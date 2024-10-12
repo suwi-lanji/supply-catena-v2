@@ -37,7 +37,7 @@ RUN composer install
 EXPOSE 8000
 
 # Run Laravel migrations
-RUN php artisan migrate
+# RUN php artisan migrate
 
 # Link storage for Laravel
 #RUN php artisan storage:link
