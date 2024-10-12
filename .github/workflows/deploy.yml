@@ -1,0 +1,53 @@
+name: Build and Deploy Docker Image
+
+on:
+  push:
+    branches:
+      - main  # Trigger on push to the main branch
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout the code from the repository
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Set up Docker
+      - name: Set up Docker
+        uses: docker/setup-buildx-action@v2
+
+      # Build the Docker image
+      - name: Build Docker Image
+        run: |
+          docker build -t supplycatena:latest .
+      
+      # Log in to Docker registry
+      - name: Log in to Docker Registry
+        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login 209.97.129.148:9004 --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+
+      # Tag and push the Docker image to the registry
+      - name: Tag and Push Docker Image
+        run: |
+          docker tag supplycatena:latest 209.97.129.148:9004/supplycatena:latest
+          docker push 209.97.129.148:9004/supplycatena:latest
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      # Deploy the Docker container on the VPS using SSH
+      - name: Deploy to VPS
+        uses: appleboy/ssh-action@v0.1.8
+        with:
+          host: ${{ secrets.VPS_IP }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /home/schipofya/inventory_management
+            docker pull 209.97.129.148:9004/supplycatena:latest
+            docker stop supplycatena || true
+            docker rm supplycatena || true
+            docker run -d --name supplycatena -p 8089:8000 209.97.129.148:9004/supplycatena:latest
