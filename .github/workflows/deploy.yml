@@ -24,8 +24,8 @@ jobs:
           docker build -t supplycatena:latest .
       
       # Log in to Docker registry
-      - name: Log in to Docker Registry
-        run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login 209.97.129.148:9004 --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
+      #- name: Log in to Docker Registry
+      #  run: echo "${{ secrets.DOCKER_REGISTRY_PASSWORD }}" | docker login 209.97.129.148:9004 --username ${{ secrets.DOCKER_REGISTRY_USERNAME }} --password-stdin
 
       # Tag and push the Docker image to the registry
       - name: Tag and Push Docker Image
