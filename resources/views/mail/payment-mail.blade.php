@@ -1,0 +1,1 @@
+Thanks for your interest in our Services. Please find our Payment Record attached with this mail.

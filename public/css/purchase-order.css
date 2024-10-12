@@ -1,0 +1,91 @@
+@import url('https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap');
+
+/* Container styles */
+.bg-white {
+    background-color: #ffffff;
+}
+
+.text-black {
+    color: #000000;
+}
+
+.font-semibold {
+    font-weight: 600;
+}
+
+.text-gray-600 {
+    color: #4b5563;
+}
+
+.max-w-6xl {
+    max-width: 72rem;
+}
+
+.mx-auto {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.p-3 {
+    padding: 0.75rem;
+}
+
+.space-y-10 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 2.5rem;
+}
+
+/* Header styles */
+.justify-between {
+    justify-content: space-between;
+}
+
+.text-sm {
+    font-size: 0.875rem;
+}
+
+.text-3xl {
+    font-size: 1.875rem;
+}
+
+/* Address and delivery details styles */
+.space-y-3 > :not([hidden]) ~ :not([hidden]) {
+    margin-top: 0.75rem;
+}
+
+.flex {
+    display: flex;
+}
+
+.items-end {
+    align-items: flex-end;
+}
+
+.space-x-2 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 0.5rem;
+}
+
+/* Table styles */
+.w-full {
+    width: 100%;
+}
+
+.table-auto {
+    width: auto;
+}
+
+.border {
+    border-width: 1px;
+}
+
+.bg {
+    background-color: #20150f;
+}
+
+.text-gray-200 {
+    color: #edf2f7;
+}
+
+/* Total section styles */
+.space-x-7 > :not([hidden]) ~ :not([hidden]) {
+    margin-left: 1.75rem;
+}
