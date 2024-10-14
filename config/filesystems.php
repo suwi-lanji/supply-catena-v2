@@ -13,7 +13,7 @@ return [
     |
     */
 
-    'default' => env('FILESYSTEM_DISK', 'local'),
+    'default' => env('FILESYSTEM_DISK', 'ftp'),
 
     /*
     |--------------------------------------------------------------------------
@@ -55,6 +55,19 @@ return [
             'use_path_style_endpoint' => env('AWS_USE_PATH_STYLE_ENDPOINT', false),
             'throw' => false,
         ],
+        'ftp' => [
+        'driver'   => 'ftp',
+        'host'     => env('FTP_HOST', '209.97.129.148'),
+        'username' => env('FTP_USERNAME', 'wimusani'),
+        'password' => env('FTP_PASSWORD', 'wimusani101'),
+
+        // Optional FTP settings
+        'port'     => env('FTP_PORT', 21),
+        'root'     => env('FTP_ROOT', '/home/schipofya/warehouse-ftp'), // The root folder on the FTP server
+        'passive'  => true, // Enable passive mode (usually recommended)
+        'ssl'      => false, // Use SSL for secure connection
+        'timeout'  => 30,
+    ],
 
     ],
 
