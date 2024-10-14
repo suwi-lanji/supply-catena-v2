@@ -47,6 +47,7 @@ jobs:
           host: ${{ secrets.VPS_IP }}
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
+          port: ${{ secrets.SSH_PORT }}
           script: |
             cd /home/schipofya/inventory_management
             docker pull 209.97.129.148:9004/supplycatena:latest
