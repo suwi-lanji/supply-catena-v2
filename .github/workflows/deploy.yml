@@ -54,7 +54,6 @@ jobs:
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           port: ${{ secrets.SSH_PORT }}
           script: |
-            cd /home/schipofya/inventory_management
             # Pull the latest image from the registry
             docker pull 209.97.129.148:9004/supplycatena:latest || true
             # Stop and remove the old container if it exists
