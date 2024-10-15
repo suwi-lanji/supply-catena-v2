@@ -59,7 +59,7 @@ return [
         'driver'   => 'ftp',
         'host'     => env('FTP_HOST', '209.97.129.148'),
         'username' => env('FTP_USERNAME', 'wimusani'),
-        'password' => env('FTP_PASSWORD', 'wimusani101'),
+        'password' => env('FTP_PASSWORD', 'yjA7rHrcr'),
 
         // Optional FTP settings
         'port'     => env('FTP_PORT', 21),
