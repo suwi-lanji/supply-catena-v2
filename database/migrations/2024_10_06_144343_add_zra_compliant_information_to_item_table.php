@@ -14,7 +14,7 @@ return new class extends Migration
         Schema::table('item', function (Blueprint $table) {
             $table->string('item_code')->nullable();
             $table->string('item_class')->nullable();
-            $table->string('')->nullable();
+            //$table->string('')->nullable();
         });
     }
 
