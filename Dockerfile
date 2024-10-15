@@ -41,7 +41,10 @@ RUN composer install --no-dev --optimize-autoloader
 
 # Expose port 8000
 EXPOSE 8000
-
+RUN mkdir -p storage/framework/cache/data && \
+    mkdir -p bootstrap/cache && \
+    chmod -R 775 storage bootstrap/cache && \
+    chown -R www-data:www-data storage bootstrap/cache
 # Ensure correct permissions for Laravel storage and cache folders
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
 
