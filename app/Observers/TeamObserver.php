@@ -14,7 +14,7 @@ class TeamObserver
 
     public function creating(Team $team): void
     {
-
+        $team->logo = '/content/'.$team->logo;
     }
     public function created(Team $team): void {
         $warehouse = Warehouse::create(['team_id' => $team->id, 'name' => $team->name, 'phone' => $team->phone, 'is_primary' => true]);
@@ -27,7 +27,11 @@ class TeamObserver
     }
     public function updating(Team $team): void
     {
-
+        if($team->isDirty('logo')) {
+            if($team->logo != null || $team->logo != '') {
+                $team->logo = '/content/'.$team->logo;
+            }
+        }
     }
 
     /**
