@@ -23,20 +23,11 @@ use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Actions;
 use Illuminate\Support\Facades\DB;
 use Filament\Tables\Filters\Filter;
-use App\Constants\ZraConstants;
-
 class ItemResource extends Resource
 {
     protected static ?string $model = Item::class;
     protected static ?int $navigationSort = 1;
     protected static ?string $navigationGroup = "Inventory";
-    public static function generateItemCode($countryOfOrigin, $productType, $packagingUnit, $quantityUnit, $incrementNumber) {
-        // Format the increment number to 7 digits (e.g., 0000012)
-        $formattedIncrement = str_pad($incrementNumber, 7, '0', STR_PAD_LEFT);
-        
-        // Concatenate the components to generate the item code
-        return $countryOfOrigin . $productType . $packagingUnit . $quantityUnit . $formattedIncrement;
-    }
     public static function form(Form $form): Form
     {
         return $form
@@ -46,7 +37,7 @@ class ItemResource extends Resource
                         Forms\Components\TextInput::make('name')
                             ->required(),
                         Forms\Components\Select::make('item_type')
-                            ->options(['Raw Material'=>'Raw Material','Finished Product'=>'Finished Product', 'Service' => 'Service'])
+                            ->options(['Goods'=>'Goods','Service'=>'Service'])
                             ->required(),
 			Forms\Components\FileUpload::make('image')
                             ->image()
@@ -71,62 +62,7 @@ class ItemResource extends Resource
                         Forms\Components\Checkbox::make('returnable_item'),
                         Forms\Components\Textarea::make('description'),
                         Forms\Components\TextInput::make('condition'),
-                        Forms\Components\TextInput::make('origin_country'),
-                        Forms\Components\Toggle::make('is_used')
-                        ->required(),
-                        Forms\Components\Select::make('pkg_unit')
-                        ->options(ZraConstants::PACKAGE_UNITS)
-                        ->searchable(),
-
-                        Forms\Components\Select::make('qty_unit')
-                        ->label('Quantity Units')
-                        ->options(ZraConstants::UNITS_OF_MEASURE)
-                        ->searchable(),
                     ])->columns(1),
-                Forms\Components\Fieldset::make('Tax Information')
-                ->schema([
-                    Forms\Components\Select::make('vat_classification')
-                    ->options(ZraConstants::VAT_TYPES)
-                    ->searchable(),
-                    Forms\Components\Select::make('vat_classification_code')
-                        ->options(DB::table('classification_codes')->pluck('itemClsNm', 'id'))
-                        ->searchable(),
-                    Forms\Components\Select::make('ipl_classification')
-                    ->options(ZraConstants::IPL_TYPES)
-                    ->searchable(),
-                    Forms\Components\Select::make('tl_classification')
-                    ->options(ZraConstants::TL_TYPES)
-                    ->searchable(),
-                    Forms\Components\Select::make('excise_classification')
-                    ->options(ZraConstants::EXCISE_TYPES)
-                    ->searchable(),
-                    
-                    
-                    
-                ]),
-                Forms\Components\Fieldset::make('Operator details')
-                ->schema([
-                    Forms\Components\TextInput::make('regrNm')
-                            ->label('Registrant Name')
-                            ->required()
-                            ->default(auth()->user()->name)
-                            ->maxLength(60),
-                        Forms\Components\Select::make('regr_id')
-                            ->relationship('registrant', 'email')
-                            ->searchable()
-                            ->default(auth()->user()->id)
-                            ->required(),
-                        Forms\Components\TextInput::make('modrNm')
-                            ->label('Modifier Name')
-                            ->default(auth()->user()->name)
-                            ->required()
-                            ->maxLength(60),
-                        Forms\Components\Select::make('modr_id')
-                            ->relationship('modifier', 'email')
-                            ->default(auth()->user()->id)
-                            ->required()
-                            ->searchable(),
-                ]),
                 Forms\Components\Fieldset::make('Sales Information')
                     ->schema([
                         Forms\Components\TextInput::make('selling_price')
