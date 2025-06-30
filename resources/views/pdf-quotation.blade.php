@@ -166,7 +166,7 @@ span, p {
     <div class="invoice-header clearfix">
         <div class="left">
             <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" style="width: 100px; height: 100px; display: inline-block;"/>
-            <div style="display: inline-block; border: solid 1px; height: 100px; vertical-align: top;">
+            <div style="display: inline-block;height: 100px; vertical-align: top;">
                 <h5>{{ $tenant->portal_name }}</h5>
                 <address>
                     <span>{{ $tenant->email }}</span><br/>
@@ -176,7 +176,7 @@ span, p {
                 </address>
             </div>
         </div>
-        <div class="right" style="width: 50%; border: solid 1px;">
+        <div class="right" style="width: 50%;">
             <h5>QUOTATION</h5>
             <p><strong>Bank:</strong> {{ $terms->bank }}</p>
             <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
@@ -299,8 +299,11 @@ span, p {
                     </tr>
                 </thead>
                 <tbody>
+                    @php
+                        $totalAmount = 0
+                    @endphp
                     <tr>
-                        <td>{{ number_format($record->items->sum("amount"), 2) }}</td>
+                        <td>{{ number_format($record->sub_total, 2) }}</td>
                     </tr>
                 </tbody>
             </table>

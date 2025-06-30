@@ -17,6 +17,7 @@ class Shipments extends Model
     {
         return [
             'packages' => 'array',
+            'items' => 'array'
         ];
     }
     public function team(): BelongsTo {

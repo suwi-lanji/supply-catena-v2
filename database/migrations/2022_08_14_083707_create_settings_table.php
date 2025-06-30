@@ -8,6 +8,7 @@ return new class extends Migration
 {
     public function up()
     {
+        Schema::dropIfExists('settings');
         Schema::create('settings', function (Blueprint $table): void {
             $table->id();
 

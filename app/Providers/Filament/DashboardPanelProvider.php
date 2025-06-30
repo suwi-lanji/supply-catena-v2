@@ -79,6 +79,7 @@ class DashboardPanelProvider extends PanelProvider
                 DisableBladeIconComponents::class,
                 DispatchServingFilamentEvent::class,
             ])
+            ->viteTheme('resources/css/filament/dashboard/theme.css')
             ->authMiddleware([
                 Authenticate::class,
             ]);

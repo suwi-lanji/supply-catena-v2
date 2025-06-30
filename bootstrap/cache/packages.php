@@ -8,14 +8,14 @@
   ),
   'barryvdh/laravel-dompdf' => 
   array (
+    'aliases' => 
+    array (
+      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
+    ),
     'providers' => 
     array (
       0 => 'Barryvdh\\DomPDF\\ServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Pdf' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
-      'PDF' => 'Barryvdh\\DomPDF\\Facade\\Pdf',
     ),
   ),
   'blade-ui-kit/blade-heroicons' => 
@@ -104,24 +104,24 @@
   ),
   'flowframe/laravel-trend' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Flowframe\\Trend\\TrendServiceProvider',
-    ),
     'aliases' => 
     array (
       'Trend' => 'Flowframe\\Trend\\TrendFacade',
     ),
+    'providers' => 
+    array (
+      0 => 'Flowframe\\Trend\\TrendServiceProvider',
+    ),
   ),
   'icetalker/filament-table-repeater' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Icetalker\\FilamentTableRepeater\\FilamentTableRepeaterServiceProvider',
-    ),
     'aliases' => 
     array (
       'FilamentTableRepeater' => 'Icetalker\\FilamentTableRepeater\\Facades\\FilamentTableRepeater',
+    ),
+    'providers' => 
+    array (
+      0 => 'Icetalker\\FilamentTableRepeater\\FilamentTableRepeaterServiceProvider',
     ),
   ),
   'kirschbaum-development/eloquent-power-joins' => 
@@ -138,29 +138,11 @@
       0 => 'Laravel\\Breeze\\BreezeServiceProvider',
     ),
   ),
-  'laravel/pulse' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Laravel\\Pulse\\PulseServiceProvider',
-    ),
-    'aliases' => 
-    array (
-      'Pulse' => 'Laravel\\Pulse\\Facades\\Pulse',
-    ),
-  ),
   'laravel/sail' => 
   array (
     'providers' => 
     array (
       0 => 'Laravel\\Sail\\SailServiceProvider',
-    ),
-  ),
-  'laravel/slack-notification-channel' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'Illuminate\\Notifications\\SlackChannelServiceProvider',
     ),
   ),
   'laravel/tinker' => 
@@ -172,13 +154,13 @@
   ),
   'livewire/livewire' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Livewire\\LivewireServiceProvider',
-    ),
     'aliases' => 
     array (
       'Livewire' => 'Livewire\\Livewire',
+    ),
+    'providers' => 
+    array (
+      0 => 'Livewire\\LivewireServiceProvider',
     ),
   ),
   'livewire/volt' => 
@@ -218,35 +200,35 @@
   ),
   'ryangjchandler/blade-capture-directive' => 
   array (
-    'providers' => 
-    array (
-      0 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
-    ),
     'aliases' => 
     array (
       'BladeCaptureDirective' => 'RyanChandler\\BladeCaptureDirective\\Facades\\BladeCaptureDirective',
     ),
+    'providers' => 
+    array (
+      0 => 'RyanChandler\\BladeCaptureDirective\\BladeCaptureDirectiveServiceProvider',
+    ),
   ),
   'spatie/laravel-ignition' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
-    ),
     'aliases' => 
     array (
       'Flare' => 'Spatie\\LaravelIgnition\\Facades\\Flare',
     ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelIgnition\\IgnitionServiceProvider',
+    ),
   ),
   'spatie/laravel-interacts-with-payload' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\InteractsWithPayload\\InteractsWithPayloadServiceProvider',
-    ),
     'aliases' => 
     array (
       'AllJobs' => 'Spatie\\InteractsWithPayload\\Facades\\AllJobs',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\InteractsWithPayload\\InteractsWithPayloadServiceProvider',
     ),
   ),
   'spatie/laravel-medialibrary' => 
@@ -258,24 +240,24 @@
   ),
   'spatie/laravel-multitenancy' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\Multitenancy\\MultitenancyServiceProvider',
-    ),
     'aliases' => 
     array (
       'Multitenancy' => 'Spatie\\Multitenancy\\MultitenancyFacade',
     ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\Multitenancy\\MultitenancyServiceProvider',
+    ),
   ),
   'spatie/laravel-pdf' => 
   array (
-    'providers' => 
-    array (
-      0 => 'Spatie\\LaravelPdf\\PdfServiceProvider',
-    ),
     'aliases' => 
     array (
       'LaravelPdf' => 'Pdf',
+    ),
+    'providers' => 
+    array (
+      0 => 'Spatie\\LaravelPdf\\PdfServiceProvider',
     ),
   ),
   'spatie/laravel-settings' => 
@@ -306,13 +288,6 @@
       0 => 'TomatoPHP\\ConsoleHelpers\\ConsoleHelpersServiceProvider',
     ),
   ),
-  'tomatophp/discord-notifications' => 
-  array (
-    'providers' => 
-    array (
-      0 => 'NotificationChannels\\Discord\\DiscordServiceProvider',
-    ),
-  ),
   'tomatophp/filament-alerts' => 
   array (
     'providers' => 
@@ -334,18 +309,18 @@
       0 => 'TomatoPHP\\FilamentSettingsHub\\FilamentSettingsHubServiceProvider',
     ),
   ),
-  'tomatophp/messagebird-notifications' => 
+  'turso/libsql-laravel' => 
   array (
     'providers' => 
     array (
-      0 => 'NotificationChannels\\Messagebird\\MessagebirdServiceProvider',
+      0 => 'Libsql\\Laravel\\LibsqlServiceProvider',
     ),
   ),
-  'tomatophp/pusher-notifications' => 
+  'tursodatabase/turso-driver-laravel' => 
   array (
     'providers' => 
     array (
-      0 => 'NotificationChannels\\PusherPushNotifications\\PusherPushNotificationsServiceProvider',
+      0 => 'Turso\\Driver\\Laravel\\LibSQLDriverServiceProvider',
     ),
   ),
 );

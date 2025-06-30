@@ -1,7 +1,7 @@
 <?php
- 
+
 namespace App\Filament\Widgets;
- 
+
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Card;
 use App\Models\SalesOrder;
@@ -9,7 +9,7 @@ use Filament\Facades\Filament;
 class SalesActivity extends BaseWidget
 {
     protected static ?int $sort = 3;
-    protected static ?string $heading = 'Sales Activity';
+    protected ?string $heading = 'Sales Activity';
     protected function getCards(): array
     {
         return [

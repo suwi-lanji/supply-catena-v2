@@ -23,7 +23,9 @@ return new class extends Migration
             $table->string('notes');
             $table->json('items');
             $table->unsignedBigInteger('vendor_id');
-            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');
+            $table->foreign('vendor_id')->references('id')->on('vendors')->onDelete('cascade');$table->unsignedBigInteger('team_id');
+            $table->foreign('team_id')->references('id')
+                ->on('teams')->onDelete('cascade');
             $table->timestamps();
         });
     }

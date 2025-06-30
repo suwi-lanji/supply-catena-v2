@@ -10,7 +10,7 @@ use Filament\Facades\Filament;
 class ProductDetails extends BaseWidget
 {
     protected static ?int $sort = 1;
-    protected static ?string $heading = 'Sales Activity';
+    protected ?string $heading = 'Sales Activity';
     protected function getColumns(): int
     {
        return 3;

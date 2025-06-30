@@ -14,7 +14,7 @@ class PaymentsMadeObserver
     {
         $jsonData = $paymentsMade->items;
         foreach($jsonData as $item) {
-            Bill::where('id', $item['bill_id'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
+            Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
             Bill::where('balance_due', 0)->update(['status' => 'paid']);
         }
     }
@@ -26,7 +26,7 @@ class PaymentsMadeObserver
     {
         $jsonData = $paymentsMade->items;
         foreach($jsonData as $item) {
-            Bill::where('id', $item['bill_id'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
+            Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
             Bill::where('balance_due', 0)->update(['status' => 'paid']);
         }
     }
@@ -38,7 +38,7 @@ class PaymentsMadeObserver
     {
         $jsonData = $paymentsMade->items;
         foreach($jsonData as $item) {
-            Bill::where('id', $item['bill_id'])->update(['balance_due' => $item['amount_due']]);
+            Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due']]);
             Bill::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }
     }
@@ -50,7 +50,7 @@ class PaymentsMadeObserver
     {
         $jsonData = $paymentsMade->items;
         foreach($jsonData as $item) {
-            Bill::where('id', $item['bill_id'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
+            Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
         }
         Bill::where('balance_due', 0)->update(['status' => 'paid']);
     }
@@ -62,7 +62,7 @@ class PaymentsMadeObserver
     {
         $jsonData = $paymentsMade->items;
         foreach($jsonData as $item) {
-            Bill::where('id', $item['bill_id'])->update(['balance_due' => $item['amount_due']]);
+            Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due']]);
             Bill::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }
     }

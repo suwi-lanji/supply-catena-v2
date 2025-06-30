@@ -1,63 +1,91 @@
-# Use the official PHP image as a base
-FROM php:8.2
+# ---- Base Stage ----
+# Use the lightweight Alpine version of the official PHP 8.2 FPM image
+FROM php:8.2-fpm-alpine as base
 
 # Set working directory
 WORKDIR /var/www/html
 
-# Install dependencies
-RUN apt-get update && apt-get install -y \
+# Install system dependencies required for Laravel and common extensions
+# Using apk for Alpine Linux
+RUN apk add --no-cache \
+    nginx \
+    supervisor \
+    curl \
     git \
     zip \
     unzip \
-    libpng-dev \
-    libjpeg-dev \
-    libfreetype6-dev \
-    libonig-dev \
-    libxml2-dev \
     libzip-dev \
+    libpng-dev \
+    libjpeg-turbo-dev \
+    freetype-dev \
     libpq-dev \
-    sqlite3 \
-    libsqlite3-dev \
-    curl \
-    supervisor \
-    && docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install gd pdo pdo_pgsql pdo_sqlite mbstring exif pcntl bcmath opcache intl zip
+    oniguruma-dev \
+    libxml2-dev
 
-# Install the FTP extension
-RUN apt-get install -y libssh2-1-dev libssh2-1 \
-    && docker-php-ext-install ftp
+# Install PHP extensions
+RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
+    && docker-php-ext-install \
+    gd \
+    pdo \
+    pdo_mysql \
+    pdo_pgsql \
+    pcntl \
+    bcmath \
+    opcache \
+    exif \
+    zip \
+    intl
 
-# Set Composer Superuser
-ENV COMPOSER_SUPERUSER 1
+# Get the latest Composer
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# Install Composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
+# ---- Dependencies Stage ----
+# This stage only installs Composer dependencies to leverage Docker's cache
+FROM base as dependencies
 
-# Copy application files
+# Copy only composer files
+COPY database/ database/
+COPY composer.json composer.lock ./
+
+# Install dependencies
+RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader --no-dev
+
+# ---- Final Production Image ----
+FROM base as final
+
+# Copy application code from your local machine
 COPY . .
 
-# Install PHP dependencies (Composer packages)
-RUN composer install --no-dev --optimize-autoloader
+# Copy installed dependencies from the 'dependencies' stage
+COPY --from=dependencies /var/www/html/vendor/ /var/www/html/vendor/
 
-# Expose port 8000
-EXPOSE 8000
-RUN mkdir -p storage/framework/cache/data && \
-    mkdir -p bootstrap/cache && \
-    chmod -R 775 storage bootstrap/cache && \
-    chown -R www-data:www-data storage bootstrap/cache
-# Ensure correct permissions for Laravel storage and cache folders
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Set correct file permissions for Laravel
+# This is crucial for logs and caching to work
+RUN chown -R www-data:www-data \
+    /var/www/html/storage \
+    /var/www/html/bootstrap/cache
 
-# Create a Supervisor configuration for Laravel
-RUN echo '[program:laravel-worker]\n' \
-    'process_name=%(program_name)s_%(process_num)02d\n' \
-    'command=php /var/www/html/artisan queue:work --sleep=3 --tries=3\n' \
-    'autostart=true\n' \
-    'autorestart=true\n' \
-    'user=www-data\n' \
-    'numprocs=1\n' \
-    'redirect_stderr=true\n' \
-    'stdout_logfile=/var/www/html/storage/logs/worker.log\n' > /etc/supervisor/conf.d/laravel-worker.conf
+# Generate Laravel's optimized files for production
+RUN composer dump-autoload --optimize && \
+    php artisan optimize:clear && \
+    php artisan config:cache && \
+    php artisan event:cache && \
+    php artisan route:cache && \
+    php artisan view:cache
 
-# Run the Laravel development server or php-fpm (if needed)
-CMD ["php", "artisan", "serve", "--host", "0.0.0.0", "--port", "8000"]
+# --- Nginx & Supervisor Configuration ---
+# Copy Nginx configuration file
+COPY .docker/nginx.conf /etc/nginx/nginx.conf
+
+# Copy Supervisor configuration file (manages Nginx and PHP-FPM)
+COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
+
+# Copy the entrypoint script that will run when the container starts
+COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+# Cloud Run expects the container to listen on port 8080
+EXPOSE 8080
+
+# The entrypoint script will start all the necessary services
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
