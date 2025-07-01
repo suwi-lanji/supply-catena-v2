@@ -1,91 +1,84 @@
-# ---- Base Stage ----
-# Use the lightweight Alpine version of the official PHP 8.2 FPM image
-FROM php:8.2-fpm-alpine as base
+FROM dunglas/frankenphp:latest
 
-# Set working directory
-WORKDIR /var/www/html
+# 1. Install required extensions
+RUN install-php-extensions pcntl pdo_pgsql opcache intl zip exif
 
-# Install system dependencies required for Laravel and common extensions
-# Using apk for Alpine Linux
-RUN apk add --no-cache \
-    nginx \
-    supervisor \
-    curl \
+# 2. Install system dependencies
+RUN apt-get update && apt-get install -y \
     git \
-    zip \
+    nodejs \
+    npm \
     unzip \
-    libzip-dev \
-    libpng-dev \
-    libjpeg-turbo-dev \
-    freetype-dev \
-    libpq-dev \
-    oniguruma-dev \
-    libxml2-dev
+    && rm -rf /var/lib/apt/lists/*
 
-# Install PHP extensions
-RUN docker-php-ext-configure gd --with-freetype --with-jpeg \
-    && docker-php-ext-install \
-    gd \
-    pdo \
-    pdo_mysql \
-    pdo_pgsql \
-    pcntl \
-    bcmath \
-    opcache \
-    exif \
-    zip \
-    intl
-
-# Get the latest Composer
+# 3. Install Composer
 COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
-# ---- Dependencies Stage ----
-# This stage only installs Composer dependencies to leverage Docker's cache
-FROM base as dependencies
-
-# Copy only composer files
-COPY database/ database/
+# 4. Copy only composer files first (for caching)
+WORKDIR /app
 COPY composer.json composer.lock ./
+COPY package.json ./
 
-# Install dependencies
-RUN composer install --no-interaction --no-plugins --no-scripts --prefer-dist --optimize-autoloader --no-dev
+# 5. Install dependencies (cached unless composer files change)
+RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-# ---- Final Production Image ----
-FROM base as final
+RUN npm install
 
-# Copy application code from your local machine
+# 6. Copy the rest of the application
 COPY . .
 
-# Copy installed dependencies from the 'dependencies' stage
-COPY --from=dependencies /var/www/html/vendor/ /var/www/html/vendor/
+ENV APP_NAME="Supply Catena"
+ENV APP_ENV=production
+ENV APP_KEY=base64:OS9J7O4DX5zMNUhASURJetb239q9dIDIKlmkfWSIB4k=
+ENV APP_DEBUG=false
+ENV APP_URL="http://localhost"
+ENV APP_TIMEZONE=UTC
+ENV APP_LOCALE=en
+ENV APP_FALLBACK_LOCALE=en
+ENV LOG_CHANNEL=stderr
+ENV LOG_DEPRECATIONS_CHANNEL=null
+ENV LOG_LEVEL=debug
+ENV DB_CONNECTION=pgsql
+ENV DB_HOST=ep-spring-paper-a8b8p0uw.eastus2.azure.neon.tech
+ENV DB_PORT=5432
+ENV DB_DATABASE=supplycatena
+ENV DB_USERNAME=supplycatena_owner
+ENV DB_PASSWORD=npg_2t9GPqIXNCQT
+ENV TURSO_DATABASE_URL="libsql://supplycatena-suwi-lanji.aws-ap-northeast-1.turso.io"
+ENV TURSO_AUTH_TOKEN="eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTEyNzA5NjksImlkIjoiNTBhMzM0NzctODhjZC00ODM3LWFkZjktYWU0YzI0Y2FjMmY1IiwicmlkIjoiNjdmZmFlNzgtZTBiNi00NjY1LWE0OTYtNGRlY2RlN2I4YmMwIn0.De8eaFv3HnX7_cZTtGZXUNI2a0ZmyBQgtopD3BlN1-F2B39yCJWf0lVVjPqrBJxZmsVtKTRfnTMRohNv26AhCQ"
+ENV TURSO_SYNC_INTERVAL=300
+ENV DB_AUTH_TOKEN="eyJhbGciOiJFZERTQSIsInR5cCI6IkpXVCJ9.eyJpYXQiOjE3NTEyNzA5NjksImlkIjoiNTBhMzM0NzctODhjZC00ODM3LWFkZjktYWU0YzI0Y2FjMmY1IiwicmlkIjoiNjdmZmFlNzgtZTBiNi00NjY1LWE0OTYtNGRlY2RlN2I4YmMwIn0.De8eaFv3HnX7_cZTtGZXUNI2a0ZmyBQgtopD3BlN1-F2B39yCJWf0lVVjPqrBJxZmsVtKTRfnTMRohNv26AhCQ"
+ENV DB_SYNC_URL="libsql://supplycatena-suwi-lanji.aws-ap-northeast-1.turso.io"
+ENV DB_SYNC_INTERVAL=5
+ENV DB_READ_YOUR_WRITES=true
+ENV DB_ENCRYPTION_KEY=""
+ENV DB_REMOTE_ONLY=false
+ENV CACHE_DRIVER=octane
+ENV SESSION_DRIVER=file
+ENV SESSION_LIFETIME=120
+ENV SESSION_ENCRYPT=false
+ENV QUEUE_CONNECTION=sync
+ENV REDIS_HOST=127.0.0.1
+ENV REDIS_PASSWORD=null
+ENV REDIS_PORT=6379
+ENV MAIL_MAILER=resend
+ENV MAIL_FROM_ADDRESS="onboarding@resend.dev"
+ENV MAIL_FROM_NAME="${APP_NAME}"
+ENV RESEND_API_KEY=re_73vhATde_EJ2qUzKzd6vV4XoHRL68AMyH
+ENV VITE_APP_NAME="${APP_NAME}"
+ENV ZRA_TPIN=2179235933
+ENV ZRA_BHF_ID=000
+ENV ZRA_API_URL=http://209.97.129.148:9810/zrasandboxvsdc/
+ENV ZRA_DVC_SRL_NO=2179235933_VSDC
+ENV FRANKENPHP_CONFIG="worker"
+ENV OCTANE_SERVER=frankenphp
 
-# Set correct file permissions for Laravel
-# This is crucial for logs and caching to work
-RUN chown -R www-data:www-data \
-    /var/www/html/storage \
-    /var/www/html/bootstrap/cache
+# 9. Set permissions
+RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
 
-# Generate Laravel's optimized files for production
-RUN composer dump-autoload --optimize && \
-    php artisan optimize:clear && \
-    php artisan config:cache && \
-    php artisan event:cache && \
-    php artisan route:cache && \
-    php artisan view:cache
+# 10. Health check endpoint
+HEALTHCHECK --interval=30s --timeout=3s \
+    CMD curl -f http://localhost:8080/health || exit 1
 
-# --- Nginx & Supervisor Configuration ---
-# Copy Nginx configuration file
-COPY .docker/nginx.conf /etc/nginx/nginx.conf
-
-# Copy Supervisor configuration file (manages Nginx and PHP-FPM)
-COPY .docker/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Copy the entrypoint script that will run when the container starts
-COPY .docker/entrypoint.sh /usr/local/bin/entrypoint.sh
-RUN chmod +x /usr/local/bin/entrypoint.sh
-
-# Cloud Run expects the container to listen on port 8080
-EXPOSE 8080
-
-# The entrypoint script will start all the necessary services
-ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
+# 11. Entrypoint with proper FrankenPHP configuration
+ENTRYPOINT ["php", "artisan", "octane:frankenphp", "--port=8080"]
