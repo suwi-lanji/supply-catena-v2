@@ -72,6 +72,10 @@ ENV ZRA_API_URL=http://209.97.129.148:9810/zrasandboxvsdc/
 ENV ZRA_DVC_SRL_NO=2179235933_VSDC
 ENV FRANKENPHP_CONFIG="worker"
 ENV OCTANE_SERVER=frankenphp
+ENV FILESYSTEM_DISK=cloudinary
+ENV CLOUDINARY_URL=CLOUDINARY_URL=cloudinary://586283381672664:hTum1a6u7Xf-rWigOC61dRKbjNU@do3ne4vzy
+ENV CLOUDINARY_UPLOAD_PRESET=your_upload_preset
+ENV CLOUDINARY_NOTIFICATION_URL=
 
 # 9. Set permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
