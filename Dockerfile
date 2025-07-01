@@ -26,6 +26,14 @@ RUN php artisan filament:optimize
 
 RUN php artisan optimize
 
+RUN php artisan config:cache
+
+RUN php artisan event:cache
+
+RUN php artisan route:cache
+
+RUN php artisan view:cache
+
 # 6. Copy the rest of the application
 COPY . .
 
