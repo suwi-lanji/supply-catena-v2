@@ -22,7 +22,9 @@ COPY package.json ./
 # 5. Install dependencies (cached unless composer files change)
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
-RUN npm install
+RUN php artisan filament:optimize
+
+RUN php artisan optimize
 
 # 6. Copy the rest of the application
 COPY . .
@@ -73,6 +75,7 @@ ENV ZRA_DVC_SRL_NO=2179235933_VSDC
 ENV FRANKENPHP_CONFIG="worker"
 ENV OCTANE_SERVER=frankenphp
 ENV FILESYSTEM_DISK=cloudinary
+ENV FILAMENT_FILESYSTEM_DISK=cloudinary
 ENV CLOUDINARY_URL=CLOUDINARY_URL=cloudinary://586283381672664:hTum1a6u7Xf-rWigOC61dRKbjNU@do3ne4vzy
 ENV CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 ENV CLOUDINARY_NOTIFICATION_URL=
