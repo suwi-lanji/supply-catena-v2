@@ -22,6 +22,9 @@ COPY package.json ./
 # 5. Install dependencies (cached unless composer files change)
 RUN composer install --no-dev --optimize-autoloader --no-scripts
 
+# 6. Copy the rest of the application
+COPY . .
+
 RUN php artisan filament:optimize
 
 RUN php artisan optimize
@@ -33,9 +36,6 @@ RUN php artisan event:cache
 RUN php artisan route:cache
 
 RUN php artisan view:cache
-
-# 6. Copy the rest of the application
-COPY . .
 
 ENV APP_NAME="Supply Catena"
 ENV APP_ENV=production
