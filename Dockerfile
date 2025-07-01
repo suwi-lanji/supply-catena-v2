@@ -25,6 +25,18 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # 6. Copy the rest of the application
 COPY . .
 
+RUN php artisan filament:optimize-clear
+
+RUN php artisan optimize:clear
+
+RUN php artisan config:clear
+
+RUN php artisan event:clear
+
+RUN php artisan route:clear
+
+RUN php artisan view:clear
+
 RUN php artisan filament:optimize
 
 RUN php artisan optimize
