@@ -81,8 +81,9 @@ class AppServiceProvider extends ServiceProvider
         BranchUser::observe(BranchUserObserver::class);
         PurchaseOrder::observe(PurchaseOrderObserver::class);
         Shipments::observe(ShipmentsObserver::class);
-        if (env('APP_ENV') == 'production') {
-            $url->forceScheme('https');
+        if (app()->isProduction()) {
+            \URL::forceScheme('https');
+            request()->server->set('HTTPS', request()->header('X-Forwarded-Proto', 'https') == 'https' ? 'on' : 'off');
         }
         Blade::component('customer-info', CustomerInfo::class);
     }
