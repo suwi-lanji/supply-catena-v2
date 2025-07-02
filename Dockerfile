@@ -25,30 +25,6 @@ RUN composer install --no-dev --optimize-autoloader --no-scripts
 # 6. Copy the rest of the application
 COPY . .
 
-RUN php artisan filament:optimize-clear
-
-RUN php artisan optimize:clear
-
-RUN php artisan config:clear
-
-RUN php artisan event:clear
-
-RUN php artisan route:clear
-
-RUN php artisan view:clear
-
-RUN php artisan filament:optimize
-
-RUN php artisan optimize
-
-RUN php artisan config:cache
-
-RUN php artisan event:cache
-
-RUN php artisan route:cache
-
-RUN php artisan view:cache
-
 ENV APP_NAME="Supply Catena"
 ENV APP_ENV=production
 ENV APP_KEY=base64:OS9J7O4DX5zMNUhASURJetb239q9dIDIKlmkfWSIB4k=
@@ -99,6 +75,30 @@ ENV FILAMENT_FILESYSTEM_DISK=cloudinary
 ENV CLOUDINARY_URL=CLOUDINARY_URL=cloudinary://586283381672664:hTum1a6u7Xf-rWigOC61dRKbjNU@do3ne4vzy
 ENV CLOUDINARY_UPLOAD_PRESET=your_upload_preset
 ENV CLOUDINARY_NOTIFICATION_URL=
+
+RUN php artisan config:clear
+
+RUN php artisan filament:optimize-clear
+
+RUN php artisan optimize:clear
+
+RUN php artisan event:clear
+
+RUN php artisan route:clear
+
+RUN php artisan view:clear
+
+RUN php artisan filament:optimize
+
+RUN php artisan optimize
+
+RUN php artisan config:cache
+
+RUN php artisan event:cache
+
+RUN php artisan route:cache
+
+RUN php artisan view:cache
 
 # 9. Set permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
