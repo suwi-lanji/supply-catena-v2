@@ -39,7 +39,7 @@ class RegisterTeam extends RegisterTenant {
                                     ->prepend('uploads/') // Add folder
                                     ->ltrim('./') // Remove leading ./ 
                             );
-                            ->required(),
+                            ->required(false),
                         TextInput::make('name')
                             ->required(),
                         TextInput::make('portal_name')
