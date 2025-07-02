@@ -88,6 +88,7 @@ RUN php artisan event:clear
 RUN php artisan route:clear
 
 RUN php artisan view:cache
+
 RUN php artisan filament:optimize
 
 # 9. Set permissions
