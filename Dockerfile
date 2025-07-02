@@ -87,19 +87,8 @@ RUN php artisan event:clear
 
 RUN php artisan route:clear
 
-RUN php artisan view:clear
-
-RUN php artisan filament:optimize
-
-RUN php artisan optimize
-
-RUN php artisan config:cache
-
-RUN php artisan event:cache
-
-RUN php artisan route:cache
-
 RUN php artisan view:cache
+RUN php artisan filament:optimize
 
 # 9. Set permissions
 RUN chown -R www-data:www-data /app/storage /app/bootstrap/cache
