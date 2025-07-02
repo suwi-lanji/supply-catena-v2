@@ -38,7 +38,7 @@ class RegisterTeam extends RegisterTenant {
                                     ->replaceMatches('/[^a-zA-Z0-9\_\-\.]/', '') // Remove special chars
                                     ->prepend('uploads/') // Add folder
                                     ->ltrim('./') // Remove leading ./ 
-                            );
+                            )
                             ->required(false),
                         TextInput::make('name')
                             ->required(),
