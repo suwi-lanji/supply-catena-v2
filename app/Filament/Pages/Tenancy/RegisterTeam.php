@@ -10,6 +10,7 @@ use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Filament\Forms\Components\Fieldset;
+use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
 class RegisterTeam extends RegisterTenant {
     public static function getLabel(): string {
         return "Register Team";
@@ -24,6 +25,20 @@ class RegisterTeam extends RegisterTenant {
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
                              ->disk('cloudinary')
+                             ->beforeSave(function (TemporaryUploadedFile $file) {
+                                // Remove invalid characters from filename
+                                $cleanName = preg_replace('/[^a-zA-Z0-9\_\-\.]/', '', $file->getClientOriginalName());
+                                
+                                // Return sanitized path without leading slashes/dots
+                                return ltrim("uploads/{$cleanName}", './');
+                            })
+                            // Optional: Add filename normalization
+                            ->getUploadedFileNameForStorageUsing(
+                                fn (TemporaryUploadedFile $file) => (string) str($file->getClientOriginalName())
+                                    ->replaceMatches('/[^a-zA-Z0-9\_\-\.]/', '') // Remove special chars
+                                    ->prepend('uploads/') // Add folder
+                                    ->ltrim('./') // Remove leading ./ 
+                            );
                             ->required(),
                         TextInput::make('name')
                             ->required(),
