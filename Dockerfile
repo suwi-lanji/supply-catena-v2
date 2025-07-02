@@ -29,7 +29,7 @@ ENV APP_NAME="Supply Catena"
 ENV APP_ENV=production
 ENV APP_KEY=base64:OS9J7O4DX5zMNUhASURJetb239q9dIDIKlmkfWSIB4k=
 ENV APP_DEBUG=false
-ENV APP_URL="http://localhost"
+ENV APP_URL="https://supplycatena.com"
 ENV APP_TIMEZONE=UTC
 ENV APP_LOCALE=en
 ENV APP_FALLBACK_LOCALE=en
