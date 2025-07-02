@@ -23,6 +23,7 @@ class RegisterTeam extends RegisterTenant {
                             ->image()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
+                             ->disk('cloudinary')
                             ->required(),
                         TextInput::make('name')
                             ->required(),
