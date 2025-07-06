@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\Relations\HasOne;
 class Invoices extends Model
 {
     use HasFactory;
-    
+
     protected function casts(): array {
         return [
             'items' => 'array',
@@ -36,6 +36,10 @@ class Invoices extends Model
         return $this->hasOne(SalesPerson::class)->where('team_id', Filament::getTenant()->id);
     }
     public function order_number(): HasOne {
+        return $this->hasOne(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
+    }
+
+    public function sales_order(): HasOne {
         return $this->hasOne(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
     }
 }

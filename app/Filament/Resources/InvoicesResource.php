@@ -41,11 +41,29 @@ class InvoicesResource extends Resource
                         })
                         ->relationship('customer', 'company_display_name')
                         ->preload()
-->searchable()
+                        ->searchable()
                         ->required(),
+                        Forms\Components\Select::make('type')
+                            ->options([
+                                'tax' => 'Tax',
+                                'profoma' => 'Profoma'
+                            ])
+                            ->afterStateUpdated(function($state, $set) {
+                                if($state === "tax") {
+                                    $set("invoice_number", 'INV-' . str_pad(Invoices::where('team_id', Filament::getTenant()->id)
+                                        ->where('type', 'tax')
+                                        ->count() + 1, 5, 0, STR_PAD_LEFT));
+                                } else {
+                                    $set("invoice_number", 'PI-' . str_pad(Invoices::where('team_id', Filament::getTenant()->id)
+                                        ->where('type', 'profoma')
+                                        ->count() + 1, 5, 0, STR_PAD_LEFT));
+                                }
+                            })
+                            ->live()
+                            ->native(false),
                         Forms\Components\TextInput::make('invoice_number')
-                        ->default('INV-0000' . Invoices::where('team_id', Filament::getTenant()->id)->count() + 1)
-                        ->required(),
+                            ->placeholder("Leave blank for auto generation")
+                            ->required(),
                         Forms\Components\Select::make('order_number')
                         ->relationship('order_number', 'sales_order_number')
                         ->afterStateHydrated(function (Request $request, $get, $set) {

@@ -12,7 +12,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
     }
 
     .invoice {
-        
+
         box-sizing: border-box;
     }
 
@@ -195,18 +195,32 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
         <table class="invoice-table right">
             <thead class="table-dark">
                 <tr>
-                    <td colspan="2" class="text-center">Invoice</td>
+                    <td colspan="2" class="text-center">
+                        @if ($record->type === "profoma")
+                        {{ "Profoma" }}
+                    @endif
+                        Invoice</td>
                 </tr>
             </thead>
             <tbody>
                 <tr>
-                    <td>Invoice No.</td>
+                    <td>@if ($record->type === "profoma")
+                        {{ "Profoma" }}
+                    @endif
+                    Invoice No.</td>
                     <td>{{ $record->invoice_number }}</td>
                 </tr>
+                @if ($record->type === "tax")
                 <tr>
                     <td>Invoice Date</td>
                     <td>{{ $record->invoice_date }}</td>
                 </tr>
+                @else
+                <tr>
+                    <td>Order Date</td>
+                    <td>{{ \App\Models\SalesOrder::find($record->order_number)?->sales_order_date }}</td>
+                </tr>
+                @endif
                 <tr>
 
                     <td>Prepared By.</td>
