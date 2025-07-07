@@ -210,17 +210,13 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
                     Invoice No.</td>
                     <td>{{ $record->invoice_number }}</td>
                 </tr>
-                @if ($record->type === "tax")
                 <tr>
-                    <td>Invoice Date</td>
+                    <td>@if ($record->type === "profoma")
+                        {{ "Profoma" }}
+                    @endif
+                     Invoice Date</td>
                     <td>{{ $record->invoice_date }}</td>
                 </tr>
-                @else
-                <tr>
-                    <td>Order Date</td>
-                    <td>{{ \App\Models\SalesOrder::find($record->order_number)?->sales_order_date }}</td>
-                </tr>
-                @endif
                 <tr>
 
                     <td>Prepared By.</td>
