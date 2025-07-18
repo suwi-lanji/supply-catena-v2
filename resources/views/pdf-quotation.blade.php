@@ -312,4 +312,20 @@ span, p {
     <div class="invoice-footer">
         <p>{{ $terms->notes }}</p>
     </div>
+    <div style="margin-bottom: 50px">
+        @php
+        $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
+        @endphp
+        <h3>Payment Term: {{ $terms->name }}</h3>
+        <p>Please make payment by check or bank transfer to the following account:</p>
+        <div>
+            <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
+            <p><strong>Bank:</strong> {{ $terms->bank }}</p>
+            <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
+            <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
+            <p><strong>Branch:</strong> {{ $terms->branch }}</p>
+            <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
+            <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+        </div>
+    </div>
 </div>
