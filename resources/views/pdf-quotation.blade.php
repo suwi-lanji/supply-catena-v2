@@ -271,10 +271,10 @@ span, p {
                     <td>{{ \App\Models\Item::where("id", $item["item"])->pluck("description")->first() }}</td>
                     <td>{{ $item["lead_time"] }}</td>
                     <td>{{ Arr::get($item, "quantity", 0) }}</td>
-                    <td>{{ $item["rate"] }}</td>
-                    <td>{{ $item["rate"] }}</td>
+                    <td>{{$tenant->currency_symbol}}{{ $item["rate"] }}</td>
+                    <td>{{$tenant->currency_symbol}}{{ $item["rate"] }}</td>
                     <td>{{ Arr::get($item, "discount", 0) . "%" }}</td>
-                    <td>{{ $item["amount"] }}</td>
+                    <td>{{$tenant->currency_symbol}}{{ $item["amount"] }}</td>
                 </tr>
                 @endforeach
             </tbody>
@@ -288,7 +288,7 @@ span, p {
                 </thead>
                 <tbody>
                     <tr>
-                        <td>498290844984</td>
+                        <td>{{$tenant->quotation_number}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -303,7 +303,7 @@ span, p {
                         $totalAmount = 0
                     @endphp
                     <tr>
-                        <td>{{ number_format($record->sub_total, 2) }}</td>
+                        <td>{{$tenant->currency_symbol}}{{ number_format($record->sub_total, 2) }}</td>
                     </tr>
                 </tbody>
             </table>
