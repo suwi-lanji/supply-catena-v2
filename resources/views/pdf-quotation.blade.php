@@ -194,7 +194,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
         <table class="invoice-table right">
             <thead class="table-dark">
                 <tr>
-                    <td colspan="2" class="text-center">Sales Order</td>
+                    <td colspan="2" class="text-center">Quotation</td>
                 </tr>
             </thead>
             <tbody>
