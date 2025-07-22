@@ -4,6 +4,7 @@ $tenant = \Filament\Facades\Filament::getTenant();
 $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
 @endphp
 <style>
+    /* ... all your existing styles remain here ... */
     body {
         font-family: "Figtree", sans-serif;
         margin: 0;
@@ -147,7 +148,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
 <div class="invoice">
     <div class="invoice-header clearfix">
         <div class="left">
-        <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" style="width: 150px; height: 150px;display:inline-block;"/>
+            <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" style="width: 150px; height: 150px;display:inline-block;"/>
         </div>
         <div class="right">
             <h5>{{ $tenant->portal_name }}</h5>
@@ -237,25 +238,31 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
             <tbody>
                 @foreach ($record->items as $index => $item)
                 @php
+                    // Find the item, but handle cases where it might not exist
                     $itemModel = \App\Models\Item::find($item['item']);
                 @endphp
+
+                @if ($itemModel)
                 <tr>
-                    <td>@php
-                            echo Arr::get($item, 'quantity', 0);
-                        @endphp</td>
+                    <td>{{ Arr::get($item, 'quantity', 0) }}</td>
                     <td>{{ $itemModel->part_number }}</td>
                     <td>{{ $itemModel->description }}</td>
                     <td>{{ $itemModel->condition }}</td>
-                    <td>{{$item['weight']}}</td>
-                    <td>{{$item['lead_time']}}</td>
-                    <td>{{$item['rate']}}</td>
-                    <td>
-                        @php
-                            echo Arr::get($item, 'discount', 0) . "%";
-                        @endphp
-                    </td>
-                    <td>{{$item['amount']}}</td>
+                    <td>{{ $item['weight'] }}</td>
+                    <td>{{ $item['lead_time'] }}</td>
+                    <td>{{ $item['rate'] }}</td>
+                    <td>{{ Arr::get($item, 'discount', 0) }}%</td>
+                    <td>{{ $item['amount'] }}</td>
                 </tr>
+                @else
+                {{-- This row will be rendered if the item is not found. --}}
+                {{-- It ensures the layout doesn't break and provides a clear error message. --}}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: red;">
+                        Error: Item with ID '{{ $item['item'] }}' could not be found. It may have been deleted.
+                    </td>
+                </tr>
+                @endif
                 @endforeach
                 <tr>
                     <td colspan="5"></td>
