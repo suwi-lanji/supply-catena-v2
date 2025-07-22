@@ -259,7 +259,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
                 {{-- It ensures the layout doesn't break and provides a clear error message. --}}
                 <tr>
                     <td colspan="9" style="text-align: center; color: red;">
-                        Error: Item with ID '{{ $item['item'] }}' could not be found. It may have been deleted.
+                        Error: Item with ID '{{ $item['item'] }}' {{json_encode($item)}}could not be found. It may have been deleted.
                     </td>
                 </tr>
                 @endif
