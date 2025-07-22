@@ -105,6 +105,7 @@ class ViewQuotation extends ViewRecord
                     return response()->streamDownload(function () use ($record) {
                         echo Pdf::loadView('pdf-quotation', ['record' => $record, 'tenant' => Filament::getTenant()])->setOptions([
                             'isPhpEnabled' => true,
+                                                                                                                                  
                             'isHtml5ParserEnabled' => true,
                             'DOMPDF_ENABLE_HTML5PARSER' => true,
                             'chroot' => public_path(),
