@@ -236,13 +236,16 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
             </thead>
             <tbody>
                 @foreach ($record->items as $index => $item)
+                @php
+                    $itemModel = \App\Models\Item::find($item['item']);
+                @endphp
                 <tr>
                     <td>@php
                             echo Arr::get($item, 'quantity', 0);
                         @endphp</td>
-                    <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('part_number')->first() }}</td>
-                    <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('description')->first() }}</td>
-                    <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
+                    <td>{{ $itemModel->part_number }}</td>
+                    <td>{{ $itemModel->description }}</td>
+                    <td>{{ $itemModel->condition }}</td>
                     <td>{{$item['weight']}}</td>
                     <td>{{$item['lead_time']}}</td>
                     <td>{{$item['rate']}}</td>
