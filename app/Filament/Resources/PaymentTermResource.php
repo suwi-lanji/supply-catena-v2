@@ -43,7 +43,9 @@ class PaymentTermResource extends Resource
     {
         return $table
             ->columns([
-                //
+                Tables\Columns\TextColumn::make('name'),
+                Tables\Columns\TextColumn::make('account_type'),
+                Tables\Columns\TextColumn::make('account_number')
             ])
             ->filters([
                 //
