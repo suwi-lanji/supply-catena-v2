@@ -19,7 +19,7 @@
         "APP_NAME": "Supply Catena",
         "APP_ENV": "production",
         "APP_KEY": "base64:OS9J7O4DX5zMNUhASURJetb239q9dIDIKlmkfWSIB4k=",
-        "APP_DEBUG": "false",
+        "APP_DEBUG": "true",
         "APP_URL": "https://supply-catena.vercel.app",
         "ASSET_URL": "https://supply-catena.vercel.app",
         "APP_TIMEZONE": "UTC",
