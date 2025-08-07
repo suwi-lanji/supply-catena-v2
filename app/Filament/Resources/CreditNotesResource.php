@@ -53,15 +53,7 @@ class CreditNotesResource extends Resource
 
                 Forms\Components\DatePicker::make('credit_note_date')
                     ->required(),
-                Forms\Components\Select::make('sales_person_id')
-                ->relationship('sales_person', 'name')
-                ->createOptionForm([
-                    Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
-                    Forms\Components\TextInput::make('name')->required(),
-                    Forms\Components\TextInput::make('email')->required()
-                ])
-                ->preload()
-->searchable(),
+               
                 Forms\Components\TextInput::make('subject')
                 ])->columns(1),
                 TableRepeater::make('items')
