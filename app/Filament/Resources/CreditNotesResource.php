@@ -60,7 +60,6 @@ class CreditNotesResource extends Resource
                     Forms\Components\TextInput::make('name')->required(),
                     Forms\Components\TextInput::make('email')->required()
                 ])
-                ->required()
                 ->preload()
 ->searchable(),
                 Forms\Components\TextInput::make('subject')
