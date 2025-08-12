@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\Models\PaymentsReceived;
 use App\Models\Invoices;
+use App\Models\PaymentsReceived;
 
 class PaymentsReceivedObserver
 {
@@ -13,9 +13,9 @@ class PaymentsReceivedObserver
     public function created(PaymentsReceived $paymentsReceived): void
     {
         $jsonData = $paymentsReceived->items;
-        foreach($jsonData as $item) {
-            if(!Invoices::where('id', $item['invoice_id'])->exists()) {
-                throw new \Exception("Something went wrong");
+        foreach ($jsonData as $item) {
+            if (! Invoices::where('id', $item['invoice_id'])->exists()) {
+                throw new \Exception('Something went wrong');
             }
             Invoices::where('id', $item['invoice_id'])->update(['balance_due' => floatval($item['amount_due']) - floatval($item['payment'])]);
             Invoices::where('balance_due', 0)->update(['status' => 'paid']);
@@ -28,9 +28,9 @@ class PaymentsReceivedObserver
     public function updated(PaymentsReceived $paymentsReceived): void
     {
         $jsonData = $paymentsReceived->items;
-        foreach($jsonData as $item) {
-            if(!Invoices::where('id', $item['invoice_id'])->exists()) {
-                throw new \Exception("Something went wrong");
+        foreach ($jsonData as $item) {
+            if (! Invoices::where('id', $item['invoice_id'])->exists()) {
+                throw new \Exception('Something went wrong');
             }
             Invoices::where('id', $item['invoice_id'])->update(['balance_due' => floatval($item['amount_due']) - floatval($item['payment'])]);
             Invoices::where('balance_due', 0)->update(['status' => 'paid']);
@@ -43,7 +43,7 @@ class PaymentsReceivedObserver
     public function deleted(PaymentsReceived $paymentsReceived): void
     {
         $jsonData = $paymentsReceived->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Invoices::where('id', $item['invoice_id'])->update(['balance_due' => $item['amount_due']]);
             Invoices::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }
@@ -55,7 +55,7 @@ class PaymentsReceivedObserver
     public function restored(PaymentsReceived $paymentsReceived): void
     {
         $jsonData = $paymentsReceived->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Invoices::where('id', $item['invoice_id'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
         }
         Invoices::where('balance_due', 0)->update(['status' => 'paid']);
@@ -67,7 +67,7 @@ class PaymentsReceivedObserver
     public function forceDeleted(PaymentsReceived $paymentsReceived): void
     {
         $jsonData = $paymentsReceived->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Invoices::where('id', $item['invoice_id'])->update(['balance_due' => $item['amount_due']]);
             Invoices::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }

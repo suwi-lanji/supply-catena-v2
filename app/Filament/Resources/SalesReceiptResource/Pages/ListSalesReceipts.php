@@ -14,7 +14,7 @@ class ListSalesReceipts extends ListRecords
     {
         return [
             Actions\CreateAction::make(),
-            
+
         ];
     }
 }

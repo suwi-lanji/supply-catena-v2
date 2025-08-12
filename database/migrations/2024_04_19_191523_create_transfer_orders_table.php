@@ -21,7 +21,7 @@ return new class extends Migration
             $table->unsignedBigInteger('source_warehouse_id')->nullable();
             $table->foreign('source_warehouse_id')->references('id')
                 ->on('warehouses')->onDelete('cascade');
-                $table->unsignedBigInteger('destination_warehouse_id')->nullable();
+            $table->unsignedBigInteger('destination_warehouse_id')->nullable();
             $table->foreign('destination_warehouse_id')->references('id')
                 ->on('warehouses')->onDelete('cascade');
             $table->timestamps();

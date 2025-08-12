@@ -2,10 +2,10 @@
 
 namespace App\Observers;
 
-use App\Models\PurchaseOrder;
 use App\Models\ItemsPurchased;
-use App\Models\Item;
+use App\Models\PurchaseOrder;
 use Illuminate\Support\Arr;
+
 class PurchaseOrderObserver
 {
     /**
@@ -13,9 +13,9 @@ class PurchaseOrderObserver
      */
     public function created(PurchaseOrder $purchaseOrder): void
     {
-        foreach($purchaseOrder->items as $item) {
-            if(ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
-                ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
+        foreach ($purchaseOrder->items as $item) {
+            if (ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
+                ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             } else {
                 ItemsPurchased::create(['team_id' => $purchaseOrder->team_id, 'purchase_order_id' => $purchaseOrder->id, 'item_id' => $item['item'], 'quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             }
@@ -27,9 +27,9 @@ class PurchaseOrderObserver
      */
     public function updated(PurchaseOrder $purchaseOrder): void
     {
-        foreach($purchaseOrder->items as $item) {
-            if(ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
-                ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
+        foreach ($purchaseOrder->items as $item) {
+            if (ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
+                ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             } else {
                 ItemsPurchased::create(['team_id' => $purchaseOrder->team_id, 'purchase_order_id' => $purchaseOrder->id, 'item_id' => $item['item'], 'quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             }
@@ -41,9 +41,9 @@ class PurchaseOrderObserver
      */
     public function deleted(PurchaseOrder $purchaseOrder): void
     {
-        foreach($purchaseOrder->items as $item) {
-            if(ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
-                ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->delete();
+        foreach ($purchaseOrder->items as $item) {
+            if (ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
+                ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->delete();
             }
         }
     }
@@ -53,9 +53,9 @@ class PurchaseOrderObserver
      */
     public function restored(PurchaseOrder $purchaseOrder): void
     {
-        foreach($purchaseOrder->items as $item) {
-            if(ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
-                ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
+        foreach ($purchaseOrder->items as $item) {
+            if (ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
+                ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->update(['quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             } else {
                 ItemsPurchased::create(['team_id' => $purchaseOrder->team_id, 'purchase_order_id' => $purchaseOrder->id, 'item_id' => $item['item'], 'quantity' => Arr::get($item, 'quantity', 0), 'amount' => $item['amount']]);
             }
@@ -67,9 +67,9 @@ class PurchaseOrderObserver
      */
     public function forceDeleted(PurchaseOrder $purchaseOrder): void
     {
-        foreach($purchaseOrder->items as $item) {
-            if(ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
-                ItemsPurchased::where('item_id',$item['item'])->where('purchase_order_id', $purchaseOrder->id)->delete();
+        foreach ($purchaseOrder->items as $item) {
+            if (ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->exists()) {
+                ItemsPurchased::where('item_id', $item['item'])->where('purchase_order_id', $purchaseOrder->id)->delete();
             }
         }
     }

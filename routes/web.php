@@ -1,10 +1,11 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ContentController;
-use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\DndTemplateMaker;
+use App\Http\Controllers\DocumentController;
 use App\Http\Controllers\PDFController;
+use Illuminate\Support\Facades\Route;
+
 Route::view('/', 'landing-page');
 Route::get('/content/{filename}', [ContentController::class, 'show']);
 Route::view('profile', 'profile')

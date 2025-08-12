@@ -1,7 +1,9 @@
 <?php
+
 namespace App\Constants;
 
-class ZraConstants {
+class ZraConstants
+{
     const PACKAGE_UNITS = [
         'AM' => 'Ampoule',
         'BA' => 'Barrel',
@@ -93,14 +95,16 @@ class ZraConstants {
         'UNWR' => 'Unwrap',
         'WRAP' => 'Wrapped',
     ];
+
     const CURRENCIES = [
         'ZMW' => 'Zambian Kwacha',
         'USD' => 'United States Dollar',
         'ZAR' => 'South African Rand',
         'GBP' => 'Pound Sterling',
         'CNY' => 'Chinese Yuan',
-        'EUR' => 'Euro'
+        'EUR' => 'Euro',
     ];
+
     const VAT_TYPES = [
         'A' => 'Standard Rated',
         'B' => 'Minimum Taxable Value (MTV)',
@@ -111,22 +115,27 @@ class ZraConstants {
         'E' => 'Disbursement',
         'RVAT' => 'Reverse VAT',
     ];
+
     const IPL_TYPES = [
         'IPL1' => 'Insurance Premium Levy',
         'IPL2' => 'Re-Insurance',
     ];
+
     const TL_TYPES = [
         'TL' => 'Tourism Levy',
         'F' => 'Service Charge',
     ];
+
     const EXCISE_TYPES = [
         'ECM' => 'Excise on Coal',
         'EXE' => 'Excise Electricity',
     ];
+
     const TT_TYPES = [
         'TOT' => 'Turnover Tax',
     ];
-    const UNITS_OF_MEASURE= [
+
+    const UNITS_OF_MEASURE = [
         '4B' => 'Pair',
         'AV' => 'Cap',
         'BA' => 'Barrel',
@@ -218,18 +227,18 @@ class ZraConstants {
         'CCM' => 'Cubic Centimeter',
         'CD' => 'Candela',
         'CDM' => 'Cubic Decimeter',
-        'EA' => 'Each'
+        'EA' => 'Each',
     ];
 
     const TRANSACTION_TYPE = [
         'C' => 'Copy',
-        'N' => 'Normal'
+        'N' => 'Normal',
     ];
 
     const SALES_RECEIPT_TYPE = [
         'S' => 'Sale',
         'R' => 'Refund after Sale',
-        'D' => 'Adjustment upwards after Sale'
+        'D' => 'Adjustment upwards after Sale',
     ];
 
     const PAYMENT_METHODS = [
@@ -240,24 +249,24 @@ class ZraConstants {
         '05' => 'DEBIT&CREDIT CARD',
         '06' => 'MOBILE MONEY',
         '07' => 'OTHER',
-        '08' => 'Bank transfer'
+        '08' => 'Bank transfer',
     ];
 
     const TRANSACTION_PROGRESS = [
         '02' => 'Approved',
         '05' => 'Refunded',
         '06' => 'Transferred',
-        '04' => 'Rejected'
+        '04' => 'Rejected',
     ];
 
     const REGISTRATION_TYPE = [
         'A' => 'Automatic',
-        'M' => 'Manual'
+        'M' => 'Manual',
     ];
 
     const PURCHASE_RECEIPT_TYPES = [
         'P' => 'Purchase',
-        'R' => 'Refund after Purchase'
+        'R' => 'Refund after Purchase',
     ];
 
     const STOCK_IN_OUT_TYPE = [

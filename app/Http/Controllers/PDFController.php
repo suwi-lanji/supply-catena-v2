@@ -2,14 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Quotation;
+use App\Models\Vendor;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\Facades\Log;
-use App\Models\Quotation;
+use Illuminate\Support\Facades\Storage;
 use Spatie\Browsershot\Browsershot;
-use Filament\Facades\Filament;
-use App\Models\Vendor;
+
 class PDFController extends Controller
 {
     public function savePdf(Request $request)
@@ -18,7 +18,7 @@ class PDFController extends Controller
 
         // Validate the incoming request
         $request->validate([
-            'pdfData' => 'required|string'
+            'pdfData' => 'required|string',
         ]);
 
         try {
@@ -31,7 +31,7 @@ class PDFController extends Controller
             $pdfBinary = base64_decode($pdfBase64);
 
             // Define a file path to save the PDF
-            $filePath = 'public/pdf/generated-template-' . time() . '.pdf';
+            $filePath = 'public/pdf/generated-template-'.time().'.pdf';
 
             // Save the binary content to the file
             Storage::put($filePath, $pdfBinary);
@@ -47,7 +47,7 @@ class PDFController extends Controller
         } catch (\Exception $e) {
             Log::error('Error saving PDF', [
                 'error' => $e->getMessage(),
-                'session' => session()->all()  // Log all session data
+                'session' => session()->all(),  // Log all session data
             ]);
 
             return response()->json([
@@ -80,16 +80,16 @@ class PDFController extends Controller
                 $placeholders = [
                     'tenant_address' => 'Zambia', // Replace with actual tenant address
                     'team_image' => 'https://via.placeholder.com/150',
-                    'business_location' => 'Zambia'
+                    'business_location' => 'Zambia',
                 ];
-            
+
                 foreach ($placeholders as $field => $value) {
                     $htmlTemplate = str_replace("__FIELD_{$field}__", nl2br($value), $htmlTemplate);
                 }
                 $tables = [
                     'vendor_table' => [
                         'headers' => [
-                            ['text' => "Monica Chipofya<br/>monicaesterchipofya@outlook.com<br/>Phone: 0766666145", 'colspan' => 2],
+                            ['text' => 'Monica Chipofya<br/>monicaesterchipofya@outlook.com<br/>Phone: 0766666145', 'colspan' => 2],
                         ],
                         'rows' => [
                             ['Contact No.', '0766666145'],
@@ -119,13 +119,13 @@ class PDFController extends Controller
                         ],
                     ],
                 ];
-            
+
                 foreach ($tables as $table => $content) {
                     $headerHtml = '';
                     foreach ($content['headers'] as $header) {
                         $headerHtml .= "<th colspan=\"{$header['colspan']}\">{$header['text']}</th>";
                     }
-            
+
                     $rowHtml = '';
                     foreach ($content['rows'] as $row) {
                         $rowHtml .= '<tr>';
@@ -134,12 +134,12 @@ class PDFController extends Controller
                         }
                         $rowHtml .= '</tr>';
                     }
-            
+
                     // Replace placeholders in the template
                     $htmlTemplate = str_replace("__FIELD_{$table}_COLUMNS__", $headerHtml, $htmlTemplate);
                     $htmlTemplate = str_replace("__FIELD_{$table}_ROWS__", $rowHtml, $htmlTemplate);
                 }
-            
+
                 // Step 3: Get vendor email (for email functionality later)
                 $vendorEmail = Vendor::where('id', 1)->pluck('email')->first();
                 // Step 4: Generate and stream the PDF for download
@@ -147,6 +147,7 @@ class PDFController extends Controller
 
             Log::info('HTML template rendered successfully');
             Browsershot::html($htmlTemplate)->save('example.pdf');
+
             // Return the view with the HTML content
             return response()->json([
                 'message' => 'PDF saved successfully',
@@ -155,7 +156,7 @@ class PDFController extends Controller
             Log::error('Error generating PDF', [
                 'error' => $e->getMessage(),
                 'session' => session()->all(), // Log all session data
-                'document_type' => session()->get('document_type') // Include additional context if needed
+                'document_type' => session()->get('document_type'), // Include additional context if needed
             ]);
 
             return response()->json([

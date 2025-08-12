@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\CreditNotesResource\Pages;
 
 use App\Filament\Resources\CreditNotesResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditCreditNotes extends EditRecord
@@ -13,7 +12,7 @@ class EditCreditNotes extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

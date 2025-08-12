@@ -18,7 +18,7 @@ class Notification extends Model
 
     // Cast the 'data' field to array
     protected $casts = [
-        'data' => 'array'
+        'data' => 'array',
     ];
 
     /**

@@ -1,24 +1,24 @@
 <?php
 
 namespace App\Filament\Resources;
-use Filament\Facades\Filament;
 
 use App\Filament\Resources\CustomerResource\Pages;
-use App\Filament\Resources\CustomerResource\RelationManagers;
 use App\Models\Customer;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 
 class CustomerResource extends Resource
 {
     protected static ?string $model = Customer::class;
-    protected static ?string $navigationGroup = "Sales";
+
+    protected static ?string $navigationGroup = 'Sales';
+
     protected static ?int $navigationSort = 1;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -29,7 +29,7 @@ class CustomerResource extends Resource
                             ->options(['Business', 'Individual'])
                             ->required(),
                         Forms\Components\Select::make('salutation')
-                            ->options(['Mr','Mrs', 'Miss', 'Ms', 'Dr'])
+                            ->options(['Mr', 'Mrs', 'Miss', 'Ms', 'Dr'])
                             ->required(),
                         Forms\Components\TextInput::make('first_name')
                             ->required(),
@@ -46,14 +46,14 @@ class CustomerResource extends Resource
                             ->tel()
                             ->required(),
                         Forms\Components\TextInput::make('tpin')
-                        ->required(),
+                            ->required(),
                         Forms\Components\TextInput::make('branch_id')
-                        ->label('Brnach ID')
-                        ->required(),
+                            ->label('Brnach ID')
+                            ->required(),
                         Forms\Components\Toggle::make('useYn')
-                        ->label('Is Active')
-                        ->default(true)
-                        ->required(),
+                            ->label('Is Active')
+                            ->default(true)
+                            ->required(),
                         Forms\Components\TextInput::make('regrNm')
                             ->label('Registrant Name')
                             ->required()
@@ -80,21 +80,21 @@ class CustomerResource extends Resource
                         Forms\Components\Select::make('payment_terms')
                             ->relationship('payment_term', 'name')
                             ->createOptionForm([
-Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
+                                Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('name'),
                                 Forms\Components\Fieldset::make('Payment Term Details')
-                ->schema([
-                    Forms\Components\TextInput::make('account_type'),
-                    Forms\Components\TextInput::make('bank'),
-                    Forms\Components\TextInput::make('account_name'),
-                    Forms\Components\TextInput::make('account_number'),
-                    Forms\Components\TextInput::make('branch'),
-                    Forms\Components\TextInput::make('swift_code'),
-                    Forms\Components\TextInput::make('branch_number'),              
-    
-                ])
+                                    ->schema([
+                                        Forms\Components\TextInput::make('account_type'),
+                                        Forms\Components\TextInput::make('bank'),
+                                        Forms\Components\TextInput::make('account_name'),
+                                        Forms\Components\TextInput::make('account_number'),
+                                        Forms\Components\TextInput::make('branch'),
+                                        Forms\Components\TextInput::make('swift_code'),
+                                        Forms\Components\TextInput::make('branch_number'),
+
+                                    ]),
                             ])
-                            ->required()
+                            ->required(),
                     ]),
                 Forms\Components\Fieldset::make('Address')
                     ->schema([
@@ -116,11 +116,11 @@ Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('shipping_country')->required(),
                                 Forms\Components\TextInput::make('shipping_phone')->required(),
                             ]),
-                        ]),
+                    ]),
                 Forms\Components\Fieldset::make('')
                     ->schema([
-                        Forms\Components\Textarea::make('remarks')
-                    ])
+                        Forms\Components\Textarea::make('remarks'),
+                    ]),
             ]);
     }
 
@@ -132,7 +132,7 @@ Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                 Tables\Columns\TextColumn::make('first_name'),
                 Tables\Columns\TextColumn::make('last_name'),
                 Tables\Columns\TextColumn::make('email'),
-                Tables\Columns\TextColumn::make('phone')
+                Tables\Columns\TextColumn::make('phone'),
             ])
             ->filters([
                 //

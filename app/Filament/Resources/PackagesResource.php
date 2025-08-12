@@ -1,31 +1,30 @@
 <?php
 
 namespace App\Filament\Resources;
-use Filament\Facades\Filament;
 
 use App\Filament\Resources\PackagesResource\Pages;
-use App\Filament\Resources\PackagesResource\RelationManagers;
+use App\Models\Item;
 use App\Models\Packages;
+use App\Models\SalesOrder;
+use App\Models\Warehouse;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
-use Filament\Forms\Components\Actions\Action;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
 use Illuminate\Http\Request;
-use App\Models\SalesOrder;
-use App\Models\Warehouse;
-use App\Models\Item;
 use Illuminate\Support\Facades\DB;
 
 class PackagesResource extends Resource
 {
     protected static ?string $model = Packages::class;
-    protected static ?string $navigationGroup = "Sales";
+
+    protected static ?string $navigationGroup = 'Sales';
+
     protected static ?int $navigationSort = 3;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -33,58 +32,55 @@ class PackagesResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('package_slip')
-                            ->default("PKG-0000" . Packages::where('team_id', Filament::getTenant()->id)->count() + 1),
+                            ->default('PKG-0000'.Packages::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('date')
-                            ->required()
+                            ->required(),
                     ]),
-                    TableRepeater::make('items')
+                TableRepeater::make('items')
                     ->live(onBlur: true)
                     ->afterStateHydrated(function (Request $request, $get, $set) {
-                        if($request->input('sales_order_id')) {
+                        if ($request->input('sales_order_id')) {
                             $set('items', SalesOrder::where('id', $request->input('sales_order_id'))->pluck('items')->toArray()[0]);
                         }
                     })
                     ->schema([
                         Forms\Components\Select::make('item')
-                        ->options(Item::where('team_id', Filament::getTenant()->id)
-    ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
-    ->get()
-    ->pluck('part_number_or_name', 'id')
-)
-                        ->preload()
-->searchable(),
+                            ->options(Item::where('team_id', Filament::getTenant()->id)
+                                ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
+                                ->get()
+                                ->pluck('part_number_or_name', 'id')
+                            )
+                            ->preload()
+                            ->searchable(),
                         Forms\Components\Select::make('account')
-                        ->options(['Advanced Tax', 'Employee Advance']),
+                            ->options(['Advanced Tax', 'Employee Advance']),
                         Forms\Components\TextInput::make('quantity')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\TextInput::make('rate')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\Select::make('source_warehouse')
-                    ->label("Warehouse")
-                    ->visible(fn($get): bool=> $get('item') != null)
-                    ->live()
-                    ->afterStateHydrated(function($get, $set) {
-                        $new_rate = floatval($get('rate')) + floatval(DB::table('warehouse_items')->where('warehouse_id', '=', floatval($get('source_warehouse')))->where('item_id', '=', floatval($get('item')))->pluck('price_adjustment')->first());
-                        $set('rate', $new_rate);
-                        $total = floatval($get('quantity')) * floatval($get('rate'));
+                            ->label('Warehouse')
+                            ->visible(fn ($get): bool => $get('item') != null)
+                            ->live()
+                            ->afterStateHydrated(function ($get, $set) {
+                                $new_rate = floatval($get('rate')) + floatval(DB::table('warehouse_items')->where('warehouse_id', '=', floatval($get('source_warehouse')))->where('item_id', '=', floatval($get('item')))->pluck('price_adjustment')->first());
+                                $set('rate', $new_rate);
+                                $total = floatval($get('quantity')) * floatval($get('rate'));
 
+                                $set('amount', $total);
+                            })
+                            ->afterStateUpdated(function ($get, $set) {
+                                $new_rate = floatval($get('rate')) + floatval(DB::table('warehouse_items')->where('warehouse_id', '=', floatval($get('source_warehouse')))->where('item_id', '=', floatval($get('item')))->pluck('price_adjustment')->first());
+                                $set('rate', $new_rate);
+                                $total = floatval($get('quantity')) * floatval($get('rate'));
 
-                        $set('amount', $total);
-                    })
-                    ->afterStateUpdated(function($get, $set) {
-                        $new_rate = floatval($get('rate')) + floatval(DB::table('warehouse_items')->where('warehouse_id', '=', floatval($get('source_warehouse')))->where('item_id', '=', floatval($get('item')))->pluck('price_adjustment')->first());
-                        $set('rate', $new_rate);
-                        $total = floatval($get('quantity')) * floatval($get('rate'));
-
-
-                        $set('amount', $total);
-                    })
-
-                    ->options(fn($get) => Warehouse::whereIn('id', DB::table('warehouse_items')->where('item_id', '=', $get('item'))->pluck('warehouse_id'))->pluck('name', 'id')),
+                                $set('amount', $total);
+                            })
+                            ->options(fn ($get) => Warehouse::whereIn('id', DB::table('warehouse_items')->where('item_id', '=', $get('item'))->pluck('warehouse_id'))->pluck('name', 'id')),
                         Forms\Components\TextInput::make('tax')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\TextInput::make('amount')
-                        ->numeric(),
+                            ->numeric(),
                     ])
                     ->colStyles([
                         'item' => 'width:170px',
@@ -102,7 +98,6 @@ class PackagesResource extends Resource
                         Forms\Components\Textarea::make('internal_notes')->columns(1),
                     ]),
             ]);
-
 
     }
 
@@ -142,5 +137,4 @@ class PackagesResource extends Resource
             'edit' => Pages\EditPackages::route('/{record}/edit'),
         ];
     }
-
 }

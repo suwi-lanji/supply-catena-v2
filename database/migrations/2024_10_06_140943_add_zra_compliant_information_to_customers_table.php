@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('regrNm', 60)->nullable();              // Registrant Name
             $table->unsignedBigInteger('regr_id')->nullable();              // Registrant ID
             $table->string('modrNm', 60)->nullable();  // Modifier Name (nullable)
-            $table->unsignedBigInteger('modr_id')->nullable(); 
+            $table->unsignedBigInteger('modr_id')->nullable();
             $table->foreign('regr_id')->references('id')->on('users')->onDelete('cascade');
             $table->foreign('modr_id')->references('id')->on('users')->onDelete('cascade');
         });

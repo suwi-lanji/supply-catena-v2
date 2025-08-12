@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('purchase_receives', function (Blueprint $table) {
             $table->boolean('received')->default(false);
-            
+
         });
     }
 

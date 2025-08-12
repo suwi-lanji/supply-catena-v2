@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\InventoryAdjustmentResource\Pages;
 
 use App\Filament\Resources\InventoryAdjustmentResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditInventoryAdjustment extends EditRecord
@@ -13,7 +12,7 @@ class EditInventoryAdjustment extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

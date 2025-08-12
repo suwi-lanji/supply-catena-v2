@@ -3,20 +3,23 @@
 namespace App\Filament\Resources\VendorCreditResource\Pages;
 
 use App\Filament\Resources\VendorCreditResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Blade;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
+
 class ViewVendorCredits extends ViewRecord
 {
     protected static string $resource = VendorCreditResource::class;
+
     protected static string $view = 'filament.resources.vendor-credits.pages.view-vendor-credits';
-    protected function getHeaderActions(): array {
+
+    protected function getHeaderActions(): array
+    {
         return [
             Actions\EditAction::make('edit')->color('default')
-            ->color('default'),
+                ->color('default'),
             Actions\Action::make('pdf')
                 ->label('PDF/Print')
                 ->color('default')
@@ -30,7 +33,7 @@ class ViewVendorCredits extends ViewRecord
                             'chroot' => public_path(),
                             'fontDir' => storage_path('fonts/'),
                             'isRemoteEnabled' => true,
-                            'css' => file_get_contents(public_path('css/purchase-order.css'))
+                            'css' => file_get_contents(public_path('css/purchase-order.css')),
                         ])->stream();
                     }, $record->credit_note_number.'.pdf');
                 }),

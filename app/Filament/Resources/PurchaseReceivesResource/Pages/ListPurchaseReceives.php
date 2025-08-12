@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\PurchaseReceivesResource\Pages;
 
 use App\Filament\Resources\PurchaseReceivesResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListPurchaseReceives extends ListRecords
@@ -13,7 +12,7 @@ class ListPurchaseReceives extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

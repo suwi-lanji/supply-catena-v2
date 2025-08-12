@@ -21,7 +21,7 @@ return new class extends Migration
             $table->double('shipping_charges')->default(0);
             $table->string('notes')->nullable();
             $table->boolean('delivered')->default(false);
-            
+
             $table->unsignedBigInteger('team_id');
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');

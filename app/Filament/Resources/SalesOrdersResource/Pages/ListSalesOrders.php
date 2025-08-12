@@ -18,9 +18,9 @@ class ListSalesOrders extends ListRecords
     }
 
     protected function getHeaderWidgets(): array
-{
-    return [
-        SalesOrdersResource\Widgets\SalesOrdersOverview::class,
-    ];
-}
+    {
+        return [
+            SalesOrdersResource\Widgets\SalesOrdersOverview::class,
+        ];
+    }
 }

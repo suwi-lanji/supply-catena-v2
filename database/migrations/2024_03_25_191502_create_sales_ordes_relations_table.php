@@ -22,20 +22,20 @@ return new class extends Migration
             $table->string('swift_code')->nullable();
             $table->string('branch_number')->nullable();
             $table->timestamps();
-            
+
         });
         Schema::create('delivery_methods', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->timestamps();
-            
+
         });
         Schema::create('sales_persons', function (Blueprint $table) {
             $table->id();
             $table->string('name');
             $table->string('email');
             $table->timestamps();
-            
+
         });
     }
 

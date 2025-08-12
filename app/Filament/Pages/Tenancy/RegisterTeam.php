@@ -1,21 +1,25 @@
 <?php
 
 namespace App\Filament\Pages\Tenancy;
+
 use App\Models\Team;
-use App\Models\Warehouse;
-use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\DatePicker;
-use Filament\Forms\Components\Select;
+use Filament\Forms\Components\Fieldset;
 use Filament\Forms\Components\FileUpload;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\RegisterTenant;
-use Filament\Forms\Components\Fieldset;
-use Livewire\Features\SupportFileUploads\TemporaryUploadedFile;
-class RegisterTeam extends RegisterTenant {
-    public static function getLabel(): string {
-        return "Register Team";
+
+class RegisterTeam extends RegisterTenant
+{
+    public static function getLabel(): string
+    {
+        return 'Register Team';
     }
-    public function form(Form $form): Form {
+
+    public function form(Form $form): Form
+    {
         return $form
             ->schema([
                 Fieldset::make('Company Information')
@@ -24,7 +28,6 @@ class RegisterTeam extends RegisterTenant {
                             ->image()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
-                             ->disk('cloudinary')
                             ->required(false),
                         TextInput::make('name')
                             ->required(),
@@ -60,30 +63,30 @@ class RegisterTeam extends RegisterTenant {
                 Select::make('fiscal_year')
                     ->required()
                     ->options([
-                        'jan_dec'=> 'January - December',
-                        'feb_jan'=> 'February - January',
-                        'mar_feb'=> 'March - February',
-                        'apr_mar'=> 'April - March',
+                        'jan_dec' => 'January - December',
+                        'feb_jan' => 'February - January',
+                        'mar_feb' => 'March - February',
+                        'apr_mar' => 'April - March',
                         'may_apr' => 'May - April',
-                        'jun_may'=> 'June - May',
-                        'jul_jun'=> 'July - June',
-                        'aug_jul'=> 'August - July',
-                        'sep_aug'=> 'September - August',
-                        'oct_sep'=> 'October - September',
-                        'nov_oct'=> 'November - October',
-                        'dec_nov'=> 'December - November',
+                        'jun_may' => 'June - May',
+                        'jul_jun' => 'July - June',
+                        'aug_jul' => 'August - July',
+                        'sep_aug' => 'September - August',
+                        'oct_sep' => 'October - September',
+                        'nov_oct' => 'November - October',
+                        'dec_nov' => 'December - November',
                     ]),
                 TextInput::make('language')
                     ->required(),
             ]);
     }
 
-    public function handleRegistration(array $data): Team {
+    public function handleRegistration(array $data): Team
+    {
         $team = Team::create($data);
         $team->members()->attach(auth()->user());
         $team->admins()->attach(auth()->user());
-        
+
         return $team;
     }
 }
-?>

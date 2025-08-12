@@ -3,7 +3,6 @@
 namespace App\Policies;
 
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 use Filament\Facades\Filament;
 
 class UserAccessPolicy
@@ -21,7 +20,7 @@ class UserAccessPolicy
      */
     public function view(User $user, User $model): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
             return true;
         }
 
@@ -33,7 +32,7 @@ class UserAccessPolicy
      */
     public function create(User $user): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->is_staff) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->is_staff) {
             return true;
         }
 
@@ -45,7 +44,7 @@ class UserAccessPolicy
      */
     public function update(User $user, User $model): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
             return true;
         }
 
@@ -57,7 +56,7 @@ class UserAccessPolicy
      */
     public function delete(User $user, User $model): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
             return true;
         }
 
@@ -69,7 +68,7 @@ class UserAccessPolicy
      */
     public function restore(User $user, User $model): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
             return true;
         }
 
@@ -81,7 +80,7 @@ class UserAccessPolicy
      */
     public function forceDelete(User $user, User $model): bool
     {
-        if($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
+        if ($user->administrating()->whereKey(Filament::getTenant()->id)->exists() || $user->id == $model->id) {
             return true;
         }
 

@@ -3,30 +3,23 @@
 namespace App\Filament\Resources\TransferOrderResource\Pages;
 
 use App\Filament\Resources\TransferOrderResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
-use Filament\Facades\Filament;
-use App\Models\Item;
-use App\Models\Invoices;
-use Filament\Support\Enums\IconPosition;
-use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use Filament\Forms;
-use App\Models\Packages;
-use App\Models\SalesOrder;
-use App\Models\Customer;
-use Barryvdh\DomPDF\Facade\Pdf;
-use Closure;
-use Illuminate\Database\Eloquent\Model;
 use App\Mail\ShipmentMail;
-use Illuminate\Support\Facades\Mail;
+use Barryvdh\DomPDF\Facade\Pdf;
+use Filament\Actions;
+use Filament\Facades\Filament;
 use Filament\Notifications\Notification;
-use Illuminate\Mail\Mailables\Attachment;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Mail;
 
 class ViewTransferOrder extends ViewRecord
 {
     protected static string $resource = TransferOrderResource::class;
+
     protected static string $view = 'filament.resources.transfer-orders.view-transfer-order';
-    protected function getHeaderActions(): array {
+
+    protected function getHeaderActions(): array
+    {
         return [
             Actions\EditAction::make('edit')->color('default'),
             /*Actions\Action::make('email')->color('default')
@@ -61,7 +54,7 @@ class ViewTransferOrder extends ViewRecord
                         ])->stream();
                     }, $record->transfer_order_number.'.pdf');
                 }),
-            
+
         ];
     }
 }

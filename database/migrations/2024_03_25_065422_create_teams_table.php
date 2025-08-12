@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('portal_name')->nullable();
             $table->string('industry')->nullable();
             $table->string('business_location')->nullable();
-            
+
             // address
             $table->string('street_1')->nullable();
             $table->string('street_2')->nullable();

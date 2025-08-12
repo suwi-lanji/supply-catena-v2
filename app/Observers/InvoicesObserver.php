@@ -1,13 +1,15 @@
 <?php
+
 namespace App\Observers;
 
 use App\Models\Invoices;
-use App\Models\SalesOrder;
 use App\Models\Item;
-use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Arr;
+use App\Models\SalesOrder;
 use App\Models\Team;
 use App\Notifications\DatabaseNotification;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\DB;
+
 class InvoicesObserver
 {
     /**
@@ -18,8 +20,8 @@ class InvoicesObserver
         $this->updateBalanceAndStatus($invoices);
         $recipients = Team::find($invoices->team_id)->users;
         $team = Team::find($invoices->team_id);
-        foreach($recipients as $recipient) {
-            $recipient->notify(new DatabaseNotification("New invoice created", $invoices->invoice_number . " created successfully", route('filament.dashboard.resources.invoices.view', ["tenant" => $team->id, "record" => $invoices->id]), $team->id));
+        foreach ($recipients as $recipient) {
+            $recipient->notify(new DatabaseNotification('New invoice created', $invoices->invoice_number.' created successfully', route('filament.dashboard.resources.invoices.view', ['tenant' => $team->id, 'record' => $invoices->id]), $team->id));
         }
         DB::transaction(function () use ($invoices) {
             SalesOrder::where('id', $invoices->order_number)
@@ -104,20 +106,20 @@ class InvoicesObserver
     protected function updateStockOnInvoiceItems(Invoices $invoices, string $operation): void
     {
         foreach ($invoices->items as $item) {
-            $itemModel = Item::find($item["item"]);
+            $itemModel = Item::find($item['item']);
 
             if ($itemModel) {
-                $itemModel->{$operation}("stock_on_hand", Arr::get($item, 'quantity', 0));
+                $itemModel->{$operation}('stock_on_hand', Arr::get($item, 'quantity', 0));
             }
 
             $warehouseId = Arr::get($item, 'source_warehouse', null);
             if ($warehouseId) {
-                if (DB::table('warehouse_items')->where('warehouse_id', $warehouseId)->where('item_id', $item["item"])->exists()) {
-                    DB::table('warehouse_items')->where('warehouse_id', $warehouseId)->where('item_id', $item["item"])->{$operation}('quantity', Arr::get($item, 'quantity', 0));
+                if (DB::table('warehouse_items')->where('warehouse_id', $warehouseId)->where('item_id', $item['item'])->exists()) {
+                    DB::table('warehouse_items')->where('warehouse_id', $warehouseId)->where('item_id', $item['item'])->{$operation}('quantity', Arr::get($item, 'quantity', 0));
                 }
             } else {
                 if (DB::table('warehouses')->where('team_id', $invoices->team_id)->where('is_primary', true)->exists()) {
-                    DB::table('warehouse_items')->where('team_id', $invoices->team_id)->where('item_id', $item["item"])->{$operation}('quantity', Arr::get($item, 'quantity', 0));
+                    DB::table('warehouse_items')->where('team_id', $invoices->team_id)->where('item_id', $item['item'])->{$operation}('quantity', Arr::get($item, 'quantity', 0));
                 }
             }
         }

@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\VendorsResource\Pages;
 
 use App\Filament\Resources\VendorsResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditVendors extends EditRecord
@@ -13,7 +12,7 @@ class EditVendors extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

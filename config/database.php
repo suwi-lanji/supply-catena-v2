@@ -41,7 +41,7 @@ return [
 
         'libsql' => [
             'driver' => 'libsql',
-            'url' => 'file:' . env('DB_DATABASE', database_path('database.sqlite')),
+            'url' => 'file:'.env('DB_DATABASE', database_path('database.sqlite')),
             'authToken' => env('DB_AUTH_TOKEN', ''),
             'syncUrl' => env('DB_SYNC_URL', ''),
             'syncInterval' => env('DB_SYNC_INTERVAL', 5),
@@ -51,7 +51,6 @@ return [
             'database' => null,
             'prefix' => '',
         ],
-
 
         'mysql' => [
             'driver' => 'mysql',

@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('sales_returns', function (Blueprint $table) {
             $table->boolean('approved')->default(true);
-            $table->date('received_date')->nullable(); 
+            $table->date('received_date')->nullable();
             $table->string('notes')->nullable();
         });
     }

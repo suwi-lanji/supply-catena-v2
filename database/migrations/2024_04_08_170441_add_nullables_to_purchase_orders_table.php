@@ -12,8 +12,8 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('purchase_orders', function (Blueprint $table) {
-            $table->string("customer_notes")->nullable()->change();
-            $table->json("terms_and_conditions")->nullable()->change();
+            $table->string('customer_notes')->nullable()->change();
+            $table->json('terms_and_conditions')->nullable()->change();
         });
     }
 

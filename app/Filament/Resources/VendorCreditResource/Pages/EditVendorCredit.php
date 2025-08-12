@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\VendorCreditResource\Pages;
 
 use App\Filament\Resources\VendorCreditResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditVendorCredit extends EditRecord
@@ -13,7 +12,7 @@ class EditVendorCredit extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

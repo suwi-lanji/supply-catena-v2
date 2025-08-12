@@ -3,16 +3,12 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\PaymentTermResource\Pages;
-use App\Filament\Resources\PaymentTermResource\RelationManagers;
 use App\Models\PaymentTerm;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Illuminate\Support\Facades\DB;
 
 class PaymentTermResource extends Resource
 {
@@ -26,16 +22,16 @@ class PaymentTermResource extends Resource
             ->schema([
                 Forms\Components\TextInput::make('name'),
                 Forms\Components\Fieldset::make('Payment Term Details')
-                ->schema([
-                    Forms\Components\TextInput::make('account_type'),
-                    Forms\Components\TextInput::make('bank'),
-                    Forms\Components\TextInput::make('account_name'),
-                    Forms\Components\TextInput::make('account_number'),
-                    Forms\Components\TextInput::make('branch'),
-                    Forms\Components\TextInput::make('swift_code'),
-                    Forms\Components\TextInput::make('branch_number'),              
-    
-                ])
+                    ->schema([
+                        Forms\Components\TextInput::make('account_type'),
+                        Forms\Components\TextInput::make('bank'),
+                        Forms\Components\TextInput::make('account_name'),
+                        Forms\Components\TextInput::make('account_number'),
+                        Forms\Components\TextInput::make('branch'),
+                        Forms\Components\TextInput::make('swift_code'),
+                        Forms\Components\TextInput::make('branch_number'),
+
+                    ]),
             ]);
     }
 
@@ -45,7 +41,7 @@ class PaymentTermResource extends Resource
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
                 Tables\Columns\TextColumn::make('account_type'),
-                Tables\Columns\TextColumn::make('account_number')
+                Tables\Columns\TextColumn::make('account_number'),
             ])
             ->filters([
                 //

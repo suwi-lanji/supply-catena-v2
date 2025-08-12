@@ -8,12 +8,18 @@ use Illuminate\Database\Eloquent\Model;
 class ItemsSold extends Model
 {
     use HasFactory;
-    protected $table = "items_sold";
+
+    protected $table = 'items_sold';
+
     protected $guarded = [];
-    public function team() {
-        return $this->belongsTo(Team::class);;
+
+    public function team()
+    {
+        return $this->belongsTo(Team::class);
     }
-    public function item() {
+
+    public function item()
+    {
         return $this->belongsTo(Item::class);
     }
 }

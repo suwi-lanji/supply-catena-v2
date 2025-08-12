@@ -1,27 +1,27 @@
 <?php
 
 namespace App\Filament\Resources;
-use Filament\Facades\Filament;
 
 use App\Filament\Resources\SalesReturnsResource\Pages;
-use App\Filament\Resources\SalesReturnsResource\RelationManagers;
+use App\Models\Item;
 use App\Models\SalesReturns;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use App\Models\Item;
 use Illuminate\Support\Facades\DB;
+
 class SalesReturnsResource extends Resource
 {
     protected static ?string $model = SalesReturns::class;
 
-    protected static ?string $navigationGroup = "Sales";
+    protected static ?string $navigationGroup = 'Sales';
+
     protected static ?int $navigationSort = 10;
+
     public static function form(Form $form): Form
     {
         return $form
@@ -35,28 +35,28 @@ class SalesReturnsResource extends Resource
                 TableRepeater::make('items')
                     ->schema([
                         Forms\Components\Select::make('item')
-                        ->options(Item::where('team_id', Filament::getTenant()->id)
-    ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
-    ->get()
-    ->pluck('part_number_or_name', 'id')
-)
-                        ->preload()
-->searchable(),
+                            ->options(Item::where('team_id', Filament::getTenant()->id)
+                                ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
+                                ->get()
+                                ->pluck('part_number_or_name', 'id')
+                            )
+                            ->preload()
+                            ->searchable(),
                         Forms\Components\Select::make('account')
-                        ->options(['Advanced Tax', 'Employee Advance']),
+                            ->options(['Advanced Tax', 'Employee Advance']),
                         Forms\Components\TextInput::make('quantity')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\TextInput::make('rate')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\TextInput::make('tax')
-                        ->numeric(),
+                            ->numeric(),
                         Forms\Components\TextInput::make('amount')
-                        ->numeric(),
+                            ->numeric(),
                     ])
                     ->colStyles([
-                        'item' => 'width:170px',
-                        'default' => 'margin-bottom: 10px',
-                    ])
+                                                    'item' => 'width:170px',
+                                                    'default' => 'margin-bottom: 10px',
+                                                ])
                     ->reorderable()
                     ->cloneable()
                     ->collapsible()
@@ -74,14 +74,12 @@ class SalesReturnsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('sales_returns_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('date')
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('reason')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\IconColumn::make('credit_only_goods')
                     ->boolean(),
                 Tables\Columns\TextColumn::make('created_at')
@@ -98,8 +96,7 @@ class SalesReturnsResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('notes')
-
-->searchable(),
+                    ->searchable(),
             ])
             ->filters([
                 //

@@ -15,32 +15,32 @@ return new class extends Migration
             $table->unsignedBigInteger('team_id')->default(1);
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');
-            
+
         });
         Schema::table('manufucturers', function (Blueprint $table) {
             $table->unsignedBigInteger('team_id')->default(1);
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');
-            
+
         });
 
         Schema::table('payment_terms', function (Blueprint $table) {
             $table->unsignedBigInteger('team_id')->default(1);
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');
-            
+
         });
         Schema::table('sales_accounts', function (Blueprint $table) {
             $table->unsignedBigInteger('team_id')->default(1);
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');
-            
+
         });
         Schema::table('sales_persons', function (Blueprint $table) {
             $table->unsignedBigInteger('team_id')->default(1);
             $table->foreign('team_id')->references('id')
                 ->on('teams')->onDelete('cascade');
-            
+
         });
 
     }

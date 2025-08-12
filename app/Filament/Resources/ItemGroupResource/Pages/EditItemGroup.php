@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\ItemGroupResource\Pages;
 
 use App\Filament\Resources\ItemGroupResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditItemGroup extends EditRecord
@@ -13,7 +12,7 @@ class EditItemGroup extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

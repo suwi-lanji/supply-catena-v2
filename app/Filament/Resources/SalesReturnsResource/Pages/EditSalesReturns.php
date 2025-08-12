@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SalesReturnsResource\Pages;
 
 use App\Filament\Resources\SalesReturnsResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditSalesReturns extends EditRecord
@@ -13,7 +12,7 @@ class EditSalesReturns extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

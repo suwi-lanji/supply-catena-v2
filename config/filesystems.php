@@ -66,18 +66,18 @@ return [
             'throw' => false,
         ],
         'ftp' => [
-        'driver'   => 'ftp',
-        'host'     => env('FTP_HOST', '209.97.129.148'),
-        'username' => env('FTP_USERNAME', 'wimusani'),
-        'password' => env('FTP_PASSWORD', 'yjA7rHrcr'),
+            'driver' => 'ftp',
+            'host' => env('FTP_HOST', '209.97.129.148'),
+            'username' => env('FTP_USERNAME', 'wimusani'),
+            'password' => env('FTP_PASSWORD', 'yjA7rHrcr'),
 
-        // Optional FTP settings
-        'port'     => env('FTP_PORT', 21),
-        'root'     => env('FTP_ROOT', '/home/schipofya/warehouse-ftp'), // The root folder on the FTP server
-        'passive'  => true, // Enable passive mode (usually recommended)
-        'ssl'      => false, // Use SSL for secure connection
-        'timeout'  => 30,
-    ],
+            // Optional FTP settings
+            'port' => env('FTP_PORT', 21),
+            'root' => env('FTP_ROOT', '/home/schipofya/warehouse-ftp'), // The root folder on the FTP server
+            'passive' => true, // Enable passive mode (usually recommended)
+            'ssl' => false, // Use SSL for secure connection
+            'timeout' => 30,
+        ],
 
     ],
 

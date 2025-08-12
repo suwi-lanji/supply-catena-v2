@@ -3,8 +3,9 @@
 namespace App\Observers;
 
 use App\Models\BranchUser;
-use Illuminate\Support\Facades\Http;
 use Filament\Notifications\Notification;
+use Illuminate\Support\Facades\Http;
+
 class BranchUserObserver
 {
     /**
@@ -28,34 +29,34 @@ class BranchUserObserver
 
         // Send the HTTP request to save the branch user
         try {
-            $response = Http::post(env('ZRA_API_URL') . 'branches/saveBrancheUser', $payload);
+            $response = Http::post(env('ZRA_API_URL').'branches/saveBrancheUser', $payload);
 
             if ($response->successful()) {
                 // Handle success response if needed
                 Notification::make()
-                ->title('Branch User added successfully' . $response->json()['resultMsg'])
-                ->success()
-                ->send();
+                    ->title('Branch User added successfully'.$response->json()['resultMsg'])
+                    ->success()
+                    ->send();
             } else {
                 // Handle failure response if needed
                 // You can log the error or throw an exception
-                \Log::error('Failed to save branch user: ' . $response->body());
+                \Log::error('Failed to save branch user: '.$response->body());
                 Notification::make()
-                ->title('Error adding branch user')
-                ->body($response->body())
-                ->danger()
-                ->send();
+                    ->title('Error adding branch user')
+                    ->body($response->body())
+                    ->danger()
+                    ->send();
                 $branchUser->delete();
             }
         } catch (\Exception $e) {
             // Handle exceptions (e.g., connection errors)
-            \Log::error('Exception occurred while saving branch user: ' . $e->getMessage());
+            \Log::error('Exception occurred while saving branch user: '.$e->getMessage());
             Notification::make()
                 ->title('Error adding branch user')
                 ->body($e->getMessage())
                 ->danger()
                 ->send();
-                $branchUser->delete();
+            $branchUser->delete();
         }
     }
 

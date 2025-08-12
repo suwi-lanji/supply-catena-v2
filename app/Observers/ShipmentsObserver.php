@@ -1,11 +1,10 @@
 <?php
+
 namespace App\Observers;
 
-use App\Models\Shipments;
 use App\Models\Packages;
 use App\Models\SalesOrder;
-use App\Models\Item;
-use Illuminate\Support\Facades\DB;
+use App\Models\Shipments;
 
 class ShipmentsObserver
 {
@@ -14,14 +13,14 @@ class ShipmentsObserver
      */
     public function created(Shipments $shipments): void
     {
-        foreach($shipments->packages as $pid) {
+        foreach ($shipments->packages as $pid) {
             $package = Packages::find($pid);
-            $package->update(["shipped" => true]);
-            SalesOrder::find($package->sales_order_number)->update(["shipped" =>true]);
-            if($shipments->delivered || $shipments->status=="Delivered") {
-                SalesOrder::find($package->sales_order_number)->update(["delivered" =>true]);
-                if(!$shipments->delivered) {
-                    $shipments->update(["delivered" =>true]);
+            $package->update(['shipped' => true]);
+            SalesOrder::find($package->sales_order_number)->update(['shipped' => true]);
+            if ($shipments->delivered || $shipments->status == 'Delivered') {
+                SalesOrder::find($package->sales_order_number)->update(['delivered' => true]);
+                if (! $shipments->delivered) {
+                    $shipments->update(['delivered' => true]);
                 }
             }
 
@@ -33,14 +32,14 @@ class ShipmentsObserver
      */
     public function updated(Shipments $shipments): void
     {
-        foreach($shipments->packages as $pid) {
+        foreach ($shipments->packages as $pid) {
             $package = Packages::find($pid);
-            $package->update(["shipped" => true]);
-            SalesOrder::find($package->sales_order_number)->update(["shipped" =>true]);
-            if($shipments->delivered || $shipments->status=="Delivered") {
-                SalesOrder::find($package->sales_order_number)->update(["delivered" =>true]);
-                if(!$shipments->delivered) {
-                    $shipments->update(["delivered" =>true]);
+            $package->update(['shipped' => true]);
+            SalesOrder::find($package->sales_order_number)->update(['shipped' => true]);
+            if ($shipments->delivered || $shipments->status == 'Delivered') {
+                SalesOrder::find($package->sales_order_number)->update(['delivered' => true]);
+                if (! $shipments->delivered) {
+                    $shipments->update(['delivered' => true]);
                 }
             }
 
@@ -53,13 +52,13 @@ class ShipmentsObserver
      */
     public function deleted(Shipments $shipments): void
     {
-        if($shipments->delivered || $shipments->status=="Delivered") {
-            if(!$shipments->delivered) {
-                $shipments->update(["delivered" =>true]);
+        if ($shipments->delivered || $shipments->status == 'Delivered') {
+            if (! $shipments->delivered) {
+                $shipments->update(['delivered' => true]);
             }
-            foreach($shipments->packages as $pid) {
-                Packages::find($pid)->update(["shipped" => true]);
-                SalesOrder::find(Packages::find($pid)->pluck("sales_order_number"))->update(["shipped" =>true]);
+            foreach ($shipments->packages as $pid) {
+                Packages::find($pid)->update(['shipped' => true]);
+                SalesOrder::find(Packages::find($pid)->pluck('sales_order_number'))->update(['shipped' => true]);
             }
         }
     }
@@ -69,9 +68,9 @@ class ShipmentsObserver
      */
     public function restored(Shipments $shipments): void
     {
-        if($shipments->delivered || $shipments->status=="Delivered") {
-            if(!$shipments->delivered) {
-                $shipments->update(["delivered" =>true]);
+        if ($shipments->delivered || $shipments->status == 'Delivered') {
+            if (! $shipments->delivered) {
+                $shipments->update(['delivered' => true]);
             }
         }
     }
@@ -81,9 +80,9 @@ class ShipmentsObserver
      */
     public function forceDeleted(Shipments $shipments): void
     {
-        if($shipments->delivered || $shipments->status=="Delivered") {
-            if(!$shipments->delivered) {
-                $shipments->update(["delivered" =>true]);
+        if ($shipments->delivered || $shipments->status == 'Delivered') {
+            if (! $shipments->delivered) {
+                $shipments->update(['delivered' => true]);
             }
         }
     }

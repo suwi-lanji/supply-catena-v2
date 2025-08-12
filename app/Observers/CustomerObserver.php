@@ -4,7 +4,6 @@ namespace App\Observers;
 
 use App\Models\Customer;
 use Illuminate\Support\Facades\Http;
-use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 
 class CustomerObserver
@@ -19,8 +18,8 @@ class CustomerObserver
             'tpin' => env('ZRA_TPIN'),
             'bhfId' => $customer->branch_id,
             'custNo' => $customer->phone,
-            'custNm' => $customer->first_name . ' ' . $customer->lastName,
-            'adrs' => $customer->billing_street_1 . ' ' . $customer->billing_city . ' ' . $customer->billing_province . ' ' . $customer->billing_country,
+            'custNm' => $customer->first_name.' '.$customer->lastName,
+            'adrs' => $customer->billing_street_1.' '.$customer->billing_city.' '.$customer->billing_province.' '.$customer->billing_country,
             'email' => $customer->email,
             'useYn' => $customer->useYn,
             'remark' => $customer->remark ?? 'N/A',
@@ -32,7 +31,7 @@ class CustomerObserver
 
         // Send request to the API
         try {
-            $response = Http::post(env('ZRA_API_URL') . 'branches/saveBrancheCustomers', $requestData);
+            $response = Http::post(env('ZRA_API_URL').'branches/saveBrancheCustomers', $requestData);
 
             // Check if the API request was successful
             if ($response->successful()) {
@@ -42,8 +41,8 @@ class CustomerObserver
             }
         } catch (\Exception $e) {
             // Log the error (optional)
-            \Log::error('Failed to save branch customer: ' . $e->getMessage());
-            
+            \Log::error('Failed to save branch customer: '.$e->getMessage());
+
             // Delete the customer from the database
             $customer->delete();
         }

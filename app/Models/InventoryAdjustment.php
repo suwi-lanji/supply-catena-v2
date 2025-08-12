@@ -1,24 +1,26 @@
 <?php
 
 namespace App\Models;
-use Filament\Facades\Filament;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\BelongsToMany;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+
 class InventoryAdjustment extends Model
 {
     use HasFactory;
-    
+
     protected $guarded = [];
-    protected function casts(): array {
+
+    protected function casts(): array
+    {
         return [
             'items' => 'array',
         ];
     }
-    public function team(): BelongsTo {
+
+    public function team(): BelongsTo
+    {
         return $this->belongsTo(Team::class);
     }
 }

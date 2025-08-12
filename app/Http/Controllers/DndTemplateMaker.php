@@ -1,14 +1,16 @@
 <?php
+
 namespace App\Http\Controllers;
 
+use App\Models\Template;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
-use App\Models\Template;
 
-class TemplateConfig {
-    
-    public function getTemplates() {
-        return 
+class TemplateConfig
+{
+    public function getTemplates()
+    {
+        return
         [
             'bills' => [
                 'fields' => [
@@ -25,32 +27,32 @@ class TemplateConfig {
                             ['text' => 'Item', 'colspan' => '1'],
                             ['text' => 'Quantity', 'colspan' => '1'],
                             ['text' => 'Unit Price', 'colspan' => '1'],
-                            ['text' => 'Amount', 'colspan' => '1']
+                            ['text' => 'Amount', 'colspan' => '1'],
                         ],
                         'rows' => [
                             ['Placeholder Item 1', 1, 0.0, 0.0],
                             ['Placeholder Item 2', 1, 0.0, 0.0],
-                        ]
+                        ],
                     ])],
                     ['name' => 'bill_details_table', 'type' => 'table', 'default' => json_encode([
                         'headers' => [
                             [
                                 'text' => 'Bill',
-                                'colspan' => '2'
-                            ]
+                                'colspan' => '2',
                             ],
-                            'rows' => [
-                                [
-                                    'Bill Number', 'BL-0001',
-                                ],
-                                [
-                                    'Bill Date', '2024-06-03'
-                                ]
-                            ]
+                        ],
+                        'rows' => [
+                            [
+                                'Bill Number', 'BL-0001',
+                            ],
+                            [
+                                'Bill Date', '2024-06-03',
+                            ],
+                        ],
                     ])],
                     ['name' => 'adjustment', 'type' => 'key_value', 'default' => '0'],
                     ['name' => 'sub_total', 'type' => 'key_value', 'default' => '0'],
-                    ['name' => 'total', 'type' => 'key_value', 'default'=> '0'],
+                    ['name' => 'total', 'type' => 'key_value', 'default' => '0'],
                     ['name' => 'balance_due', 'type' => 'key_value', 'default' => '0'],
                     ['name' => 'vendor', 'type' => 'text_field', 'default' => 'Default Vendor'], // Changed from relationship to text_field
                     ['name' => 'team', 'type' => 'text_field', 'default' => 'Default Team'], // Changed from relationship to text_field
@@ -58,7 +60,7 @@ class TemplateConfig {
                     ['name' => 'VAT', 'type' => 'key_value', 'default' => '0%'],
                     ['name' => 'tenant_address', 'type' => 'text_field', 'default' => 'Emerald Web Agency\nWeighbridge\nSolwezi North Western Zambia\nPhone: 0760478215'],
                     ['name' => 'vendor_table', 'type' => 'table', 'default' => json_encode([
-                        'headers' => [['text' =>'Monica Chipofya\nmonicaesterchipofya@outlook.com\nPhone: 0766666145', 'colspan' => 2]],
+                        'headers' => [['text' => 'Monica Chipofya\nmonicaesterchipofya@outlook.com\nPhone: 0766666145', 'colspan' => 2]],
                         'rows' => [
                             [
                                 'Contact No.', '0766666145',
@@ -67,11 +69,11 @@ class TemplateConfig {
                                 'Email Address', 'monicaesterchipofya@outlook.com',
                             ],
                             [
-                                'VAT NO.', 'N/A'
-                            ]
-                        ]
-                    ])]
-                ]
+                                'VAT NO.', 'N/A',
+                            ],
+                        ],
+                    ])],
+                ],
             ],
             // Add other templates here...
         ];
@@ -84,7 +86,7 @@ class DndTemplateMaker extends Controller
 
     public function __construct()
     {
-        $this->config = new TemplateConfig();
+        $this->config = new TemplateConfig;
     }
 
     public function loadForm(Request $request)
@@ -94,7 +96,7 @@ class DndTemplateMaker extends Controller
         $templates = $this->config->getTemplates();
 
         // Check if the template name exists in the dictionary
-        if (!array_key_exists($templateName, $templates)) {
+        if (! array_key_exists($templateName, $templates)) {
             return abort(404, 'Template not found');
         }
 
@@ -109,28 +111,28 @@ class DndTemplateMaker extends Controller
             'template_data' => $templateData,
         ]);
     }
-    public function saveTemplate(Request $request) {
+
+    public function saveTemplate(Request $request)
+    {
         // Validate the request
         $request->validate([
             'tenant_id' => 'required|integer',
             'template_name' => 'required|string',
             'template' => 'required|string',
         ]);
-    
+
         // Retrieve the data from the request
         $tenantId = $request->input('tenant_id');
         $templateName = $request->input('template_name');
         $templateContent = $request->input('template');
-    
+
         // Save the template to the database
         Template::create([
             'tenant_id' => $tenantId,
             'template_name' => $templateName,
             'template' => $templateContent,
         ]);
-    
+
         return response()->json(['message' => 'Template saved successfully']);
     }
-    
 }
-?>

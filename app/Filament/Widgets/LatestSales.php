@@ -1,26 +1,24 @@
 <?php
+
 namespace App\Filament\Widgets;
 
-use Filament\Tables;
-use Filament\Tables\Table;
-use Filament\Widgets\TableWidget as BaseWidget;
-use App\Models\Item;
 use App\Models\ItemsSold;
-use App\Models\SalesOrder;
 use Carbon\Carbon;
-use Filament\Forms\Components\Select;
-use Illuminate\Database\Eloquent\Builder;
-use Filament\Tables\Filters\Filter;
-use Filament\Tables\Columns\TextColumn;
-use InvalidArgumentException;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\DB;
+use Filament\Tables;
+use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\DateConstraint;
+use Filament\Tables\Table;
+use Filament\Widgets\TableWidget as BaseWidget;
+use InvalidArgumentException;
+
 class LatestSales extends BaseWidget
 {
     protected static ?int $sort = 6;
-    protected int | string | array $columnSpan = 'full';
+
+    protected int|string|array $columnSpan = 'full';
+
     // Helper method to get the start of the period based on the provided time frame
     private function getStartOfPeriod(string $period): Carbon
     {
@@ -56,19 +54,19 @@ class LatestSales extends BaseWidget
                     ->label('Amount')
                     ->sortable(),
                 TextColumn::make('updated_at')
-                    ->dateTime()
+                    ->dateTime(),
             ])
             ->filters([
                 QueryBuilder::make()
-                ->constraints([
-                    DateConstraint::make('updated_at')
-                ])
+                    ->constraints([
+                        DateConstraint::make('updated_at'),
+                    ]),
 
             ])
             ->defaultSort('quantity', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make()
+                Tables\Actions\ViewAction::make(),
             ]);
     }
 }

@@ -1,4 +1,5 @@
 <?php
+
 namespace App\Jobs;
 
 use App\Notifications\TenantNotification;
@@ -11,6 +12,7 @@ class ProcessTenantNotification implements ShouldQueue
     use Dispatchable, Queueable; // Ensure Dispatchable trait is included
 
     protected $tenantId;
+
     protected $message;
 
     public function __construct($tenantId, $message)

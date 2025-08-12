@@ -2,12 +2,10 @@
 
 namespace App\Observers;
 
-use Filament\Facades\Filament;
 use App\Models\Item;
+use App\Models\Team;
 use App\Models\Warehouse;
 use Illuminate\Support\Facades\DB;
-use Illuminate\Support\Facades\Log;
-use App\Models\Team;
 
 class ItemObserver
 {
@@ -23,7 +21,7 @@ class ItemObserver
                 $warehouseId = $item->warehouse_id;
 
                 // If no warehouse is associated, find the primary warehouse
-                if (!$warehouseId) {
+                if (! $warehouseId) {
                     $warehouse = Warehouse::where('is_primary', true)
                         ->where('team_id', $team->id)
                         ->first();
@@ -40,7 +38,7 @@ class ItemObserver
                     ->where('item_id', $item->id)
                     ->exists();
 
-                if (!$exists) {
+                if (! $exists) {
                     // Insert warehouse item record only if it doesn't already exist
                     DB::table('warehouse_items')->insert([
                         'warehouse_id' => $warehouseId,

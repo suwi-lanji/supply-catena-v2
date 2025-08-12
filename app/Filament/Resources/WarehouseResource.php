@@ -3,28 +3,29 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Resources\WarehouseResource\Pages;
-use App\Filament\Resources\WarehouseResource\RelationManagers;
 use App\Models\Warehouse;
+use Filament\Facades\Filament;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
-use Illuminate\Database\Eloquent\Builder;
-use Illuminate\Database\Eloquent\SoftDeletingScope;
-use Filament\Facades\Filament;
-use Illuminate\Support\Facades\DB;
+
 class WarehouseResource extends Resource
 {
     protected static ?string $model = Warehouse::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
-    public static function shouldRegisterNavigation(): bool {
-        if(Filament::getTenant()->has_warehouses != null && Filament::getTenant()->has_warehouses != false) {
+
+    public static function shouldRegisterNavigation(): bool
+    {
+        if (Filament::getTenant()->has_warehouses != null && Filament::getTenant()->has_warehouses != false) {
             return true;
         }
+
         return false;
     }
+
     public static function form(Form $form): Form
     {
         return $form
@@ -50,10 +51,10 @@ class WarehouseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-                    
+
 ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
-                    
+
 ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
@@ -79,7 +80,7 @@ class WarehouseResource extends Resource
                 ]),
             ])
             ->emptyStateIcon('heroicon-o-bookmark')
-            ->emptyStateDescription("Create multiple warehouses to store items in different locations")
+            ->emptyStateDescription('Create multiple warehouses to store items in different locations')
             ->emptyStateActions([
                 Tables\Actions\Action::make('create')
                     ->label('Create Warehouse')

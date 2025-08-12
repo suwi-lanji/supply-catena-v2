@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\PurchaseReceivesResource\Pages;
 
 use App\Filament\Resources\PurchaseReceivesResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPurchaseReceives extends EditRecord
@@ -13,7 +12,7 @@ class EditPurchaseReceives extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

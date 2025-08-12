@@ -3,20 +3,23 @@
 namespace App\Filament\Resources\CreditNotesResource\Pages;
 
 use App\Filament\Resources\CreditNotesResource;
-use Filament\Actions;
-use Filament\Resources\Pages\ViewRecord;
 use Barryvdh\DomPDF\Facade\Pdf;
-use Illuminate\Database\Eloquent\Model;
+use Filament\Actions;
 use Filament\Facades\Filament;
-use Illuminate\Support\Facades\Blade;
+use Filament\Resources\Pages\ViewRecord;
+use Illuminate\Database\Eloquent\Model;
+
 class ViewCreditNotes extends ViewRecord
 {
     protected static string $resource = CreditNotesResource::class;
+
     protected static string $view = 'filament.resources.credit-notes.pages.view-credit-notes';
-    protected function getHeaderActions(): array {
+
+    protected function getHeaderActions(): array
+    {
         return [
             Actions\EditAction::make('edit')->color('default')
-            ->color('default'),
+                ->color('default'),
             Actions\Action::make('pdf')
                 ->label('PDF/Print')
                 ->color('default')
@@ -30,7 +33,7 @@ class ViewCreditNotes extends ViewRecord
                             'chroot' => public_path(),
                             'fontDir' => storage_path('fonts/'),
                             'isRemoteEnabled' => true,
-                            'css' => file_get_contents(public_path('css/purchase-order.css'))
+                            'css' => file_get_contents(public_path('css/purchase-order.css')),
                         ])->stream();
                     }, $record->credit_note_number.'.pdf');
                 }),

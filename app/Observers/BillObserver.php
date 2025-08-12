@@ -4,6 +4,7 @@ namespace App\Observers;
 
 use App\Models\Bill;
 use App\Models\PurchaseOrder;
+
 class BillObserver
 {
     /**
@@ -12,7 +13,7 @@ class BillObserver
     public function created(Bill $bill): void
     {
         $bill->update(['balance_due' => $bill->total]);
-        if($bill->balance_due == 0) {
+        if ($bill->balance_due == 0) {
             $bill->update(['status', 'paid']);
         }
         $order = PurchaseOrder::where('id', $bill->order_number)->update(['billed' => true]);
@@ -23,7 +24,7 @@ class BillObserver
      */
     public function updated(Bill $bill): void
     {
-        if($bill->balance_due == 0) {
+        if ($bill->balance_due == 0) {
             $bill->update(['status', 'paid']);
         }
         $order = PurchaseOrder::where('id', $bill->order_number)->update(['billed' => true]);
@@ -44,6 +45,7 @@ class BillObserver
     {
         $order = PurchaseOrder::where('id', $bill->order_number)->update(['billed' => true]);
     }
+
     /**
      * Handle the Bill "force deleted" event.
      */

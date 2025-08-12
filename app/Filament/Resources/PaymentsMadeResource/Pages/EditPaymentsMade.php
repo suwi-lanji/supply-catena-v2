@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\PaymentsMadeResource\Pages;
 
 use App\Filament\Resources\PaymentsMadeResource;
-use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 
 class EditPaymentsMade extends EditRecord
@@ -13,7 +12,7 @@ class EditPaymentsMade extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            
+
         ];
     }
 }

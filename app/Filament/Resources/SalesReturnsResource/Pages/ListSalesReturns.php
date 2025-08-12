@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\SalesReturnsResource\Pages;
 
 use App\Filament\Resources\SalesReturnsResource;
-use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
 
 class ListSalesReturns extends ListRecords

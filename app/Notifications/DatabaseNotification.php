@@ -6,7 +6,13 @@ use Illuminate\Notifications\Notification;
 
 class DatabaseNotification extends Notification
 {
-    public $tenant_id, $title, $body, $url;
+    public $tenant_id;
+
+    public $title;
+
+    public $body;
+
+    public $url;
 
     public function __construct($title, $body, $url, $tenant_id)
     {
@@ -24,10 +30,10 @@ class DatabaseNotification extends Notification
     public function toDatabase($notifiable)
     {
         return [
-            "title" => $this->title,
-            "body" => $this->body,
-            "url" => $this->url,
-            "tenant_id" => $this->tenant_id
+            'title' => $this->title,
+            'body' => $this->body,
+            'url' => $this->url,
+            'tenant_id' => $this->tenant_id,
         ];
     }
 }

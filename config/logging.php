@@ -125,7 +125,7 @@ return [
 
         'emergency' => [
             'driver' => 'monolog',
-	    'handler' => NullHandler::class
+            'handler' => NullHandler::class,
         ],
 
     ],

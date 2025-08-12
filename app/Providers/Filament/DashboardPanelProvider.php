@@ -1,10 +1,14 @@
 <?php
 
 namespace App\Providers\Filament;
-use App\Models\User;
+
+use App\Filament\Pages\Tenancy\EditTeamProfile;
+use App\Filament\Pages\Tenancy\RegisterTeam;
+use App\Models\Team;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
+use Filament\Navigation\NavigationGroup;
 use Filament\Pages;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -17,12 +21,6 @@ use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
 use Illuminate\Session\Middleware\StartSession;
 use Illuminate\View\Middleware\ShareErrorsFromSession;
-use App\Filament\Pages\Tenancy\RegisterTeam;
-use App\Filament\Pages\Tenancy\EditTeamProfile;
-use App\Models\Team;
-use Filament\Navigation\NavigationGroup;
-use Filament\Navigation\UserMenuItem;
-use Illuminate\Http\Request;
 
 class DashboardPanelProvider extends PanelProvider
 {
@@ -41,7 +39,7 @@ class DashboardPanelProvider extends PanelProvider
             ->navigationGroups([
                 NavigationGroup::make()
                     ->icon('heroicon-o-clipboard-document-list')
-                     ->label('Inventory'),
+                    ->label('Inventory'),
                 NavigationGroup::make()
                     ->icon('heroicon-o-shopping-cart')
                     ->label('Sales'),
@@ -66,7 +64,7 @@ class DashboardPanelProvider extends PanelProvider
             ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\\Filament\\Widgets')
             ->widgets([
                 // Widgets\AccountWidget::class,
-//                Widgets\FilamentInfoWidget::class,
+                //                Widgets\FilamentInfoWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

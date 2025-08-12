@@ -2,8 +2,8 @@
 
 namespace App\Observers;
 
-use App\Models\PaymentsMade;
 use App\Models\Bill;
+use App\Models\PaymentsMade;
 
 class PaymentsMadeObserver
 {
@@ -13,7 +13,7 @@ class PaymentsMadeObserver
     public function created(PaymentsMade $paymentsMade): void
     {
         $jsonData = $paymentsMade->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
             Bill::where('balance_due', 0)->update(['status' => 'paid']);
         }
@@ -25,7 +25,7 @@ class PaymentsMadeObserver
     public function updated(PaymentsMade $paymentsMade): void
     {
         $jsonData = $paymentsMade->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
             Bill::where('balance_due', 0)->update(['status' => 'paid']);
         }
@@ -37,7 +37,7 @@ class PaymentsMadeObserver
     public function deleted(PaymentsMade $paymentsMade): void
     {
         $jsonData = $paymentsMade->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due']]);
             Bill::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }
@@ -49,7 +49,7 @@ class PaymentsMadeObserver
     public function restored(PaymentsMade $paymentsMade): void
     {
         $jsonData = $paymentsMade->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due'] - $item['payment']]);
         }
         Bill::where('balance_due', 0)->update(['status' => 'paid']);
@@ -61,7 +61,7 @@ class PaymentsMadeObserver
     public function forceDeleted(PaymentsMade $paymentsMade): void
     {
         $jsonData = $paymentsMade->items;
-        foreach($jsonData as $item) {
+        foreach ($jsonData as $item) {
             Bill::where('bill_number', $item['bill_number'])->update(['balance_due' => $item['amount_due']]);
             Bill::where('balance_due', '>', 0)->where('status', 'paid')->update(['status' => 'open']);
         }
