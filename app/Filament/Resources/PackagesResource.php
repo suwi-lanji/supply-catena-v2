@@ -34,6 +34,7 @@ class PackagesResource extends Resource
                         Forms\Components\TextInput::make('package_slip')
                             ->default('PKG-0000'.Packages::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('date')
+                            ->native(false)->default(now())
                             ->required(),
                     ]),
                 TableRepeater::make('items')

@@ -41,6 +41,7 @@ class SalesReceiptResource extends Resource
                         Forms\Components\TextInput::make('sales_receipt_number')
                             ->default('SR-0000'.SalesReceipt::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('receipt_date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\Select::make('payment_term_id')
                             ->label('Payment Terms')

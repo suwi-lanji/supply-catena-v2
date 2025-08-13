@@ -12,6 +12,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
+use App\Models\SalesAccount;
+use App\Models\PurchasesAccount;
 
 class ItemGroupResource extends Resource
 {
@@ -25,6 +27,8 @@ class ItemGroupResource extends Resource
     {
         return $form
             ->schema([
+                Forms\Components\Section::make()
+                ->schema([
                 Forms\Components\Select::make('type')
                     ->options(['Goods', 'Service'])
                     ->required(),
@@ -168,6 +172,7 @@ class ItemGroupResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('sales_account_id')
                             ->relationship('sales_account', 'name')
+                            ->default(SalesAccount::get()->map(function($record) { return $record->id; })->first())
                             ->createOptionForm([
                                 Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('name')
@@ -176,16 +181,17 @@ class ItemGroupResource extends Resource
                             ->required(),
                         Forms\Components\Select::make('purchases_account_id')
                             ->relationship('purchases_account', 'name')
+                            ->default(PurchasesAccount::get()->map(function($record) { return $record->id; })->first())
                             ->createOptionForm([
                                 Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('name')
                                     ->required(),
                             ])
                             ->required(),
-                        Forms\Components\Select::make('inventory_account')
-                            ->options(['Finished Goods', 'Inventory Assets', 'Work In Progress'])
-                            ->required(),
+                        Forms\Components\Hidden::make('inventory_account')
+                            ->default('Inventory Assets')
                     ]),
+            ])
             ]);
     }
 

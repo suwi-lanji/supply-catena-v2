@@ -2,7 +2,7 @@
     @php
         $tenant = \Filament\Facades\Filament::getTenant();
         $payment_modes = ['Bank Remittance','Bank Transfer','Cash','Check','Credit Card','Other'];
-        $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+        $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
         $paid_through = ['Petty Cash','Undeposited funds','Employee Reimbursements','Drawings','Opening Balance Offset','Owners Equity','Employee Advance', 'Other'];
     @endphp
     <style>

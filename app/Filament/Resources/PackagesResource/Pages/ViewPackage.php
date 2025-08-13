@@ -20,7 +20,7 @@ class ViewPackage extends ViewRecord
 {
     protected static string $resource = PackagesResource::class;
 
-    protected static string $view = 'filament.resources.packages.pages.view-package';
+    protected static string $view = 'filament.resources.packages.pages.view-packages-1';
 
     protected function getHeaderActions(): array
     {

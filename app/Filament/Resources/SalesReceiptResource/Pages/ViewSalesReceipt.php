@@ -16,7 +16,7 @@ class ViewSalesReceipt extends ViewRecord
 {
     protected static string $resource = SalesReceiptResource::class;
 
-    protected static string $view = 'filament.resources.sales-receipt.view-sales-receipt';
+    protected static string $view = 'filament.resources.sales-receipt.view-sales-receipt-1';
 
     protected function getCustomer()
     {

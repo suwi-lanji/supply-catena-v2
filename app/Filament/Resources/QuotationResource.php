@@ -46,8 +46,10 @@ class QuotationResource extends Resource
                         Forms\Components\TextInput::make('report_number'),
                         Forms\Components\TextInput::make('stock_in'),
                         Forms\Components\DatePicker::make('quotation_date')
+                            ->native(false)->default(now())
                             ->required(),
-                        Forms\Components\DatePicker::make('expected_shippment_date'),
+                        Forms\Components\DatePicker::make('expected_shippment_date')
+                            ->native(false)->default(now()),
                         Forms\Components\Select::make('payment_term_id')
                             ->relationship('payment_term', 'name')
                             ->createOptionForm([

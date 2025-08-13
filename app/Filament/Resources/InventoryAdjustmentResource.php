@@ -32,6 +32,7 @@ class InventoryAdjustmentResource extends Resource
                 Forms\Components\TextInput::make('reference_number')
                     ->default('RN-0000'.InventoryAdjustment::where('team_id', Filament::getTenant()->id)->count() + 1),
                 Forms\Components\DatePicker::make('date')
+                    ->native(false)->default(now())
                     ->required(),
                 Forms\Components\Select::make('account')
                     ->options(['Inventory Asset Account', 'Cost of Goods Sold (COGS) Account', 'Expense Account', 'Income Account', 'Other Asset Account', 'Other Liability Account'])
@@ -98,8 +99,20 @@ class InventoryAdjustmentResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('mode_of_adjustment')
-
-->searchable(),
+                ->state(function ($record) {
+                    switch($record->mode_of_adjustment) {
+                    case 0:
+                        return 'Quantity';
+                    default:
+                        return 'Value';
+                }
+                })
+                ->badge()
+                ->searchable(),
+                Tables\Columns\TextColumn::make('nmber_of_items affected')
+                ->state(fn($record) => count($record->items))
+                ->badge()
+                ->color('gray')
 
             ])
             ->filters([

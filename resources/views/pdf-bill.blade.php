@@ -1,7 +1,7 @@
 @php
 $vendor = \App\Models\Vendor::where('id', $record->vendor_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
     body {
@@ -242,7 +242,8 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
             <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }}  {{$tenant->currency_code}}</span></p>
             
             <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
-            <h5>{{$tenant->currency_symbol}}{{$record->total}}</h5>
+            <h5>Total: {{$tenant->currency_symbol}}{{$record->total}}</h5>
+            <h5>Balance Due: {{ $record->balance_due }}</h5>
         </div>
     </div>
 
@@ -250,7 +251,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
     @php
             $terms = \App\Models\PaymentTerm::find($vendor->payment_terms);
         @endphp
-        <h3>Payment Term: {{ $terms->name }}</h3>
+        <h3><b>Payment Term: {{ $terms->name }}</b></h3>
         <p>Please make payment by check or bank transfer to the following account:</p>
         <div>
             <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>

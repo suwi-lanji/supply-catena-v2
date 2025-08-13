@@ -14,7 +14,7 @@ class TeamObserver
      */
     public function creating(Team $team): void
     {
-        $team->logo = '/content/'.$team->logo;
+        
     }
 
     public function created(Team $team): void
@@ -30,11 +30,6 @@ class TeamObserver
 
     public function updating(Team $team): void
     {
-        if ($team->isDirty('logo')) {
-            if ($team->logo != null || $team->logo != '') {
-                $team->logo = '/content/'.$team->logo;
-            }
-        }
     }
 
     /**

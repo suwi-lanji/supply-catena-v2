@@ -30,8 +30,8 @@ class ARevenueSummary extends BaseWidget
         }
 
         return [
-            Stat::make('Total Sales', PaymentsReceived::where('team_id', Filament::getTenant()->id)->sum('amount_received').' '.Filament::getTenant()->currency_code),
-            Stat::make('Total Purchases', PaymentsMade::where('team_id', Filament::getTenant()->id)->sum('payment_made').' '.Filament::getTenant()->currency_code),
+            Stat::make('Total Payments Received', PaymentsReceived::where('team_id', Filament::getTenant()->id)->sum('amount_received').' '.Filament::getTenant()->currency_code),
+            Stat::make('Total Payments Made', PaymentsMade::where('team_id', Filament::getTenant()->id)->sum('payment_made').' '.Filament::getTenant()->currency_code),
             Stat::make('Total Returns', $returned.' '.Filament::getTenant()->currency_code),
         ];
     }

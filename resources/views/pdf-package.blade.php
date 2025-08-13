@@ -2,7 +2,7 @@
 $customer_id = \App\Models\SalesOrder::where('id', $record->sales_order_number)->pluck('customer_id')->first();
 $customer = \App\Models\Customer::where('id', $customer_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
     body {
@@ -229,7 +229,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
                     <td>@php
                             echo Arr::get($item, 'quantity', 0);
                         @endphp</td>
-                    <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('part_number')->first() }}</td>
+                    <td>{{ \App\Models\Item::where('id', $item['item'])->get()->map(function($item) { return $item->part_number ?? $item->name; })->first() }}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('description')->first() }}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
                     <td>{{$item['rate']}}</td>

@@ -22,7 +22,7 @@ class ViewShipment extends ViewRecord
 {
     protected static string $resource = ShipmentsResource::class;
 
-    protected static string $view = 'filament.resources.shipments.pages.view-shipment';
+    protected static string $view = 'filament.resources.shipments.pages.view-shipment-1';
 
     protected function getCustomer()
     {

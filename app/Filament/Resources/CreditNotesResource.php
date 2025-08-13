@@ -50,6 +50,7 @@ class CreditNotesResource extends Resource
                             ->required(),
 
                         Forms\Components\DatePicker::make('credit_note_date')
+                            ->native(false)->default(now())
                             ->required(),
 
                         Forms\Components\TextInput::make('subject'),

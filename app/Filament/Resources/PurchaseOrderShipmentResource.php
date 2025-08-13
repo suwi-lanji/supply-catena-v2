@@ -41,6 +41,7 @@ class PurchaseOrderShipmentResource extends Resource
                     ->required()
                     ->default('SHIP-0000'.PurchaseOrderShipment::where('team_id', Filament::getTenant()->id)->count() + 1),
                 Forms\Components\DatePicker::make('shipment_date')
+                    ->native(false)->default(now())
                     ->required(),
                 Forms\Components\Select::make('delivery_method_id')
                     ->relationship('delivery_method', 'name')
@@ -68,12 +69,6 @@ class PurchaseOrderShipmentResource extends Resource
                 Tables\Columns\TextColumn::make('shipment_date')
                     ->date()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tracking_number')
-
-->searchable(),
-                Tables\Columns\TextColumn::make('tracking_url')
-
-->searchable(),
                 Tables\Columns\TextColumn::make('shipping_charges')
                     ->numeric()
                     ->sortable(),

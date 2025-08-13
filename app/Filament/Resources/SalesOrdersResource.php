@@ -49,8 +49,9 @@ class SalesOrdersResource extends Resource
                         Forms\Components\TextInput::make('reference_number')
                             ->default('RN-0000'.SalesOrder::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('sales_order_date')
+                            ->native(false)->default(now())
                             ->required(),
-                        Forms\Components\DatePicker::make('expected_shippment_date'),
+                        Forms\Components\DatePicker::make('expected_shippment_date')->native(false)->default(now()),
                         Forms\Components\Select::make('payment_term_id')
                             ->relationship('payment_term', 'name')
                             ->createOptionForm([
@@ -95,13 +96,6 @@ class SalesOrdersResource extends Resource
                         }
                     })
                     ->hintActions([
-                        Action::make('add_custom_field')
-                            ->form([
-                                Forms\Components\TextInput::make('name'),
-                            ])
-                            ->action(function ($data) {
-                                array_push($this->custom_fields, $data['name']);
-                            }),
                         Action::make('account')
                             ->form([
                                 Forms\Components\Select::make('account')
@@ -279,8 +273,6 @@ class SalesOrdersResource extends Resource
                         Forms\Components\TextInput::make('amount'),
                         // ->numeric(),
 
-                    ] + [
-                        Forms\Components\TextInput::make('test'),
                     ])
                     ->colStyles([
                         'item' => 'width: 200px;',
@@ -340,8 +332,7 @@ class SalesOrdersResource extends Resource
                 Forms\Components\TextInput::make('total')
                     ->required()
                     ->numeric(),
-                Forms\Components\Select::make('status')
-                    ->options(['Draft', 'Send'])
+                Forms\Components\Hidden::make('status')
                     ->default('Send')
                     ->required(),
             ]);

@@ -94,6 +94,7 @@ class ViewPurchaseOrder extends ViewRecord
                                 })
                                 ->required(),
                             Forms\Components\DatePicker::make('received_date')
+                                ->native(false)->default(now())
                                 ->required(),
                             TableRepeater::make('items')
                                 ->afterStateHydrated(function (Forms\Components\Repeater $component, array $state, $get, $set) {

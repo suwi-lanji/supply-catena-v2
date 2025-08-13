@@ -3,5 +3,8 @@
 @config 'tailwind.config.js';
 
 .fi-sidebar {
-    @apply bg-white dark:bg-gray-900
+    @apply bg-white dark:bg-gray-900 shadow-lg
+}
+* {
+    @apply text-gray-900 dark:text-white
 }

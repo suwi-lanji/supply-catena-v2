@@ -38,8 +38,6 @@ class PurchaseOrder extends Model
         $packages = PurchaseReceives::where('purchase_order_number', $this->id)->get();
         foreach ($packages as $package) {
             foreach ($package->items as $index => $item) {
-
-                // Retrieve ordered quantity from Package's item JSON field
                 $orderedQuantity = $this->items[$index]['quantity'];
                 $deliveredQuantity = $item['quantity_to_receive'];
 

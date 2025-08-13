@@ -32,8 +32,8 @@ class PurchaseReceives extends Model
         return $this->belongsToMany(Item::class);
     }
 
-    public function vendor(): HasOne
+    public function vendor(): BelongsTo
     {
-        return $this->hasOne(Vendor::class)->where('team_id', Filament::getTenant()->id);
+        return $this->belongsTo(Vendor::class)->where('team_id', Filament::getTenant()->id);
     }
 }

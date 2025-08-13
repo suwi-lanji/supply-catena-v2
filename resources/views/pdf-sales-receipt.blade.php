@@ -1,7 +1,7 @@
 @php
 $customer = \App\Models\Customer::where('id', $record->customer_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
         .clearfix::after {

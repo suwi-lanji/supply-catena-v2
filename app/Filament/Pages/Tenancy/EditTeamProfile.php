@@ -65,6 +65,7 @@ class EditTeamProfile extends EditTenantProfile
                 TextInput::make('currency_code')->default('USD'),
                 TextInput::make('currency_symbol')->default('$'),
                 DatePicker::make('inventory_start')
+                    ->native(false)->default(now())
                     ->required(),
                 Select::make('fiscal_year')
                     ->required()

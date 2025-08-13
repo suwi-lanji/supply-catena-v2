@@ -63,8 +63,10 @@ class BillResource extends Resource
                     ->searchable()
                     ->required(),
                 Forms\Components\DatePicker::make('bill_date')
+                    ->native(false)->default(now())
                     ->required(),
                 Forms\Components\DatePicker::make('due_date')
+                    ->native(false)->default(now())
                     ->required(),
                 Forms\Components\Select::make('payment_terms')
                     ->required()

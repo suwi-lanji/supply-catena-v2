@@ -20,7 +20,7 @@ class ViewInvoice extends ViewRecord
 {
     protected static string $resource = InvoicesResource::class;
 
-    protected static string $view = 'filament.resources.invoices.pages.view-invoice';
+    protected static string $view = 'filament.resources.invoices.pages.view-invoice-1';
 
     protected function getCustomer()
     {

@@ -29,7 +29,7 @@ class ViewSalesOrder extends ViewRecord
 {
     protected static string $resource = SalesOrdersResource::class;
 
-    protected static string $view = 'filament.resources.sales-orders.pages.view-sales-order';
+    protected static string $view = 'filament.resources.sales-orders.pages.view-sales-order-1';
 
     private function backOrderItems(): array
     {
@@ -123,6 +123,7 @@ class ViewSalesOrder extends ViewRecord
                                 Forms\Components\TextInput::make('package_slip')
                                     ->default('PKG-0000'.Packages::where('team_id', Filament::getTenant()->id)->count() + 1),
                                 Forms\Components\DatePicker::make('date')
+                                    ->native(false)->default(now())
                                     ->required(),
                             ]),
                         TableRepeater::make('items')
@@ -302,6 +303,7 @@ class ViewSalesOrder extends ViewRecord
                         Forms\Components\TextInput::make('sales_returns_number')
                             ->default('SR-0000'.SalesReturns::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\Textarea::make('reason'),
                         Forms\Components\Toggle::make('credit_only_goods'),

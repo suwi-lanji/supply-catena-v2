@@ -42,6 +42,7 @@ class TransferOrderResource extends Resource
                             ->required()
                             ->default('TO-0000'.TransferOrder::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\Textarea::make('reason'),
                     ])

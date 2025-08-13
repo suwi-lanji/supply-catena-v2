@@ -60,6 +60,7 @@ class PurchaseReceivesResource extends Resource
                             })
                             ->required(),
                         Forms\Components\DatePicker::make('received_date')
+                            ->native(false)->default(now())
                             ->required(),
                         TableRepeater::make('items')
                             ->schema([
@@ -96,9 +97,13 @@ class PurchaseReceivesResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('vendor_id')
+                Tables\Columns\TextColumn::make('vendor.vendor_display_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purchase_order_number')
+                    ->state(function($record) {
+                        $order = PurchaseOrder::where('id', $record->purchase_order_number)->get()->first();
+                        return $order->purchase_order_number;
+                    })
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purchase_receive_number')
                     ->searchable(),

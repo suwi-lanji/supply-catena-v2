@@ -105,7 +105,7 @@
                     <td class="text-center">@php
                             echo Arr::get($item, 'quantity', 0);
                         @endphp</td>
-                    <td class="text-center">{{ \App\Models\Item::where('id', $item['item'])->pluck('part_number')->first() }}</td>
+                    <td class="text-center">{{ \App\Models\Item::where('id', $item['item'])->get()->map(function($item) { return $item->part_number ?? $item->name; })->first() }}</td>
                     <td class="text-center">{{ \App\Models\Item::where('id', $item['item'])->pluck('description')->first() }}</td>
                     <td class="text-center">{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
                     <td class="text-center">{{$item['rate']}}</td>

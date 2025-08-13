@@ -70,7 +70,8 @@ class PaymentsReceivedResource extends Resource
                                 return PaymentsReceived::where('team_id', Filament::getTenant()->id)->count() + 1;
                             })
                             ->required(),
-                        Forms\Components\DatePicker::make('payment_date')
+                        Forms\Components\DatePicker::make('payment_date')   
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\TextInput::make('amount_received')
                             ->hintAction(

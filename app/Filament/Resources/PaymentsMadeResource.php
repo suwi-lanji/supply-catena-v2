@@ -77,6 +77,7 @@ class PaymentsMadeResource extends Resource
                             })
                             ->required(),
                         Forms\Components\DatePicker::make('payment_date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\TextInput::make('full_amount')->hidden(true),
                         Forms\Components\TextInput::make('payment_made')
@@ -183,11 +184,6 @@ class PaymentsMadeResource extends Resource
                     ->label('Go To Unpaid Bills')
                     ->url(route('filament.dashboard.resources.bills.index', ['tenant' => Filament::getTenant(), 'tableFilters[is_paid][isActive]' => false]))
                     ->color('success')
-                    ->button(),
-                Tables\Actions\Action::make('import_payments')
-                    ->label('Import Payments')
-                    ->url(route('filament.dashboard.resources.payments-mades.create', ['tenant' => Filament::getTenant()]))
-                    ->color('default')
                     ->button(),
             ]);
     }

@@ -1,6 +1,6 @@
 @php
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 
 <style>

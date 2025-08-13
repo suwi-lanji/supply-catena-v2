@@ -66,6 +66,7 @@ class VendorCreditResource extends Resource
                             })
                             ->required(),
                         Forms\Components\DatePicker::make('vendor_credit_date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\TextInput::make('subject'),
                     ]),
@@ -275,11 +276,6 @@ class VendorCreditResource extends Resource
                     ->color('success')
                     ->url(route('filament.dashboard.resources.vendor-credits.create', ['tenant' => Filament::getTenant()]))
                     ->icon('heroicon-m-plus')
-                    ->button(),
-                Tables\Actions\Action::make('import_payments')
-                    ->label('Import Vendor Credits')
-                    ->url(route('filament.dashboard.resources.vendor-credits.create', ['tenant' => Filament::getTenant()]))
-                    ->color('default')
                     ->button(),
             ]);
     }

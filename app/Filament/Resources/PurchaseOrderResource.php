@@ -60,6 +60,7 @@ class PurchaseOrderResource extends Resource
                         Forms\Components\TextInput::make('reference_number')
                             ->default('RN-0000'.PurchaseOrder::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\DatePicker::make('purchase_order_date')
+                            ->native(false)->default(now())
                             ->required(),
                         Forms\Components\DatePicker::make('expected_delivery_date'),
                         Forms\Components\Select::make('payment_terms')

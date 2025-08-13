@@ -1,7 +1,7 @@
 @php
 $customer = \App\Models\Customer::where('id', $record->customer_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
     /* ... all your existing styles remain here ... */
@@ -245,7 +245,7 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
                 @if ($itemModel)
                 <tr>
                     <td>{{ Arr::get($item, 'quantity', 0) }}</td>
-                    <td>{{ $itemModel->part_number }}</td>
+                    <td>{{ $itemModel->part_number ?? $itemModel->name }}</td>
                     <td>{{ $itemModel->description }}</td>
                     <td>{{ $itemModel->condition }}</td>
                     <td>{{ $item['weight'] }}</td>

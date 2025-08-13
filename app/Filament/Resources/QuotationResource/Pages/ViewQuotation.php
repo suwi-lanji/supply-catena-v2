@@ -22,7 +22,7 @@ class ViewQuotation extends ViewRecord
 {
     protected static string $resource = QuotationResource::class;
 
-    protected static string $view = 'filament.resources.quotations.view-quotation';
+    protected static string $view = 'filament.resources.quotations.view-quotation-1';
 
     protected function getCustomer()
     {

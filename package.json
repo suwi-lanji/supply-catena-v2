@@ -4,7 +4,8 @@
     "scripts": {
         "dev": "vite",
         "build": "vite build",
-        "production": "echo Hello World"
+        "production": "echo Hello World",
+        "pint": "./vendor/bin/pint"
     },
     "devDependencies": {
         "@tailwindcss/forms": "^0.5.10",
@@ -19,7 +20,6 @@
     "dependencies": {
         "alpinejs": "^3.13.8",
         "express": "^4.21.0",
-        "proxy-from-env": "^1.1.0",
-        "puppeteer": "^22.15.0"
+        "proxy-from-env": "^1.1.0"
     }
 }

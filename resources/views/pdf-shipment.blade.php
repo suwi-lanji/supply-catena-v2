@@ -2,7 +2,7 @@
 @php
 $customer = \App\Models\Customer::where('id', $record->customer_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
     body {
@@ -224,17 +224,22 @@ $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', 
                 </tr>
             </thead>
             <tbody>
-                @foreach ($record->items as $index => $item)
-                <tr>
+                @foreach ($record->packages as $package)
+                @php
+                    $package = \App\Models\Packages::find($package)
+                @endphp
+                @foreach ( $package->items as $index => $item)
+                    <tr>
                     <td>@php
                             echo Arr::get($item, 'quantity', 0);
                         @endphp</td>
-                    <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('part_number')->first() }}</td>
+                    <td>{{ \App\Models\Item::where('id', $item['item'])->get()->map(function($item) { return $item->part_number ?? $item->name; })->first() }}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('description')->first() }}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
                     <td>{{$item['rate']}}</td>
                     <td>{{$item['amount']}}</td>
                 </tr>
+                @endforeach
                 @endforeach
             </tbody>
         </table>

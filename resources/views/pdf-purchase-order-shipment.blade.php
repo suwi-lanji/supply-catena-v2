@@ -1,7 +1,7 @@
 <div class="document">
         @php
     $vendor = \App\Models\Vendor::where('id', $record->vendor_id)->first();
-    $fullpath = base_path() . '/storage/app/public' . str_replace('/content/', '/', $tenant->logo);
+    $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
 @endphp
 <style>
     body {
@@ -197,7 +197,7 @@
             <tbody>
                 <tr>
                     <td>Shipment No.</td>
-                    <td>{{$record->shipment_number}}</td>
+                    <td>{{$record->shipment_order_number}}</td>
                 </tr>
                 <tr>
                     <td>Order Date</td>

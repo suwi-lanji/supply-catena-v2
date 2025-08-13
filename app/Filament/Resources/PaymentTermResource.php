@@ -13,8 +13,8 @@ use Filament\Tables\Table;
 class PaymentTermResource extends Resource
 {
     protected static ?string $model = PaymentTerm::class;
-
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $modelLabel = "Bank Detail";
+    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
 
     public static function form(Form $form): Form
     {
@@ -40,7 +40,9 @@ class PaymentTermResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name'),
-                Tables\Columns\TextColumn::make('account_type'),
+                Tables\Columns\TextColumn::make('account_type')
+                ->badge()
+                ->color('success'),
                 Tables\Columns\TextColumn::make('account_number'),
             ])
             ->filters([

@@ -51,6 +51,7 @@ class ShipmentsResource extends Resource
                             ->default('SHP-0000'.Shipments::where('team_id', Filament::getTenant()->id)->count() + 1)
                             ->required(),
                         Forms\Components\DatePicker::make('shipment_date')
+                            ->native(false)->default(now())
                             ->required(),
                     ])
                     ->columns(1),
@@ -95,10 +96,6 @@ class ShipmentsResource extends Resource
                     ->badge()
                     ->color('success')
                     ->sortable(),
-                Tables\Columns\TextColumn::make('tracking_number')
-                    ->searchable(),
-                Tables\Columns\TextColumn::make('tracking_url')
-                    ->searchable(),
                 Tables\Columns\TextColumn::make('shipping_charges')
                     ->numeric()
                     ->sortable(),

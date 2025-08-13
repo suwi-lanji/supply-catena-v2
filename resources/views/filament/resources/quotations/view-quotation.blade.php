@@ -8,8 +8,8 @@
         $discount = 0;
     @endphp
     <script src="https://cdn.tailwindcss.com"></script>
-    <div class="p-8">
-        <!-- Invoice Header -->
+    <div class="p-8 text-black dark:text-white bg-white">
+
         <div class="flex justify-between mb-12">
             <div class="flex flex-row">
                 <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" class="mr-3" style="width:150px;height:150px"/>

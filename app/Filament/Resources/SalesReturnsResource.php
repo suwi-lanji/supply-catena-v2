@@ -29,6 +29,7 @@ class SalesReturnsResource extends Resource
                 Forms\Components\TextInput::make('sales_returns_number')
                     ->required(),
                 Forms\Components\DatePicker::make('date')
+                    ->native(false)->default(now())
                     ->required(),
                 Forms\Components\TextInput::make('reason'),
                 Forms\Components\Toggle::make('credit_only_goods'),
