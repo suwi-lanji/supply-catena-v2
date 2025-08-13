@@ -48,7 +48,7 @@ class BillResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('bill_number')
                     ->readonly()
-                    ->default(fn (): string => 'BL-0000'.Bill::where('team_id', Filament::getTenant()->id)->count() + 1)
+                    ->default(fn (): string => 'BL-' . str_pad(Bill::where('team_id', Filament::getTenant()->id)->count() + 1, 5, 0, STR_PAD_LEFT))
                     ->required(),
                 Forms\Components\Select::make('order_number')
                     ->options(function ($get): array {
