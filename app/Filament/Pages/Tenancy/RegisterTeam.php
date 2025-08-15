@@ -26,6 +26,7 @@ class RegisterTeam extends RegisterTenant
                     ->schema([
                         FileUpload::make('logo')
                             ->image()
+                            ->disk()
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
                             ->required(false),
