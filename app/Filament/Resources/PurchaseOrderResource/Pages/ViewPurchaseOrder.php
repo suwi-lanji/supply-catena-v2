@@ -156,9 +156,19 @@ class ViewPurchaseOrder extends ViewRecord
                 ->label('PDF/Print')
                 ->color('default')
                 ->icon('heroicon-s-arrow-down-tray')
-                ->action(function (Model $record) {
-                    return response()->streamDownload(function () use ($record) {
-                        echo Pdf::loadView('pdf', ['record' => $record, 'tenant' => Filament::getTenant()])->setOptions([
+                ->form([
+                    Forms\Components\Select::make('format')
+                        ->options([
+                            'default' => 'Default',
+                            'template_1' => 'Template 1'
+                        ])
+                        ->native(false)
+                ])
+                ->action(function (array $data, Model $record) {
+
+                    $template = $data['format'] === 'default' ? 'pdf' : 'pdf-andrich-purchase-order';
+                    return response()->streamDownload(function () use ($record, $template) {
+                        echo Pdf::loadView($template, ['record' => $record, 'tenant' => Filament::getTenant()])->setOptions([
                             'isPhpEnabled' => true,
                             'isHtml5ParserEnabled' => true,
                             'DOMPDF_ENABLE_HTML5PARSER' => true,

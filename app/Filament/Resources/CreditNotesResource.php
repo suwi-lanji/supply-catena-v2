@@ -43,10 +43,10 @@ class CreditNotesResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('credit_note_number')
-                            ->default('DN-' . str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1), 5, "0", STR_PAD_LEFT)
+                            ->default('DN-' . str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, "0", STR_PAD_LEFT))
                             ->required(),
                         Forms\Components\TextInput::make('reference_number')
-                            ->default('RN-0000'.CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1)
+                            ->default('RN-'. str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, '0', STR_PAD_LEFT))
                             ->required(),
 
                         Forms\Components\DatePicker::make('credit_note_date')
