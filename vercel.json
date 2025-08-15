@@ -11,7 +11,7 @@
             "dest": "public/$1/$2"
         },
         {
-            "src": "/(public)/(.*)",
+            "src": "/(storage)/(.*)",
             "dest": "storage/app/public/$1/$2"
         },
         {
