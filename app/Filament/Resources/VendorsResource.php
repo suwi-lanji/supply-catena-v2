@@ -31,6 +31,10 @@ class VendorsResource extends Resource
                 Forms\Components\TextInput::make('first_name'),
                 Forms\Components\TextInput::make('last_name'),
                 Forms\Components\TextInput::make('company_name'),
+                Forms\Components\TextInput::make('country'),
+                Forms\Components\TextInput::make('city'),
+                Forms\Components\TextInput::make('address'),
+                Forms\Components\TextInput::make('postal_address'),
                 Forms\Components\TextInput::make('vendor_display_name')->required(),
                 Forms\Components\TextInput::make('email')
                     ->email()

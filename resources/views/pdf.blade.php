@@ -154,7 +154,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
             <h5>{{ $tenant->portal_name }}</h5>
             <address>
                 <span>{{ $tenant->email }}</span><br/>
-                <span>{{ $tenant->street_1 }}</span><br/>
+                <span>{{ $record->street_1 }}</span><br/>
                 <span>{{ $tenant->city }}, {{ $tenant->province }}, {{ $tenant->business_location }}</span><br/>
                 <abbr title="Phone">Phone:</abbr> <span>{{ $tenant->phone }}</span>
             </address>
@@ -168,8 +168,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <td colspan="2">
                         <address>
                             <span>{{ $vendor['vendor_display_name'] }}</span><br/>
-                            <span>{{ $vendor['email'] }}</span><br/>
-                            <abbr title="Phone">Phone:</abbr> <span>{{ $vendor['phone'] }}</span>
+                            <abbr title="Phone">Address:</abbr> <span><b>{{ $vendor['city'] }}</b></span>, <span>{{ $vendor['address'] }}, {{ $vendor['city'] }} - {{ $vendor['country'] }}</span>
                         </address>
                     </td>
                 </tr>
