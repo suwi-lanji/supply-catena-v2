@@ -29,7 +29,6 @@
         "APP_TIMEZONE": "UTC",
         "APP_LOCALE": "en",
         "APP_FALLBACK_LOCALE": "en",
-        
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
         "APP_PACKAGES_CACHE": "/tmp/packages.php",
