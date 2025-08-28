@@ -40,7 +40,6 @@
         "LOG_CHANNEL": "stderr",
         "LOG_DEPRECATIONS_CHANNEL": "null",
         "LOG_LEVEL": "debug",
-
         "DB_CONNECTION": "pgsql",
         "DB_HOST": "ep-spring-paper-a8b8p0uw.eastus2.azure.neon.tech",
         "DB_PORT": "5432",
