@@ -31,8 +31,6 @@ class EditTeamProfile extends EditTenantProfile
                     ->schema([
                         FileUpload::make('logo')
                             ->image()
-                            ->disk('cloudinary')
-                            ->default(null)
                             ->imageResizeMode('cover')
                             ->imageCropAspectRatio('1:1')
                             ->required(),
