@@ -274,7 +274,7 @@
                                 React.createElement('span', { className: 'text-xl font-bold' }, 'Supply Catena')
                             ),
                             React.createElement('div', { className: 'text-center md:text-right' },
-                                React.createElement('p', { className: 'text-gray-400' }, '© 2024 Supply Catena. All rights reserved.'),
+                                React.createElement('p', { className: 'text-gray-400' }, '©' + (new Date().getFullYear()) + ' Supply Catena. All rights reserved.'),
                                 React.createElement('p', { className: 'text-gray-500 text-sm mt-1' }, 'Multi-Warehouse ERP System for Industrial Efficiency')
                             )
                         )
