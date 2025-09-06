@@ -1,192 +1,222 @@
 <!DOCTYPE html>
-<html lang="{{ str_replace('_', '-', app()->getLocale()) }}">
-    <head>
-        <meta charset="utf-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supply Catena Cloud ERP</title>
 
-        <title>Warehouse</title>
-        <link rel="icon" type="icon/png" href="/logo.png"/>
-        <!-- Fonts -->
-        <link rel="preconnect" href="https://fonts.bunny.net">
-        <link href="https://fonts.bunny.net/css?family=figtree:400,600&display=swap" rel="stylesheet" />
+    <!-- Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-        <!-- Styles -->
-        @vite(['resources/css/app.css', 'resources/js/app.js'])
-        <script src="https://cdn.tailwindcss.com"></script>
-    </head>
-    <body class="antialiased font-sans">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
 
-<div class="flex flex-col min-h-[100dvh] dark:bg-black dark:text-white">
-      <header class="px-4 lg:px-6 h-14 flex items-center">
-        <a class="flex items-center justify-center space-x-3" href="#">
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5" stroke="currentColor" class="w-8 h-10 text-purple-700 font-bold"><path stroke-linecap="round" stroke-linejoin="round" d="M2.25 21h19.5m-18-18v18m10.5-18v18m6-13.5V21M6.75 6.75h.75m-.75 3h.75m-.75 3h.75m3-6h.75m-.75 3h.75m-.75 3h.75M6.75 21v-3.375c0-.621.504-1.125 1.125-1.125h2.25c.621 0 1.125.504 1.125 1.125V21M3 3h12m-.75 4.5H21m-3.75 3.75h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Zm0 3h.008v.008h-.008v-.008Z" /></svg>
-          <span class="font-bold text-xl">WareHouse</span>
-        </a>
-        <nav class="ml-auto flex items-center space-x-7">
-          <a class="text-sm font-medium hover:underline underline-offset-4" href="#features">
-            Features
-        </a>
-        @auth
-        <a
-                  class="inline-flex h-7 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                  href="/dashboard"
-                >
-                  Dashboard
-        </a>
-        @else
-        <a
-                  class="inline-flex h-7 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                  href="{{route('register')}}"
-                >
-                  Get Started
-        </a>
-        @endauth
-        </nav>
-      </header>
-      <main class="flex-1">
-        <section class="w-full py-12 md:py-24 lg:py-32">
-          <div class="container px-4 md:px-6">
-            <div class="flex flex-col items-center space-y-4 text-center">
-              <div class="space-y-2">
-                <h1 class="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
-                  Efficient Inventory Management Simplified
-                </h1>
-                <p class="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Increase your sales and keep track of every unit with our powerful stock management, order fulfillment, and inventory control software
-                </p>
-              </div>
-              <div class="flex flex-col gap-2 min-[400px]:flex-row">
-                <a
-                  class="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                  href="{{route('register')}}"
-                >
-                  Get Started
-        </a>
-                <a
-                  class="inline-flex h-10 items-center justify-center rounded-md border border-gray-200 border-gray-200 bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                  href="#features"
-                >
-                  Overview
-        </a>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="w-full py-12 md:py-24 lg:py-32">
-          <div class="container px-4 md:px-6">
-            <div class="flex flex-col items-center justify-center space-y-4 text-center">
-              <div class="space-y-2">
-                <div class="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-black">
-                  New Features
-                </div>
-                <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">Faster iteration. More innovation.</h2>
-                <p class="max-w-[900px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                  Revolutionzing Inventory Management through Agile Iteration and Cutting-edge Innovations.
-                </p>
-              </div>
-            </div>
-            <div class="mx-auto grid max-w-5xl items-center gap-6 py-12 lg:grid-cols-2 lg:gap-12">
-              <div class="relative">
-              <img
-                alt="Image"
-                class="mx-auto aspect-video overflow-hidden rounded-xl object-cover object-center sm:w-full lg:order-last"
-                height="310"
-                src="/pc.jpeg"
-                width="550"
-              />
-              <img
-                alt="Image"
-                class="absolute bottom-0 right-0 h-[80%] rounded-xl"
-                src="/mobile.jpeg"
-              />
-              </div>
+    <!-- React + ReactDOM + Babel -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-              <div class="flex flex-col justify-center space-y-4" id="features">
-                <ul class="grid gap-6">
-                  <li>
-                    <div class="grid gap-1">
-                      <h3 class="text-xl font-bold">Manage orders</h3>
-                      <p class="text-gray-500 dark:text-gray-400">
-                        Manage your offline and online orders with our efficient order management system. Manage purchase and sales orders all in the comfort of our user-freindly Inventory Management System.
-                      </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="grid gap-1">
-                      <h3 class="text-xl font-bold">End-to-End Tracking</h3>
-                      <p class="text-gray-500 dark:text-gray-400">
-                        Enhancing Operational Efficiency with Comprehensive End to End Tracking Solutions.
-                      </p>
-                    </div>
-                  </li>
-                  <li>
-                    <div class="grid gap-1">
-                      <h3 class="text-xl font-bold">Insightful Visualisation</h3>
-                      <p class="text-gray-500 dark:text-gray-400">
-                        Harnessing Data to Drive Informed Decision-Making and Business Growth
-                      </p>
-                    </div>
-                  </li>
-                </ul>
-              </div>
-            </div>
-          </div>
-        </section>
-        <section class="w-full py-12 md:py-24 lg:py-32 border-t">
-          <div class="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2 lg:gap-10">
-            <div class="space-y-2">
-              <h2 class="text-3xl font-bold tracking-tighter md:text-4xl/tight">
-                Experience the workflow to optimize your business operations.
-              </h2>
-              <p class="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
-                Optimize your business operations through automation and data-driven insights.
-              </p>
-            </div>
-            <div class="flex flex-col gap-2 min-[400px]:flex-row lg:justify-end">
-              <a
-                class="inline-flex h-10 items-center justify-center rounded-md bg-gray-900 px-8 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                href="{{route('register')}}"
-              >
-                Get Started
-        </a>
-              <a
-                class="inline-flex h-10 items-center justify-center rounded-md border border-gray-200 border-gray-200 bg-white px-8 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                href="#features"
-              >
-                Learn more
-        </a>
-            </div>
-          </div>
-        </section>
-        <section class="w-full py-12 md:py-24 lg:py-32">
-          <div class="container grid items-center gap-6 px-4 md:px-6 lg:grid-cols-2">
-            <div class="space-y-4">
-              <div class="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-black">Performance</div>
-              <h2 class="lg:leading-tighter text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl xl:text-[3.4rem] 2xl:text-[3.75rem]">
-                Maximizing Efficiency
-              </h2>
-              <a
-                class="inline-flex h-9 items-center justify-center rounded-md bg-gray-900 px-4 py-2 text-sm font-medium text-gray-50 shadow transition-colors hover:bg-gray-900/90 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:bg-gray-50 dark:text-gray-900 dark:hover:bg-gray-50/90 dark:focus-visible:ring-gray-300"
-                href="{{route('register')}}"
-              >
-                Get Started
-        </a>
-            </div>
-            <div class="flex flex-col items-start space-y-4">
-              <div class="inline-block rounded-lg bg-gray-100 px-3 py-1 text-sm dark:bg-black">Scale</div>
-              <p class="mx-auto max-w-[700px] text-gray-500 md:text-xl/relaxed dark:text-gray-400">
-                Elevating Perfomance through Optimized Processes and Enhanced Resource Utilization.
-              </p>
-              <a
-                class="inline-flex h-9 items-center justify-center rounded-md border border-gray-200 border-gray-200 bg-white px-4 py-2 text-sm font-medium shadow-sm transition-colors hover:bg-gray-100 hover:text-gray-900 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-gray-950 disabled:pointer-events-none disabled:opacity-50 dark:border-gray-800 dark:border-gray-800 dark:bg-gray-950 dark:hover:bg-gray-800 dark:hover:text-gray-50 dark:focus-visible:ring-gray-300"
-                href="{{route('register')}}"
-              >
-                Get Started
-        </a>
-            </div>
-          </div>
-        </section>
-      </main>
-    </div>
-    </body>
+    <!-- Initialize Lucide -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            lucide.createIcons();
+        });
+    </script>
+
+    <style>
+        /* Optional: Ensure icons render correctly */
+        .lucide {
+            display: inline-block;
+            width: 1em;
+            height: 1em;
+            stroke-width: 2;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-gray-50">
+    <div id="root"></div>
+
+    <script type="text/babel">
+        // Define icons as components
+        const ArrowRight = () => React.createElement('i', { 'data-lucide': 'arrow-right', className: 'lucide w-5 h-5' });
+        const Mail = () => React.createElement('i', { 'data-lucide': 'mail', className: 'lucide w-5 h-5' });
+        const Warehouse = () => React.createElement('i', { 'data-lucide': 'warehouse', className: 'lucide w-6 h-6' });
+        const Package = () => React.createElement('i', { 'data-lucide': 'package', className: 'lucide w-6 h-6' });
+        const ShoppingCart = () => React.createElement('i', { 'data-lucide': 'shopping-cart', className: 'lucide w-6 h-6' });
+        const CreditCard = () => React.createElement('i', { 'data-lucide': 'credit-card', className: 'lucide w-6 h-6' });
+        const Settings = () => React.createElement('i', { 'data-lucide': 'settings', className: 'lucide w-6 h-6' });
+        const CheckCircle = () => React.createElement('i', { 'data-lucide': 'check-circle', className: 'lucide w-4 h-4 text-gray-400 mr-2 flex-shrink-0' });
+
+        function App() {
+            const features = [
+                {
+                    icon: React.createElement(Warehouse, null),
+                    title: "Warehouses",
+                    description: "Multi-warehouse management system"
+                },
+                {
+                    icon: React.createElement(Package, null),
+                    title: "Inventory",
+                    items: ["Items", "Item Groups", "Inventory Adjustments", "Transfer Orders"]
+                },
+                {
+                    icon: React.createElement(ShoppingCart, null),
+                    title: "Sales",
+                    items: ["Customers", "Quotations", "Sales Orders", "Packages", "Shipments", "Invoices", "Sales Receipts", "Payments Received", "Credit Notes", "Sales Returns"]
+                },
+                {
+                    icon: React.createElement(CreditCard, null),
+                    title: "Purchases",
+                    items: ["Vendors", "Purchase Orders", "Purchase Receives", "Bills", "Payments Made", "Vendor Credits", "Shipments"]
+                },
+                {
+                    icon: React.createElement(Settings, null),
+                    title: "Settings",
+                    items: ["Users"]
+                }
+            ];
+
+            const trustedBy = [
+                "Hermes Engineering",
+                "Wimusani Enterprise Limited",
+                "Kany Consulting Group (KCG)"
+            ];
+
+            const handleGetStarted = () => {
+                document.getElementById('contact')?.scrollIntoView({ behavior: 'smooth' });
+            };
+
+            const handleContact = () => {
+                window.location.href = 'mailto:suwilanjichipofya@inongo.space';
+            };
+
+            return React.createElement('div', { className: 'min-h-screen bg-gray-50' },
+
+                // Navigation
+                React.createElement('nav', { className: 'bg-white shadow-sm' },
+                    React.createElement('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' },
+                        React.createElement('div', { className: 'flex justify-between items-center h-16' },
+                            React.createElement('div', { className: 'flex items-center' },
+                                React.createElement(Warehouse, { className: 'w-8 h-8 text-gray-700 mr-3' }),
+                                React.createElement('span', { className: 'text-xl font-semibold text-gray-900' }, 'Supply Catena')
+                            ),
+                            React.createElement('div', { className: 'flex space-x-4' },
+                                React.createElement('button', {
+                                    onClick: handleContact,
+                                    className: 'text-gray-600 hover:text-gray-900 px-3 py-2 rounded-md text-sm font-medium transition-colors'
+                                }, 'Contact'),
+                                React.createElement('button', {
+                                    onClick: handleGetStarted,
+                                    className: 'bg-gray-900 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-gray-800 transition-colors'
+                                }, 'Get Started')
+                            )
+                        )
+                    )
+                ),
+
+                // Hero Section
+                React.createElement('section', { className: 'bg-white py-20' },
+                    React.createElement('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center' },
+                        React.createElement('h1', { className: 'text-4xl md:text-6xl font-bold text-gray-900 mb-6' },
+                            'Multi-Warehouse ERP System',
+                            React.createElement('span', { className: 'block text-gray-600 text-2xl md:text-3xl mt-2 font-normal' }, 'for Industrial Efficiency')
+                        ),
+                        React.createElement('p', { className: 'text-xl text-gray-600 mb-8 max-w-3xl mx-auto' },
+                            'Streamline your operations with comprehensive inventory management, sales tracking, and procurement processes across multiple warehouses.'
+                        ),
+                        React.createElement('div', { className: 'flex flex-col sm:flex-row gap-4 justify-center' },
+                            React.createElement('button', {
+                                onClick: handleGetStarted,
+                                className: 'bg-gray-900 text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-gray-800 transition-colors flex items-center justify-center gap-2'
+                            }, 'Get Started', React.createElement(ArrowRight, null)),
+                            React.createElement('button', {
+                                onClick: handleContact,
+                                className: 'border border-gray-300 text-gray-700 px-8 py-3 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors flex items-center justify-center gap-2'
+                            }, React.createElement(Mail, null), 'Contact Us')
+                        )
+                    )
+                ),
+
+                // Features Section
+                React.createElement('section', { className: 'py-20 bg-gray-50' },
+                    React.createElement('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8' },
+                        React.createElement('h2', { className: 'text-3xl font-bold text-gray-900 text-center mb-12' }, 'Complete ERP Solution'),
+                        React.createElement('div', { className: 'grid md:grid-cols-2 lg:grid-cols-3 gap-8' },
+                            features.map((feature, index) =>
+                                React.createElement('div', {
+                                    key: index,
+                                    className: 'bg-white p-6 rounded-lg shadow-sm hover:shadow-md transition-shadow'
+                                },
+                                    React.createElement('div', { className: 'flex items-center mb-4' },
+                                        React.createElement('div', { className: 'text-gray-700 mr-3' }, feature.icon),
+                                        React.createElement('h3', { className: 'text-xl font-semibold text-gray-900' }, feature.title)
+                                    ),
+                                    feature.description && React.createElement('p', { className: 'text-gray-600' }, feature.description),
+                                    feature.items && React.createElement('ul', { className: 'space-y-2' },
+                                        feature.items.slice(0, 4).map((item, itemIndex) =>
+                                            React.createElement('li', { key: itemIndex, className: 'flex items-center text-sm text-gray-600' },
+                                                React.createElement(CheckCircle, null),
+                                                item
+                                            )
+                                        ),
+                                        feature.items.length > 4 && React.createElement('li', { className: 'text-sm text-gray-500 ml-6' },
+                                            `+${feature.items.length - 4} more features`
+                                        )
+                                    )
+                                )
+                            )
+                        )
+                    )
+                ),
+
+                // Trusted By Section
+                React.createElement('section', { className: 'py-16 bg-white' },
+                    React.createElement('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center' },
+                        React.createElement('h3', { className: 'text-lg font-medium text-gray-500 mb-8' }, 'Trusted by leading organizations'),
+                        React.createElement('div', { className: 'grid md:grid-cols-3 gap-8' },
+                            trustedBy.map((company, index) =>
+                                React.createElement('div', { key: index, className: 'text-gray-700 font-medium text-lg' }, company)
+                            )
+                        )
+                    )
+                ),
+
+                // Contact Section
+                React.createElement('section', { id: 'contact', className: 'py-20 bg-gray-900 text-white' },
+                    React.createElement('div', { className: 'max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center' },
+                        React.createElement('h2', { className: 'text-3xl font-bold mb-6' }, 'Ready to optimize your operations?'),
+                        React.createElement('p', { className: 'text-xl text-gray-300 mb-8' },
+                            'Get started with Supply Catena and transform your warehouse management today.'
+                        ),
+                        React.createElement('div', { className: 'flex flex-col sm:flex-row gap-4 justify-center' },
+                            React.createElement('button', {
+                                onClick: handleContact,
+                                className: 'bg-white text-gray-900 px-8 py-3 rounded-lg text-lg font-medium hover:bg-gray-100 transition-colors flex items-center justify-center gap-2'
+                            }, React.createElement(Mail, null), 'Contact Sales'),
+                            React.createElement('button', {
+                                onClick: handleGetStarted,
+                                className: 'border border-white text-white px-8 py-3 rounded-lg text-lg font-medium hover:bg-white hover:text-gray-900 transition-colors'
+                            }, 'Get Started')
+                        )
+                    )
+                ),
+
+                // Footer
+                React.createElement('footer', { className: 'bg-white py-8 border-t border-gray-200' },
+                    React.createElement('div', { className: 'max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center' },
+                        React.createElement('div', { className: 'flex items-center justify-center mb-4' },
+                            React.createElement(Warehouse, { className: 'w-6 h-6 text-gray-700 mr-2' }),
+                            React.createElement('span', { className: 'text-lg font-semibold text-gray-900' }, 'Supply Catena')
+                        ),
+                        React.createElement('p', { className: 'text-gray-600' }, 'Multi-Warehouse ERP System for Industrial Efficiency')
+                    )
+                )
+            );
+        }
+
+        const container = document.getElementById('root');
+        const root = ReactDOM.createRoot(container);
+        root.render(React.createElement(App));
+    </script>
+</body>
 </html>
