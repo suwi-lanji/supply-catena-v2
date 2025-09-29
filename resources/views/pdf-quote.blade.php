@@ -200,10 +200,10 @@
                             <td class="text-center">{{ $itemModel->description ?? '' }}</td>
                             <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
                             <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
-                            <td class="text-center">{{ number_format($item['rate'], 2) }}</td>
-                            <td class="text-center">{{ number_format($item['rate'], 2) }}</td>
+                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
+                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
                             <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
-                            <td class="text-center">{{ number_format($item['amount'], 2) }}</td>
+                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
                         </tr>
                     @else
                         <tr>
@@ -230,7 +230,7 @@ foreach ($record->items as $item) {
             <table class="totals-table">
                 <tr>
                     <td>SUB TOTAL</td>
-                    <td style="text-align:right;">{{ number_format($record->sub_total, 2) }}</td>
+                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
                 </tr>
                 <tr>
                     <td>DISCOUNT %</td>
@@ -238,15 +238,15 @@ foreach ($record->items as $item) {
                 </tr>
                 <tr>
                     <td>VAT @ 16%</td>
-                    <td style="text-align:right;">{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
+                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
                 </tr>
                 <tr>
                     <td>SUB TOTAL (INCL)</td>
-                    <td style="text-align:right;">{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
+                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
                 </tr>
                 <tr>
                     <td>GRAND TOTAL</td>
-                    <td style="text-align:right;">{{ number_format($record->total, 2) }}</td>
+                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->total, 2) }}</td>
                 </tr>
             </table>
         </div>
