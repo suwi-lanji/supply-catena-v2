@@ -1,323 +1,241 @@
 @php
 $customer = \App\Models\Customer::where('id', $record->customer_id)->first();
 $tenant = \Filament\Facades\Filament::getTenant();
-$fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
+$fullpath = storage_path("app/public/" . str_replace("/content/", "/", $tenant->logo));
+$terms = \App\Models\PaymentTerm::find($record->payment_term_id);
+$vat = 0;
+$discount = 0;
 @endphp
+
 <style>
-    /* ... all your existing styles remain here ... */
     body {
         font-family: "Figtree", sans-serif;
         margin: 0;
         padding: 0;
         font-size: 0.7em;
+        color: #000;
+        background-color: #fff;
     }
-
+    
     .invoice {
-        box-sizing: border-box;
+        padding: 2rem;
+        color: #000;
+        background-color: #fff;
     }
-
-    .invoice-header, .invoice-footer {
-        margin-bottom: 50px;
-    }
-
-    .invoice-header-left img {
-        width: 150px;
-        height: 150px;
-        border-radius: 50%;
-    }
-
-    .invoice-header-right h5 {
-        margin: 0;
-    }
-
-    .invoice-header-right address, .invoice-footer p, .invoice-footer h5 {
-        margin: 0;
-    }
-
-    .invoice-body {
-        margin-bottom: 50px;
-    }
-    .clearfix::after {
-            content: "";
-            display: table;
-            clear: both;
-        }
-        .left, .right {
-            box-sizing: border-box;
-        }
-        .left {
-            float: left;
-            width: 45%;
-        }
-        .right {
-            float: right;
-            width: 45%;
-            text-align: right;
-        }
-    .invoice-table {
-        width: 48%;
-        border-collapse: collapse;
-    }
-
-    .invoice-table th, .invoice-table td {
-        border: 1px solid #ccc;
-        padding: 3px;
-        text-align: left;
-    }
-
-    .invoice-columns {
-        display: flex;
-        justify-content: space-between;
-    }
-
-    .terms-column,
-    .total-column {
-        width: 48%;
-        padding-top: 70px;padding-bottom: 10px;
-    }
-
-    ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    .table-sm .action-icon {
-        font-size: 1rem;
-    }
-
-    .table-sm>:not(caption)>*>* {
-        padding: .2rem .2rem;
-    }
-
-    .bg-light-subtle {
-        background-color: #fcfcfd !important;
-    }
-
-    .border-light {
-        --ct-border-opacity: 1;
-        border-color: rgba(242, 242, 247, 1) !important;
-    }
-
-    .mb-0 {
-        margin-bottom: 0 !important;
-    }
-
-    .mt-3 {
-        margin-top: 1.5rem !important;
-    }
-
-    .table-dark {
-        color: #fff;
-        background-color: #212529;
-        border-color: #373b3e;
-    }
-
-    .h5, h5 {
-        font-size: .91rem;
-    }
-
-    .table-centered td, .table-centered th {
-        vertical-align: middle !important;
-    }
-
-    .table-borderless>:not(caption)>*>* {
-        border-bottom-width: 0;
-    }
-
-    tbody, td, tfoot, th, thead, tr {
-        border-color: inherit;
-        border-style: solid;
-        border-width: 0;
-    }
-
+    
+    .flex { display: flex; }
+    .justify-between { justify-content: space-between; }
+    .flex-row { flex-direction: row; }
+    .flex-grow { flex-grow: 1; }
+    .items-end { align-items: flex-end; }
+    .mb-12 { margin-bottom: 3rem; }
+    .mb-8 { margin-bottom: 2rem; }
+    .mb-5 { margin-bottom: 1.25rem; }
+    .ml-20 { margin-left: 5rem; }
+    .mr-3 { margin-right: 0.75rem; }
+    .mt-2 { margin-top: 0.5rem; }
+    .p-8 { padding: 2rem; }
+    .text-center { text-align: center; }
+    .text-right { text-align: right; }
+    .text-left { text-align: left; }
+    .text-xl { font-size: 1.25rem; }
+    .text-sm { font-size: 0.875rem; }
+    .font-semibold { font-weight: 600; }
+    .w-full { width: 100%; }
+    .w-1\/2 { width: 50%; }
+    .h-fit { height: fit-content; }
+    
     table {
         border-collapse: collapse;
-    }
-
-    .table {
         width: 100%;
-        margin-bottom: 1.5rem;
-        color: var(--ct-table-color);
-        vertical-align: top;
-        border-color: var(--ct-table-border-color);
     }
-    th {
-      text-align:left;
+    
+    .table-auto { table-layout: auto; }
+    
+    .border { border-width: 1px; }
+    .border-gray-300 { border-color: #d1d5db; }
+    
+    .divide-x > * + * { border-left: 1px solid #d1d5db; }
+    .divide-y > * + * { border-top: 1px solid #d1d5db; }
+    
+    th, td {
+        padding: 0.25rem 0.5rem;
+        border: 1px solid #d1d5db;
     }
+    
+    .bg-gray-100 { background-color: #f3f4f6; }
+    .bg-gray-800 { background-color: #1f2937; color: #fff; }
+    
+    address { font-style: normal; }
 </style>
+
 <div class="invoice">
-    <div class="invoice-header clearfix">
-        <div class="left">
-            <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" style="width: 150px; height: 150px;display:inline-block;"/>
+    <div class="flex justify-between mb-12">
+        <div class="flex flex-row">
+            <img src="data:image/png;base64,{{ base64_encode(file_get_contents($fullpath)) }}" alt="Logo" class="mr-3" style="width:150px;height:150px"/>
+            <div class="">
+                <h5 class="font-semibold text-xl">{{ $tenant->portal_name }}</h5>
+                <address class="mt-2 text-sm">
+                    <span>{{ $tenant->street_1 }}</span><br/>
+                    <span>{{ $tenant->city }}, {{ $tenant->province }}, {{ $tenant->business_location }}</span><br/>
+                </address>
+            </div>
         </div>
-        <div class="right">
-            <h5>{{ $tenant->portal_name }}</h5>
-            <address>
-                <span>{{ $tenant->email }}</span><br/>
-                <span>{{ $tenant->street_1 }}</span><br/>
-                <span>{{ $tenant->city }}, {{ $tenant->province }}, {{ $tenant->business_location }}</span><br/>
-                <abbr title="Phone">Phone:</abbr> <span>{{ $tenant->phone }}</span>
-            </address>
-        </div>
-    </div>
-
-    <div class="invoice-tables clearfix">
-        <table class="invoice-table left">
-            <tbody>
-                <tr>
-                    <th class="text-nowrap">TPIN/Account No.</th>
-                    <td>{{ $customer['tpin'] }}</td>
-                </tr>
-                <tr>
-                    <td colspan="2">
-                        <address>
-                            <span>{{ $customer['company_display_name'] }}</span><br/>
-                            <span>{{ $customer['billing_street_1'] }}, {{ $customer['billing_city'] }}, {{ $customer['billing_country'] }}</span><br/>
-                            <span>{{ $customer['billing_city'] }}</span><br/>
-                            <abbr title="Phone">Phone:</abbr> <span>{{ $customer['phone'] }}</span>
-                        </address>
-                    </td>
-                </tr>
-                <tr>
-                    <th class="text-nowrap">Contact No.</th>
-                    <td>{{ $customer['phone'] }}</td>
-                </tr>
-                <tr>
-                    <th class="text-nowrap">Email Address</th>
-                    <td>{{ $customer['email'] }}</td>
-                </tr>
-                <tr>
-                    <th class="text-nowrap">VAT No.</th>
-                    <td>N/A</td>
-                </tr>
-            </tbody>
-        </table>
-        <table class="invoice-table right">
-            <thead class="table-dark">
-                <tr>
-                    <td colspan="2" class="text-center">Quotation</td>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>Quotation No.</td>
-                    <td>{{$record->quotation_number}}</td>
-                </tr>
-                <tr>
-                    <td>Quotation Date</td>
-                    <td>{{$record->quotation_date}}</td>
-                </tr>
-                <tr>
-
-                    <td>Prepared By.</td>
-                    <td>
-                      @php
-                      echo \App\Models\SalesPerson::where('id', $record->sales_person_id)->pluck('email')->first();
-                      @endphp
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="invoice-body">
-        <table class="table table-sm table-centered table-hover table-borderless mb-0 mt-3">
-            <thead class="border-top border-bottom border-light">
-                <tr>
-                    <th>Qty</th>
-                    <th>Part No.</th>
-                    <th>Description</th>
-                    <th>Condition</th>
-                    <th>Weight</th>
-                    <th>Lead Time</th>
-                    <th>Unit Price</th>
-                    <th>Discount</th>
-                    <th>Amount</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach ($record->items as $index => $item)
-                @php
-                    // Find the item, but handle cases where it might not exist
-                    $itemModel = \App\Models\Item::find($item['item']);
-                @endphp
-
-                @if ($itemModel)
-                <tr>
-                    <td>{{ Arr::get($item, 'quantity', 0) }}</td>
-                    <td>{{ $itemModel->part_number ?? $itemModel->name }}</td>
-                    <td>{{ $itemModel->description }}</td>
-                    <td>{{ $itemModel->condition }}</td>
-                    <td>{{ $item['weight'] }}</td>
-                    <td>{{ $item['lead_time'] }}</td>
-                    <td>{{ $item['rate'] }}</td>
-                    <td>{{ Arr::get($item, 'discount', 0) }}%</td>
-                    <td>{{ $item['amount'] }}</td>
-                </tr>
-                @else
-                {{-- This row will be rendered if the item is not found. --}}
-                {{-- It ensures the layout doesn't break and provides a clear error message. --}}
-                <tr>
-                    <td colspan="9" style="text-align: center; color: red;">
-                        Error: Item with ID '{{ $item['item'] }}' {{json_encode($item)}}could not be found. It may have been deleted.
-                    </td>
-                </tr>
-                @endif
-                @endforeach
-                <tr>
-                    <td colspan="5"></td>
-                    @php
-                    $totalWeight = array_reduce($record->items, function($carry, $item) {
-                        return $carry + $item['weight'];
-                    }, 0);
-                    @endphp
-                    <td><b>Total Weight: {{$totalWeight}}</b></td>
-                    <td colspan="3"></td>
-                </tr>
-            </tbody>
-        </table>
-    </div>
-
-    <div class="invoice-columns clearfix">
-        <div class="terms-column left">
-            <h4>Terms and Conditions</h4>
-            <ul>
-                @foreach ($record->terms_and_conditions as $index => $t_and_c)
-                <li><small>{{ $t_and_c['terms_and_conditions'] }}</small></li>
-                @endforeach
-            </ul>
-        </div>
-        <div class="invoice-footer right">
-            @php
-            $totalVat = array_reduce($record->items, function($carry, $item) {
-                return $carry + Arr::get($item, 'tax', 0);
-            }, 0);
-            $totalDiscount = array_reduce($record->items, function($carry, $item) {
-                return $carry + Arr::get($item, 'discount', 0);
-            }, 0);
-            $totalDiscount += floatval($record->discount);
-            @endphp
-            <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }}</span></p>
-            <p><b>Discount ({{$totalDiscount}}%):</b> <span class="fw-normal text-body">{{$totalDiscount}}%</span></p>
-            <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
-            <h5>{{$tenant->currency_symbol}}{{$record->total}}  {{$tenant->currency_code}}</h5>
-        </div>
-    </div>
-
-    <div style="margin-bottom: 50px">
-        @php
-        $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
-        @endphp
-        <h3>Payment Term: {{ $terms->name }}</h3>
-        <p>Please make payment by check or bank transfer to the following account:</p>
-        <div>
-            <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
+        <div class="text-left">
+            <h5 class="font-semibold text-xl text-center">QUOTATION</h5>
             <p><strong>Bank:</strong> {{ $terms->bank }}</p>
             <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
             <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
             <p><strong>Branch:</strong> {{ $terms->branch }}</p>
             <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
             <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+        </div>
+    </div>
+
+    <!-- Delivery Address Table -->
+    <div class="flex flex-row justify-between mb-5">
+        <table class="table-auto flex-grow border border-gray-300">
+            <thead>
+                <tr>
+                    <th colspan="2" class="bg-gray-100 text-center">DELIVERY ADDRESS</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td colspan="2" class="">
+                        <address>
+                            <span>{{ $customer->company_display_name }}</span><br/>
+                            <span>{{ $customer->billing_street_1 }}, {{ $customer->billing_city }}, {{ $customer->billing_country }}</span><br/>
+                            <span>{{ $customer->billing_city }}</span><br/>
+                            <span>Phone: {{ $customer->phone }}</span>
+                        </address>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <div class="ml-20">
+            <p>OFFICE CELL: {{ $tenant->phone }}</p>
+            <p>EMAIL: {{ $tenant->email }}</p>
+        </div>
+    </div>
+
+    <!-- Quotation Details Table -->
+    <div class="mb-8">
+        <table class="table-auto w-full border border-gray-300">
+            <thead class="">
+                <tr class="divide-x">
+                    <th class="bg-gray-100">VALID DATE</th>
+                    <th class="bg-gray-100">CLIENT</th>
+                    <th class="bg-gray-100">REPORT NO.</th>
+                    <th class="bg-gray-100">INCO TERM</th>
+                    <th class="bg-gray-100">STOCK IN</th>
+                    <th class="bg-gray-100">LEAD TIME</th>
+                    <th class="bg-gray-100">PAYMENT TERM</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="divide-x">
+                    <td class="text-center">
+                        {{ date("Y/m/d", strtotime($record->quotation_date)) }} -
+                        {{ $record->expected_shippment_date != null ? date("Y/m/d", strtotime($record->expected_shippment_date)) : "" }}
+                    </td>
+                    <td class="text-center">{{ $customer->company_display_name }}</td>
+                    <td class="text-center">{{ $record->report_number }}</td>
+                    <td class="text-center">{{ $record->inco_term}}</td>
+                    <td class="text-center">{{ $record->stock_in }}</td>
+                    <td class="text-center">{{ $record->lead_time }}</td>
+                    <td class="text-center">{{ $record->payment_time }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- Invoice Items Table -->
+    <div class="mb-12">
+        <table class="table-auto w-full text-sm border border-gray-300">
+            <thead class="bg-gray-800">
+                <tr class="divide-x">
+                    <th class="bg-gray-100">ITEM</th>
+                    <th class="bg-gray-100">MATERIAL NO.</th>
+                    <th class="bg-gray-100">PART NO.</th>
+                    <th class="bg-gray-100">DESCRIPTION</th>
+                    <th class="bg-gray-100">LEAD TIME</th>
+                    <th class="bg-gray-100">QTY</th>
+                    <th class="bg-gray-100">UNIT PRICE (EXCL)</th>
+                    <th class="bg-gray-100">UNIT PRICE (INCL)</th>
+                    <th class="bg-gray-100">DISC %</th>
+                    <th class="bg-gray-100">TOTAL PRICE (EXCL)</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($record->items as $index => $item)
+                @php
+                    $itemModel = \App\Models\Item::find($item['item']);
+                    $vat += $item["tax"] ?? 0;
+                    $discount += $item["discount"] ?? 0;
+                @endphp
+                @if ($itemModel)
+                <tr class="divide-x">
+                    <td class="text-center">{{ $index + 1 }}</td>
+                    <td class="text-center">{{ $item["sku"] ?? "N/A" }}</td>
+                    <td class="text-center">{{ $itemModel->part_number ?? "N/A" }}</td>
+                    <td class="text-center">{{ $itemModel->description ?? "N/A" }}</td>
+                    <td class="text-center">{{ $item["lead_time"] ?? "N/A" }}</td>
+                    <td class="text-center">{{ $item["quantity"] ?? "0" }}</td>
+                    <td class="text-center">{{ number_format($item["rate"], 2) }}</td>
+                    <td class="text-center">{{ number_format($item["rate"], 2) }}</td>
+                    <td class="text-center">{{ $item["discount"] ?? "0" }}%</td>
+                    <td class="text-center">{{ number_format($item["amount"], 2) }}</td>
+                </tr>
+                @else
+                <tr class="divide-x">
+                    <td colspan="10" style="text-align: center; color: red;">
+                        Error: Item with ID '{{ $item['item'] }}' could not be found. It may have been deleted.
+                    </td>
+                </tr>
+                @endif
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Quotation Number and Totals -->
+        <div class="flex justify-between items-end">
+            <table class="table-auto border border-gray-300 h-fit">
+                <thead>
+                    <tr>
+                        <th class="bg-gray-100 px-10">QUOTATION NO.</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">{{ $record->quotation_number }}</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="table-auto w-1/2 text-right border border-gray-300">
+                <tbody class="divide-y">
+                    <tr class="text-left">
+                        <td class="bg-gray-100 text-center">SUB TOTAL</td>
+                        <td class="text-right">{{ number_format($record->sub_total, 2) }}</td>
+                    </tr>
+                    <tr class="text-left">
+                        <td class="bg-gray-100 text-center">DISCOUNT %</td>
+                        <td class="text-right">{{ $record->discount == null ? number_format($discount, 2) : number_format($record->discount, 2) }}</td>
+                    </tr>
+                    <tr class="text-left">
+                        <td class="bg-gray-100 text-center">VAT @ {{ $vat }}%</td>
+                        <td class="text-right">{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
+                    </tr>
+                    <tr class="text-left">
+                        <td class="bg-gray-100 text-center">SUB TOTAL (INCL)</td>
+                        <td class="text-right">{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - $discount, 2) }}</td>
+                    </tr>
+                    <tr class="text-left">
+                        <td class="font-semibold bg-gray-100 text-center">GRAND TOTAL</td>
+                        <td class="font-semibold text-right">{{ number_format($record->total, 2) }}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
