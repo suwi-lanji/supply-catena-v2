@@ -86,8 +86,8 @@ class PurchaseReceivesResource extends Resource
                                     ->required(),
                             ])
                             ->colStyles([
-                                                                    'item' => 'width: 200px',
-                                                                ]),
+                                'item' => 'width: 200px',
+                            ]),
                         Forms\Components\Textarea::make('notes'),
                     ]),
             ]);
@@ -100,8 +100,9 @@ class PurchaseReceivesResource extends Resource
                 Tables\Columns\TextColumn::make('vendor.vendor_display_name')
                     ->searchable(),
                 Tables\Columns\TextColumn::make('purchase_order_number')
-                    ->state(function($record) {
+                    ->state(function ($record) {
                         $order = PurchaseOrder::where('id', $record->purchase_order_number)->get()->first();
+
                         return $order->purchase_order_number;
                     })
                     ->searchable(),

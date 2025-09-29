@@ -239,11 +239,9 @@ class VendorCreditResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('credit_note_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('order_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('amount_due')
                     ->numeric()
                     ->sortable(),

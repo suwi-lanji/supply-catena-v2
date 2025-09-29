@@ -9,7 +9,6 @@ use App\Models\Item;
 use App\Models\Packages;
 use App\Models\SalesOrder;
 use App\Models\Shipments;
-use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms;
@@ -97,18 +96,7 @@ class ViewQuotation extends ViewRecord
                 ->color('default')
                 ->icon('heroicon-s-arrow-down-tray')
                 ->action(function (Model $record) {
-                    return response()->streamDownload(function () use ($record) {
-                        echo Pdf::loadView('pdf-quotation', ['record' => $record, 'tenant' => Filament::getTenant()])->setOptions([
-                            'isPhpEnabled' => true,
-
-                            'isHtml5ParserEnabled' => true,
-                            'DOMPDF_ENABLE_HTML5PARSER' => true,
-                            'chroot' => public_path(),
-                            'fontDir' => storage_path('fonts/'),
-                            'isRemoteEnabled' => true,
-                            'css' => file_get_contents(public_path('css/purchase-order.css')),
-                        ])->stream();
-                    }, $record->quotation_number.'.pdf');
+                    return redirect('/quotation/'.\Filament\Facades\Filament::getTenant()->id.'/'.$record->id);
                 }),
         ];
     }

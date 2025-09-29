@@ -39,6 +39,7 @@ class CustomerResource extends Resource
                         Forms\Components\TextInput::make('company_display_name')
                             ->label('Display Name')
                             ->required(),
+                        Forms\Components\TextInput::make('vendor_number'),
                         Forms\Components\TextInput::make('email')
                             ->email()
                             ->required(),

@@ -55,9 +55,9 @@ class SalesReturnsResource extends Resource
                             ->numeric(),
                     ])
                     ->colStyles([
-                                                    'item' => 'width:170px',
-                                                    'default' => 'margin-bottom: 10px',
-                                                ])
+                        'item' => 'width:170px',
+                        'default' => 'margin-bottom: 10px',
+                    ])
                     ->reorderable()
                     ->cloneable()
                     ->collapsible()

@@ -48,7 +48,7 @@ class BillResource extends Resource
                     ->required(),
                 Forms\Components\TextInput::make('bill_number')
                     ->readonly()
-                    ->default(fn (): string => 'BL-' . str_pad(Bill::where('team_id', Filament::getTenant()->id)->count() + 1, 5, 0, STR_PAD_LEFT))
+                    ->default(fn (): string => 'BL-'.str_pad(Bill::where('team_id', Filament::getTenant()->id)->count() + 1, 5, 0, STR_PAD_LEFT))
                     ->required(),
                 Forms\Components\Select::make('order_number')
                     ->options(function ($get): array {
@@ -203,9 +203,9 @@ class BillResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('item')
                             ->options(Item::where('team_id', Filament::getTenant()->id)
-                            ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
-                            ->get()
-                            ->pluck('part_number_or_name', 'id')
+                                ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
+                                ->get()
+                                ->pluck('part_number_or_name', 'id')
                             )
                             ->preload()
                             ->searchable()

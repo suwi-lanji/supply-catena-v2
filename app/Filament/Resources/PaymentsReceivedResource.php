@@ -70,7 +70,7 @@ class PaymentsReceivedResource extends Resource
                                 return PaymentsReceived::where('team_id', Filament::getTenant()->id)->count() + 1;
                             })
                             ->required(),
-                        Forms\Components\DatePicker::make('payment_date')   
+                        Forms\Components\DatePicker::make('payment_date')
                             ->native(false)->default(now())
                             ->required(),
                         Forms\Components\TextInput::make('amount_received')
@@ -134,8 +134,7 @@ class PaymentsReceivedResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('payment_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('payment_date')
                     ->date()
                     ->sortable(),
@@ -146,8 +145,7 @@ class PaymentsReceivedResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('reference_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

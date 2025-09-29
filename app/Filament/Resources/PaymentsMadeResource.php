@@ -140,8 +140,7 @@ class PaymentsMadeResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('payment_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('payment_date')
                     ->date()
                     ->sortable(),
@@ -149,8 +148,7 @@ class PaymentsMadeResource extends Resource
                     ->numeric()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('reference_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

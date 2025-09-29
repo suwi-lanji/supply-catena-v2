@@ -43,10 +43,10 @@ class CreditNotesResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('credit_note_number')
-                            ->default('DN-' . str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, "0", STR_PAD_LEFT))
+                            ->default('DN-'.str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, '0', STR_PAD_LEFT))
                             ->required(),
                         Forms\Components\TextInput::make('reference_number')
-                            ->default('RN-'. str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, '0', STR_PAD_LEFT))
+                            ->default('RN-'.str_pad(CreditNotes::where('team_id', Filament::getTenant()->id)->count() + 1, 5, '0', STR_PAD_LEFT))
                             ->required(),
 
                         Forms\Components\DatePicker::make('credit_note_date')
@@ -193,11 +193,9 @@ class CreditNotesResource extends Resource
                     ->date()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('credit_note_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('reference_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('amount_due')
                     ->numeric()
                     ->sortable(),

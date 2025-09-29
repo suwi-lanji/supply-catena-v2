@@ -17,7 +17,7 @@ class Team extends Model implements HasAvatar
 
     public function getFilamentAvatarUrl(): ?string
     {
-        return asset('storage/' . $this->logo);
+        return asset('storage/'.$this->logo);
     }
 
     public function members(): BelongsToMany

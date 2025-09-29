@@ -99,20 +99,20 @@ class InventoryAdjustmentResource extends Resource
                 Tables\Columns\TextColumn::make('date')
                     ->dateTime(),
                 Tables\Columns\TextColumn::make('mode_of_adjustment')
-                ->state(function ($record) {
-                    switch($record->mode_of_adjustment) {
-                    case 0:
-                        return 'Quantity';
-                    default:
-                        return 'Value';
-                }
-                })
-                ->badge()
-                ->searchable(),
+                    ->state(function ($record) {
+                        switch ($record->mode_of_adjustment) {
+                            case 0:
+                                return 'Quantity';
+                            default:
+                                return 'Value';
+                        }
+                    })
+                    ->badge()
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('nmber_of_items affected')
-                ->state(fn($record) => count($record->items))
-                ->badge()
-                ->color('gray')
+                    ->state(fn ($record) => count($record->items))
+                    ->badge()
+                    ->color('gray'),
 
             ])
             ->filters([

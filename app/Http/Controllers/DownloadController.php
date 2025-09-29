@@ -20,7 +20,7 @@ class DownloadController extends Controller
     public function download_quotation(Team $tenant, Quotation $record)
     {
         return pdf()
-            ->view('pdf-quotation', ['record' => $record, 'tenant' => $tenant])
+            ->view('pdf-quote', ['record' => $record, 'tenant' => $tenant])
             ->name($record->quotation_number.'.pdf');
     }
 }

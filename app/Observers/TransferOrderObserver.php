@@ -3,8 +3,9 @@
 namespace App\Observers;
 
 use App\Models\TransferOrder;
-use Illuminate\Support\Facades\DB;
 use Filament\Facades\Filament;
+use Illuminate\Support\Facades\DB;
+
 class TransferOrderObserver
 {
     /**
@@ -31,7 +32,7 @@ class TransferOrderObserver
                         'quantity' => $item['transfer_quantity'],
                         'price_adjustment' => $total_costs,
                         'cost_adjustment' => $total_costs,
-                        'team_id' => Filament::getTenant()->id
+                        'team_id' => Filament::getTenant()->id,
                     ]);
                 }
 

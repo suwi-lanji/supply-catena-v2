@@ -12,10 +12,7 @@ class TeamObserver
     /**
      * Handle the Team "created" event.
      */
-    public function creating(Team $team): void
-    {
-        
-    }
+    public function creating(Team $team): void {}
 
     public function created(Team $team): void
     {
@@ -28,9 +25,7 @@ class TeamObserver
         }
     }
 
-    public function updating(Team $team): void
-    {
-    }
+    public function updating(Team $team): void {}
 
     /**
      * Handle the Team "updated" event.

@@ -160,13 +160,14 @@ class ViewPurchaseOrder extends ViewRecord
                     Forms\Components\Select::make('format')
                         ->options([
                             'default' => 'Default',
-                            'template_1' => 'Template 1'
+                            'template_1' => 'Template 1',
                         ])
-                        ->native(false)
+                        ->native(false),
                 ])
                 ->action(function (array $data, Model $record) {
 
                     $template = $data['format'] === 'default' ? 'pdf' : 'pdf-andrich-purchase-order';
+
                     return response()->streamDownload(function () use ($record, $template) {
                         echo Pdf::loadView($template, ['record' => $record, 'tenant' => Filament::getTenant()])->setOptions([
                             'isPhpEnabled' => true,

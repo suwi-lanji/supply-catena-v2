@@ -3,19 +3,13 @@
 namespace App\Filament\Resources\BillResource\Pages;
 
 use App\Filament\Resources\BillResource;
-use App\Mail\BillMail;
-use App\Models\Template;
-use App\Models\Vendor;
 use App\Models\VendorCredit;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Filament\Actions;
 use Filament\Facades\Filament;
 use Filament\Forms;
-use Filament\Notifications\Notification;
 use Filament\Resources\Pages\ViewRecord;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Mail\Mailables\Attachment;
-use Illuminate\Support\Facades\Mail;
 
 class ViewBillResource extends ViewRecord
 {

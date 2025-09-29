@@ -64,8 +64,7 @@ class PurchaseOrderShipmentResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('shipment_order_number')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('shipment_date')
                     ->date()
                     ->sortable(),

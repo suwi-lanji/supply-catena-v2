@@ -195,9 +195,9 @@ class SalesOrdersResource extends Resource
 
                         Forms\Components\Select::make('item')
                             ->options(Item::where('team_id', Filament::getTenant()->id)
-                            ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
-                            ->get()
-                            ->pluck('part_number_or_name', 'id')
+                                ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
+                                ->get()
+                                ->pluck('part_number_or_name', 'id')
                             )
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($get, $set) {

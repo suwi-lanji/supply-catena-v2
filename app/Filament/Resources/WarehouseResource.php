@@ -51,11 +51,9 @@ class WarehouseResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('name')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('phone')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()

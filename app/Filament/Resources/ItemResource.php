@@ -59,7 +59,7 @@ class ItemResource extends Resource
                             ->required(),
                         Forms\Components\TextInput::make('part_number')->unique(ignoreRecord: true)
                             ->validationMessages([
-                            'unique' => 'The :attribute has already been registered.',
+                                'unique' => 'The :attribute has already been registered.',
                             ]),
                         Forms\Components\Checkbox::make('returnable_item'),
                         Forms\Components\Textarea::make('description'),

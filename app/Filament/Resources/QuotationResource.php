@@ -40,7 +40,7 @@ class QuotationResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('quotation_number')
-                            ->default('QO-0000'.Quotation::where('team_id', Filament::getTenant()->id)->count() + 1),
+                            ->default(fn (): string => 'QO-2304'.str_pad(Quotation::where('team_id', Filament::getTenant()->id)->count() + 1, 3, 0, STR_PAD_LEFT)),
                         Forms\Components\TextInput::make('reference_number')
                             ->default('RN-0000'.Quotation::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\TextInput::make('report_number'),
@@ -173,7 +173,7 @@ class QuotationResource extends Resource
                                     $item['tax'] = $data['tax'];
                                     $total = floatval($item['quantity']) * floatval($item['rate']);
                                     if (floatval($item['tax']) > 0) {
-                                        $total -= (floatval($item['tax']) / 100 * $total);
+                                        $total += (floatval($item['tax']) / 100 * $total);
                                     }
                                     $item['amount'] = $total;
                                     array_push($new_items, $item);
@@ -203,9 +203,9 @@ class QuotationResource extends Resource
                     ->schema([
                         Forms\Components\Select::make('item')
                             ->options(Item::where('team_id', Filament::getTenant()->id)
-                            ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
-                            ->get()
-                            ->pluck('part_number_or_name', 'id')
+                                ->select('id', DB::raw('COALESCE(part_number, name) as part_number_or_name'))
+                                ->get()
+                                ->pluck('part_number_or_name', 'id')
                             )
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($get, $set) {

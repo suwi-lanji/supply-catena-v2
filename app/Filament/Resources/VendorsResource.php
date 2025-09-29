@@ -76,14 +76,11 @@ class VendorsResource extends Resource
         return $table
             ->columns([
                 Tables\Columns\TextColumn::make('first_name')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('last_name')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('vendor_display_name')
-
-->searchable(),
+                    ->searchable(),
                 Tables\Columns\TextColumn::make('created_at')
                     ->dateTime()
                     ->sortable()
