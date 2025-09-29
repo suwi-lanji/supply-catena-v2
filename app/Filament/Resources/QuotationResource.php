@@ -90,7 +90,7 @@ class QuotationResource extends Resource
                                 'EXW (Ex Works)' => 'EXW (Ex Works)',
                                 'FOB (Free on Board)' => 'FOB (Free on Board)',
                                 'CIF (Cost, Insurance and Freight)' => 'CIF (Cost, Insurance and Freight)',
-                                'DDP (Delivered Duty Paid)' => 'DDP (Delivered Duty Paid)',
+                                'DDP MINESITE' => 'DDP MINESITE',
                             ]),
                         Forms\Components\TextInput::make('lead_time'),
                         Forms\Components\TextInput::make('payment_time'),
