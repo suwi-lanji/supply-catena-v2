@@ -12,7 +12,7 @@
         },
         {
             "src": "/(storage)/(.*)",
-            "dest": "public/storage/app/public/$2"
+            "dest": "public/storage/$2"
         },
         {
             "src": "/(.*)",
