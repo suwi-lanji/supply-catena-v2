@@ -28,7 +28,7 @@
         "ASSET_URL": "https://supply-catena.vercel.app",
         "APP_TIMEZONE": "UTC",
         "APP_LOCALE": "en",
-        "APP_MAINTENANCE": true,
+        "APP_MAINTENANCE": "true",
         "APP_FALLBACK_LOCALE": "en",
         "APP_CONFIG_CACHE": "/tmp/config.php",
         "APP_EVENTS_CACHE": "/tmp/events.php",
