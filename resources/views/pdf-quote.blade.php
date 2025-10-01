@@ -201,7 +201,7 @@
                             <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
                             <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
                             <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
-                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
+                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'] * (1 + ($item['tax'] ?? 0) / 100), 2) }}</td>
                             <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
                             <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
                         </tr>
