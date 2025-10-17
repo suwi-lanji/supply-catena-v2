@@ -284,7 +284,7 @@ foreach ($record->items as $item) {
                 </tr>
                 <tr>
                     <td>GRAND TOTAL</td>
-                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->total, 2) }}</td>
+                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
                 </tr>
             </table>
         </div>
