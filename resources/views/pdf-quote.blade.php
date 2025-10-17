@@ -115,6 +115,23 @@
         .quotation-no {
             font-weight: bold;
         }
+        /* Payment Terms Section Styles */
+        .payment-terms-section {
+            width: 100%;
+            margin-top: 30px;
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #000;
+            overflow: hidden;
+        }
+        .payment-terms-section h4 {
+            margin: 0 0 10px 0;
+            font-size: 16px;
+        }
+        .payment-terms-section p {
+            margin: 5px 0;
+            line-height: 1.4;
+        }
     </style>
 </head>
 <body>
@@ -215,6 +232,30 @@
                     @endif
                 @endforeach
         </table>
+
+        <!-- Payment Terms Section -->
+        <div class="payment-terms-section">
+            <h4>PAYMENT TERMS</h4>
+            @php
+            $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
+            @endphp
+            @if($terms)
+                <p><strong>Payment Term:</strong> {{ $terms->name }}</p>
+                <p>Please make payment by check or bank transfer to the following account:</p>
+                <div>
+                    <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
+                    <p><strong>Bank:</strong> {{ $terms->bank }}</p>
+                    <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
+                    <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
+                    <p><strong>Branch:</strong> {{ $terms->branch }}</p>
+                    <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
+                    <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+                </div>
+            @else
+                <p>Payment terms information not available.</p>
+            @endif
+        </div>
+
         @php
         $vat = 0;
 $discount = 0;
