@@ -233,12 +233,11 @@
                 @endforeach
         </table>
         @php
-        $vat = 0;
+        $vat = 16;
 $discount = 0;
 
 // Calculate totals
 foreach ($record->items as $item) {
-    $vat += $item["tax"] ?? 0;
     $discount += $item["discount"] ?? 0;
 }
         @endphp
