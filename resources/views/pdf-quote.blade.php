@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -115,7 +116,6 @@
         .quotation-no {
             font-weight: bold;
         }
-        /* Payment Terms Section Styles */
         .payment-terms-section {
             width: 100%;
             margin-top: 30px;
@@ -232,9 +232,19 @@
                     @endif
                 @endforeach
         </table>
+        @php
+        $vat = 0;
+$discount = 0;
 
-        <!-- Payment Terms Section -->
-        <div class="payment-terms-section">
+// Calculate totals
+foreach ($record->items as $item) {
+    $vat += $item["tax"] ?? 0;
+    $discount += $item["discount"] ?? 0;
+}
+        @endphp
+        <div class="footer-section">
+            <div class="">
+                <div class="payment-terms-section">
             <h4>PAYMENT TERMS</h4>
             @php
             $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
@@ -255,19 +265,7 @@
                 <p>Payment terms information not available.</p>
             @endif
         </div>
-
-        @php
-        $vat = 0;
-$discount = 0;
-
-// Calculate totals
-foreach ($record->items as $item) {
-    $vat += $item["tax"] ?? 0;
-    $discount += $item["discount"] ?? 0;
-}
-        @endphp
-        <div class="footer-section">
-            <div class=""></div>
+            </div>
             <table class="totals-table">
                 <tr>
                     <td>SUB TOTAL</td>
