@@ -20,7 +20,7 @@ COPY composer.json composer.lock ./
 COPY package.json ./
 
 # 5. Install dependencies (cached unless composer files change)
-RUN composer install --no-dev --optimize-autoloader --no-scripts
+RUN composer install --optimize-autoloader --no-scripts
 
 # 6. Copy the rest of the application
 COPY . .
