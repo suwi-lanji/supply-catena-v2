@@ -48,4 +48,4 @@ jobs:
         app-name: 'supply-catena'
         slot-name: 'production'
         publish-profile: ${{ secrets.AzureAppService_PublishProfile_9bbf7717735f40e4aa72384d91e43c7d }}
-        images: 'index.docker.io/${{ secrets.AzureAppService_ContainerUsername_6cab2ef929514b2b81a1ae97e9f320be }}/supply-catena:${{ github.sha }}'
+        images: 'index.docker.io/suwilanjichipofya/supply-catena:${{ github.sha }}'
