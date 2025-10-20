@@ -30,7 +30,7 @@ jobs:
       uses: docker/build-push-action@v3
       with:
         push: true
-        tags: index.docker.io/${{ secrets.AzureAppService_ContainerUsername_6cab2ef929514b2b81a1ae97e9f320be }}/supply-catena:${{ github.sha }}
+        tags: index.docker.io/suwilanjichipofya/supply-catena:${{ github.sha }}
         file: ./Dockerfile
 
   deploy:
