@@ -241,7 +241,7 @@ foreach ($record->items as $item) {
     $discount += $item["discount"] ?? 0;
 }
         @endphp
-        <div class="footer-section">
+        <div class="footer-section" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
             <div class="">
                 <div class="payment-terms-section">
             <h4>PAYMENT TERMS</h4>
@@ -265,28 +265,22 @@ foreach ($record->items as $item) {
             @endif
         </div>
             </div>
-            <table class="totals-table">
+            <div class="">
+                <table class="totals-table">
                 <tr>
                     <td>SUB TOTAL</td>
                     <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>DISCOUNT %</td>
-                    <td style="text-align:right;">{{ $record->discount ? number_format($record->discount, 2) : number_format($discount, 2) }}</td>
                 </tr>
                 <tr>
                     <td>VAT @ 16%</td>
                     <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
                 </tr>
                 <tr>
-                    <td>SUB TOTAL (INCL)</td>
-                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
-                </tr>
-                <tr>
                     <td>GRAND TOTAL</td>
                     <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
                 </tr>
             </table>
+            </div>
         </div>
     </div>
 
