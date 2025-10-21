@@ -96,7 +96,6 @@
         }
         .footer-section {
             width: 100%;
-            margin-top: 20px;
             overflow: hidden; /* Clear floats */
         }
         .totals-table {
@@ -117,14 +116,13 @@
         }
         .payment-terms-section {
             width: 100%;
-            margin-top: 30px;
             margin-bottom: 20px;
             padding: 15px;
             border: 1px solid #000;
             overflow: hidden;
         }
         .payment-terms-section h4 {
-            margin: 0 0 10px 0;
+            margin: 0;
             font-size: 16px;
         }
         .payment-terms-section p {
@@ -246,7 +244,7 @@ foreach ($record->items as $item) {
     $discount += $item["discount"] ?? 0;
 }
         @endphp
-        <div class="footer-section" style="display: flex; flex-direction: row; align-items: center; justify-content: space-between;">
+        <div class="footer-section" style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
             <div class="">
                 <div class="payment-terms-section">
             <h4>PAYMENT TERMS</h4>
