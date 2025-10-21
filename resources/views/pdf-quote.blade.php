@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -132,6 +131,11 @@
             margin: 5px 0;
             line-height: 1.4;
         }
+        .company-logo {
+            max-width: 150px;
+            height: auto;
+            display: block;
+        }
     </style>
 </head>
 <body>
@@ -142,7 +146,8 @@
     <div id="quotationContent" class="container">
         <div class="main-header">
             <div class="company-details">
-                <img src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" style="max-width:150px; height:auto;"/>
+                <!-- Company Logo with crossOrigin attribute for CORS -->
+                <img id="companyLogo" class="company-logo" src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" crossOrigin="anonymous" />
             </div>
             <div class="quotation-info">
                 <h3>{{ $tenant->portal_name }}</h3>
@@ -288,7 +293,82 @@ foreach ($record->items as $item) {
         // Set up jsPDF
         const { jsPDF } = window.jspdf;
 
-        function generatePDF() {
+        // Function to preload images and ensure they're ready for PDF generation
+        function preloadImages() {
+            return new Promise((resolve, reject) => {
+                const images = document.querySelectorAll('img');
+                let loadedCount = 0;
+                const totalImages = images.length;
+                
+                if (totalImages === 0) {
+                    resolve();
+                    return;
+                }
+                
+                images.forEach(img => {
+                    // Create a new image to preload
+                    const preloadImg = new Image();
+                    preloadImg.crossOrigin = 'anonymous'; // Handle CORS issues
+                    
+                    preloadImg.onload = () => {
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            resolve();
+                        }
+                    };
+                    
+                    preloadImg.onerror = () => {
+                        console.warn('Failed to load image:', img.src);
+                        loadedCount++;
+                        if (loadedCount === totalImages) {
+                            resolve();
+                        }
+                    };
+                    
+                    preloadImg.src = img.src;
+                });
+            });
+        }
+
+        // Function to convert images to data URLs
+        function convertImagesToDataURLs() {
+            return new Promise((resolve) => {
+                const images = document.querySelectorAll('img');
+                let processedCount = 0;
+                const totalImages = images.length;
+                
+                if (totalImages === 0) {
+                    resolve();
+                    return;
+                }
+                
+                images.forEach(img => {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    
+                    canvas.width = img.naturalWidth;
+                    canvas.height = img.naturalHeight;
+                    
+                    // Draw image to canvas
+                    ctx.drawImage(img, 0, 0);
+                    
+                    // Convert to data URL
+                    try {
+                        const dataURL = canvas.toDataURL('image/png');
+                        img.src = dataURL;
+                    } catch (e) {
+                        console.warn('Could not convert image to data URL:', e);
+                    }
+                    
+                    processedCount++;
+                    if (processedCount === totalImages) {
+                        resolve();
+                    }
+                });
+            });
+        }
+
+        async function generatePDF() {
             const content = document.getElementById('quotationContent');
             const button = document.querySelector('.action-button');
             
@@ -302,9 +382,23 @@ foreach ($record->items as $item) {
             document.body.style.backgroundColor = 'white'; // Remove gray background
             content.style.boxShadow = 'none'; // Remove container shadow
 
-            html2canvas(content, {
-                scale: 2 // Improve resolution
-            }).then(canvas => {
+            try {
+                // Preload and convert images
+                await preloadImages();
+                await convertImagesToDataURLs();
+                
+                // Give a small delay to ensure all images are properly rendered
+                await new Promise(resolve => setTimeout(resolve, 500));
+                
+                // Generate the PDF
+                const canvas = await html2canvas(content, {
+                    scale: 2, // Improve resolution
+                    useCORS: true, // Enable CORS for images
+                    allowTaint: true, // Allow tainted canvas
+                    logging: false, // Disable logging for cleaner output
+                    backgroundColor: '#ffffff' // Ensure white background
+                });
+                
                 // --- RESTORE ORIGINAL STYLES ---
                 // Change styles back immediately after capture
                 button.style.display = 'block';
@@ -339,7 +433,15 @@ foreach ($record->items as $item) {
 
                 // Download the PDF
                 pdf.save('{{$record->quotation_number}}.pdf');
-            });
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please try again.');
+                
+                // Restore styles even if there's an error
+                button.style.display = 'block';
+                document.body.style.backgroundColor = originalBodyBg;
+                content.style.boxShadow = originalContainerShadow;
+            }
         }
     </script>
 </body>
