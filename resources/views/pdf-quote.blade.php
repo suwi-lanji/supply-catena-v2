@@ -252,7 +252,6 @@ foreach ($record->items as $item) {
             $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
             @endphp
             @if($terms)
-                <p><strong>Payment Term:</strong> {{ $terms->name }}</p>
                 <p>Please make payment by check or bank transfer to the following account:</p>
                 <div>
                     <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
