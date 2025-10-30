@@ -148,7 +148,7 @@
             <div class="company-details-block">
                 {{-- Assuming $tenant has a logo and address fields --}}
                 @if ($tenant->logo_path ?? false)
-                    <img src="{{ asset('storage/' . $tenant->logo_path) }}" alt="Company Logo" style="max-width: 150px; height: auto;" crossOrigin="anonymous">
+                    <img id="companyLogo" class="company-logo" src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" crossOrigin="anonymous" />
                 @endif
                 <p>
                     <strong>{{ strtoupper($tenant->name ?? '') }}</strong><br>
