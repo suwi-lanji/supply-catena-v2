@@ -2,8 +2,9 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Filament\Facades\Filament;
+use Illuminate\Database\Eloquent\Model;
+
 class DeliveryNote extends Model
 {
     protected $guarded = [];
