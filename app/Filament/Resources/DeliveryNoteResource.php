@@ -56,7 +56,25 @@ class DeliveryNoteResource extends Resource
                             ->searchable()
                             ->preload()
                             ->required()
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->live()
+                            ->afterStateUpdated(function ($get, $set, $state) {
+                                $dnoteItems = [];
+                                $salesOrder = \App\SalesOrder::find($state);
+                                if($salesOrder) {
+                                    foreach($salesOrder->items as $item) {
+                                        $dnoteItems[] = [
+                                            'item_id' => $item['item'],
+                                            'material_number' => '',
+                                            'description' => '',
+                                            'ordered' => $item['quantity'],
+                                            'delivered' => 0,
+                                            'outstanding' => 0
+                                        ];
+                                    }
+                                    $set('items', $dnoteItems);
+                                }
+                            }),
 
                         TextInput::make('mode_of_transport')
                             ->required()
