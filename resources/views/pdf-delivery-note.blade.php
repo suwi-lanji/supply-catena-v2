@@ -252,18 +252,7 @@
         <div class="footer-layout">
             
             <div class="dnote-section">
-                <table class="footer-table">
-                    <thead>
-                        <tr>
-                            <th colspan="2">DNOTE NO.</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td colspan="2">{{ $deliveryNote->dnote_number ?? 'N/A' }}</td>
-                        </tr>
-                    </tbody>
-                </table>
+                
             </div>
 
             <div class="signature-section">
