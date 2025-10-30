@@ -161,7 +161,6 @@
 
             {{-- HEADER RIGHT: Company Details and Document Title --}}
             <div class="header-right">
-                <h1>DELIVERY NOTE</h1>
                 <p>
                     <strong>{{ strtoupper($tenant->name ?? '') }}</strong><br>
                     {{ $tenant->street_1 ?? '' }} / {{ $tenant->city ?? '' }}<br>
