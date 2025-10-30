@@ -66,7 +66,6 @@ class DeliveryNoteResource extends Resource
                                         $dnoteItems[] = [
                                             'item_id' => $item['item'],
                                             'material_number' => '',
-                                            'description' => '',
                                             'ordered' => $item['quantity'],
                                             'delivered' => 0,
                                             'outstanding' => 0,
@@ -103,9 +102,6 @@ class DeliveryNoteResource extends Resource
 
                                 TextInput::make('material_number')
                                     ->label('Material No.'),
-
-                                TextInput::make('description')
-                                    ->label('Description'),
 
                                 TextInput::make('ordered')
                                     ->label('Ordered')

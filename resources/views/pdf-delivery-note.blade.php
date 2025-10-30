@@ -230,7 +230,7 @@
                         {{-- Assumes fields match the TableRepeater structure --}}
                         <td>{{ $item['material_number'] ?? 'N/A' }}</td>
                         <td>{{ optional(App\Models\Item::find($item['item_id']))->part_number ?? 'N/A' }}</td>
-                        <td>{{ $item['description'] ?? 'No Description' }}</td>
+                        <td>{{ optional(App\Models\Item::find($item['item_id']))->description ?? 'N/A' }}</td>
                         <td class="align-right">{{ $item['ordered'] ?? 0 }}</td>
                         <td class="align-right">{{ $item['delivered'] ?? 0 }}</td>
                         <td class="align-right">{{ $item['outstanding'] ?? 0 }}</td>
