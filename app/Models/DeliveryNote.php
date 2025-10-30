@@ -20,7 +20,7 @@ class DeliveryNote extends Model
 
     public function salesOrder()
     {
-        $teamId = Filament::getTenant()->id;
+        $teamId = Filament::getTenant()?->id;
         return $this->belongsTo(SalesOrder::class)->when($teamId, function($query, $id) {
             return $query->where('team_id', $id);
         });
@@ -28,7 +28,7 @@ class DeliveryNote extends Model
 
     public function customer()
     {
-        $teamId = Filament::getTenant()->id;
+        $teamId = Filament::getTenant()?->id;
         return $this->belongsTo(Customer::class)->when($teamId, function($query, $id) {
             return $query->where('team_id', $id);
         });
