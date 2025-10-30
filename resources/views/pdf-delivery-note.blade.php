@@ -5,8 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Delivery Note - {{ $tenant->name ?? 'Company Name' }}</title>
 
-    {{-- The PDF functionality (jsPDF/html2canvas) is typically handled by a controller/Livewire component or a separate print view in Laravel. 
-        For a purely rendered Blade file, we remove the JS, but I'll keep the styles for the content. --}}
+    {{-- 1. JS PDF Libraries --}}
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
     <style>
         body {
@@ -14,7 +15,19 @@
             margin: 0;
             padding: 20px;
             font-size: 10pt;
-            /* background-color and text-align removed for cleaner print layout */
+            background-color: #f4f4f4; /* Added back for visual contrast on screen */
+            text-align: center;
+        }
+        /* Style for the download button */
+        .action-button {
+            margin: 20px;
+            padding: 10px 20px;
+            font-size: 14px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
         }
         .container {
             max-width: 800px;
@@ -125,6 +138,9 @@
 </head>
 <body>
 
+    {{-- 2. Download Button --}}
+    <button class="action-button" onclick="generatePDF()">Download Delivery Note PDF</button>
+
     <div id="deliveryNoteContent" class="container">
 
         {{-- MAIN DOCUMENT HEADER (Tenant Info) --}}
@@ -132,7 +148,7 @@
             <div class="company-details-block">
                 {{-- Assuming $tenant has a logo and address fields --}}
                 @if ($tenant->logo_path ?? false)
-                    <img src="{{ asset('storage/' . $tenant->logo_path) }}" alt="Company Logo" style="max-width: 150px; height: auto;">
+                    <img src="{{ asset('storage/' . $tenant->logo_path) }}" alt="Company Logo" style="max-width: 150px; height: auto;" crossOrigin="anonymous">
                 @endif
                 <p>
                     <strong>{{ strtoupper($tenant->name ?? '') }}</strong><br>
@@ -253,13 +269,11 @@
                 {{-- DELIVERED BY --}}
                 <div class="signature-field">
                     <strong>DELIVERED BY:</strong>
-                    <div class="signature-line"></div>
                 </div>
 
                 {{-- RECEIVED BY --}}
                 <div class="signature-field">
                     <strong>RECEIVED BY:</strong>
-                    <div class="signature-line"></div>
                 </div>
             </div>
 
@@ -271,5 +285,83 @@
 
     </div>
 
+    {{-- 3. PDF Generation Script --}}
+    <script>
+        const { jsPDF } = window.jspdf;
+
+        async function generatePDF() {
+            const content = document.getElementById('deliveryNoteContent');
+            const button = document.querySelector('.action-button');
+            
+            // Store original styles
+            const originalBodyBg = document.body.style.backgroundColor;
+            
+            // Temporarily change styles for a clean capture
+            button.style.display = 'none'; // Hide button
+            document.body.style.backgroundColor = 'white'; // Ensure white background for PDF
+
+            // Ensure images are loaded correctly, especially across domains
+            const images = content.querySelectorAll('img');
+            const imagePromises = Array.from(images).map(img => {
+                if (img.complete) return Promise.resolve();
+                return new Promise(resolve => {
+                    img.onload = resolve;
+                    img.onerror = resolve; // Resolve even on error
+                });
+            });
+
+            await Promise.all(imagePromises);
+            
+            try {
+                const canvas = await html2canvas(content, {
+                    scale: 2, // Improve resolution
+                    useCORS: true, // Enable CORS
+                    allowTaint: true, // Allow tainted canvas for local development
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+                
+                // Restore original styles
+                button.style.display = 'block';
+                document.body.style.backgroundColor = originalBodyBg;
+
+                // Create PDF
+                const imgData = canvas.toDataURL('image/png');
+                const pdf = new jsPDF('p', 'mm', 'a4');
+                const pdfWidth = pdf.internal.pageSize.getWidth();
+                const pdfHeight = pdf.internal.pageSize.getHeight();
+                const canvasWidth = canvas.width;
+                const canvasHeight = canvas.height;
+                const ratio = canvasWidth / canvasHeight;
+                const imgWidth = pdfWidth;
+                const imgHeight = pdfWidth / ratio;
+
+                let heightLeft = imgHeight;
+                let position = 0;
+
+                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                heightLeft -= pdfHeight;
+
+                // Handle multi-page content
+                while (heightLeft > 0) {
+                    position = heightLeft - imgHeight;
+                    pdf.addPage();
+                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    heightLeft -= pdfHeight;
+                }
+
+                // Dynamic filename based on DNote number
+                const filename = 'DeliveryNote_' + ('{{ $deliveryNote->dnote_number ?? "N_A" }}') + '.pdf';
+                pdf.save(filename);
+            } catch (error) {
+                console.error('Error generating PDF:', error);
+                alert('Error generating PDF. Please ensure all images are loaded and try again.');
+                
+                // Restore styles even if there's an error
+                button.style.display = 'block';
+                document.body.style.backgroundColor = originalBodyBg;
+            }
+        }
+    </script>
 </body>
 </html>
