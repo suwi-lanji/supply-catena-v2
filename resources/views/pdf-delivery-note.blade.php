@@ -14,7 +14,6 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            /* 💡 FONT SIZE REDUCTION: Changed from 10pt to 9pt */
             font-size: 9pt; 
             background-color: #f4f4f4;
             text-align: center;
@@ -38,29 +37,35 @@
             background-color: #fff;
             text-align: left;
         }
+        /* 💡 UPDATED HEADER STYLES */
         .main-header {
             width: 100%;
             margin-bottom: 20px;
             overflow: hidden;
             border-bottom: 2px solid #000;
             padding-bottom: 10px;
+            display: flex; /* Use Flexbox */
+            justify-content: space-between; /* Space out items */
+            align-items: flex-start; /* Align items to the top */
         }
-        .main-header .company-details-block {
-            width: 50%;
-            float: left;
+        .header-left {
+            flex-basis: 30%; /* Allocate space for the logo */
+            text-align: left;
+        }
+        .header-right {
+            flex-basis: 65%; /* Allocate space for company details and title */
+            text-align: right; /* Align text within this block to the right */
             line-height: 1.5;
         }
-        .main-header .document-title-block {
-            width: 50%;
-            float: right;
-            text-align: right;
-            /* 💡 HEADER ALIGNMENT FIX: Removed padding-top: 20px; */
-        }
-        .main-header .document-title-block h1 {
-            margin: 0;
+        .header-right h1 {
+            margin-top: 0;
+            margin-bottom: 10px;
             font-size: 24px;
             color: #333;
         }
+        /* Old .company-details-block and .document-title-block styles removed as their structure is changing */
+        /* 💡 END UPDATED HEADER STYLES */
+
         .header-box {
             border: 1px solid #000;
             padding: 5px;
@@ -131,9 +136,8 @@
         .company-logo {
             max-width: 150px;
             height: auto;
-            display: block;
+            display: block; /* Ensure it behaves as a block element */
         }
-        /* 💡 PAGE FOOTER REMOVED from CSS */
         .align-right {
             text-align: right;
         }
@@ -148,20 +152,22 @@
 
         {{-- MAIN DOCUMENT HEADER (Tenant Info) --}}
         <div class="main-header">
-            <div class="company-details-block">
-                {{-- Assuming $tenant has a logo and address fields --}}
+            {{-- HEADER LEFT: Company Logo --}}
+            <div class="header-left">
                 @if ($tenant->logo ?? false)
                     <img id="companyLogo" class="company-logo" src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" crossOrigin="anonymous" />
                 @endif
+            </div>
+
+            {{-- HEADER RIGHT: Company Details and Document Title --}}
+            <div class="header-right">
+                <h1>DELIVERY NOTE</h1>
                 <p>
                     <strong>{{ strtoupper($tenant->name ?? '') }}</strong><br>
                     {{ $tenant->street_1 ?? '' }} / {{ $tenant->city ?? '' }}<br>
                     {{ $tenant->province ?? '' }}, {{ $tenant->business_location ?? '' }}<br>
                     {{ $tenant->phone ?? '' }}
                 </p>
-            </div>
-            <div class="document-title-block">
-                <h1>DELIVERY NOTE</h1>
             </div>
         </div>
 
@@ -283,8 +289,6 @@
             </div>
 
         </div>
-
-        {{-- 💡 PAGE FOOTER REMOVED --}}
 
     </div>
 
