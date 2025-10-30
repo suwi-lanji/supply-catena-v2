@@ -250,10 +250,6 @@
 
         {{-- FOOTER LAYOUT (DNOTE and Signatures) --}}
         <div class="footer-layout">
-            
-            <div class="dnote-section">
-                
-            </div>
 
             <div class="signature-section">
                 {{-- DELIVERED BY --}}
