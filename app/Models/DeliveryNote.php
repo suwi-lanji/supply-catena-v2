@@ -20,11 +20,17 @@ class DeliveryNote extends Model
 
     public function salesOrder()
     {
-        return $this->belongsTo(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
+        $teamId = Filament::getTenant()->id;
+        return $this->belongsTo(SalesOrder::class)->when($teamId, function($query, $id) {
+            return $query->where('team_id', $id);
+        });
     }
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class)->where('team_id', Filament::getTenant()->id);
+        $teamId = Filament::getTenant()->id;
+        return $this->belongsTo(Customer::class)->when($teamId, function($query, $id) {
+            return $query->where('team_id', $id);
+        });
     }
 }
