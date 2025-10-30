@@ -197,10 +197,10 @@
                     <td>{{ $deliveryNote->salesOrder->sales_order_date ?? 'N/A' }}</td>
                     @php
                         $itemsTotalWeight = 0;
+                        foreach($deliveryNote->items as $item) {
+                            $itemsTotalWeight += ($item['delivered'] ?? 0) * (optional(App\Models\Item::find($item['item_id']))->weight ?? 0);
+                        }
                     @endphp
-                    @foreach ($deliveryNote->items as $item)
-                        $itemsTotalWeight += ($item['delivered'] ?? 0) * (optional(App\Models\Item::find($item['item_id']))->weight ?? 0);
-                    @endforeach
                     <td>{{ $itemsTotalWeight }}</td>
                     <td>{{ $deliveryNote->created_at->format('d/m/Y') ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->dnote_number ?? 'N/A' }}</td>
