@@ -60,7 +60,7 @@ class DeliveryNoteResource extends Resource
                             ->live()
                             ->afterStateUpdated(function ($get, $set, $state) {
                                 $dnoteItems = [];
-                                $salesOrder = \App\SalesOrder::find($state);
+                                $salesOrder = \App\Models\SalesOrder::find($state);
                                 if ($salesOrder) {
                                     foreach ($salesOrder->items as $item) {
                                         $dnoteItems[] = [
