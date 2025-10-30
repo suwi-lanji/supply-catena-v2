@@ -3,7 +3,7 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-
+use Filament\Facades\Filament;
 class DeliveryNote extends Model
 {
     protected $guarded = [];
@@ -19,11 +19,11 @@ class DeliveryNote extends Model
 
     public function salesOrder()
     {
-        return $this->belongsTo(SalesOrder::class);
+        return $this->belongsTo(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
     }
 
     public function customer()
     {
-        return $this->belongsTo(Customer::class);
+        return $this->belongsTo(Customer::class)->where('team_id', Filament::getTenant()->id);
     }
 }
