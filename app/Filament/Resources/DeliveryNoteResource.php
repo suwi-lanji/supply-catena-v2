@@ -60,8 +60,8 @@ class DeliveryNoteResource extends Resource
                             ->live()
                             ->afterStateUpdated(function ($get, $set, $state) {
                                 $dnoteItems = [];
-                                $salesOrder = \App\Models\SalesOrder::find($state);
-                                if ($salesOrder) {
+                                $salesOrder = \App\Models\SalesOrder::find($state) ?? null;
+                                if ($salesOrder && $salesOrder->items) {
                                     foreach ($salesOrder->items as $item) {
                                         $dnoteItems[] = [
                                             'item_id' => $item['item'],
@@ -90,6 +90,7 @@ class DeliveryNoteResource extends Resource
                             ->addable(true)
                             ->deletable(true)
                             ->reorderable(true)
+                            ->live()
                             ->schema([
                                 Select::make('item_id')
                                     ->label('Item (Part No.)')
