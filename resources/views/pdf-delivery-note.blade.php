@@ -185,7 +185,7 @@
                     <th style="width: 15%;">ORDER NO.</th>
                     <th style="width: 15%;">ORDER DATE</th>
                     <th style="width: 20%;">DISPATCH DATE</th>
-                    <th style="width: 25%;">MODE OF TRANSPORT</th>
+                    <th style="width: 25%;"> DNOTE NO.</th>
                 </tr>
             </thead>
             <tbody>
@@ -195,7 +195,7 @@
                     <td>{{ $deliveryNote->salesOrder->sales_order_number ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->salesOrder->sales_order_date ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->created_at->format('d/m/Y') ?? 'N/A' }}</td>
-                    <td>{{ $deliveryNote->mode_of_transport ?? 'N/A' }}</td>
+                    <td>{{ $deliveryNote->dnote_number ?? 'N/A' }}</td>
                 </tr>
             </tbody>
         </table>
@@ -232,8 +232,6 @@
                         $totalWeight += ($item['delivered'] ?? 0) * (optional(App\Models\Item::find($item['item_id']))->weight ?? 0);
                     @endphp
                 @endforeach
-
-                {{-- Add 1 empty row for spacing if needed and the item list is short (Optional) --}}
                 @if (count($deliveryNote->items) < 5)
                     @for ($i = 0; $i < (5 - count($deliveryNote->items)); $i++)
                         <tr>
@@ -254,9 +252,6 @@
         <div class="footer-layout">
             
             <div class="dnote-section">
-                {{-- Render the actual calculated weight --}}
-                <p><strong>GROSS WEIGHT: {{ number_format($totalWeight, 2) }} KG</strong></p>
-
                 <table class="footer-table">
                     <thead>
                         <tr>
