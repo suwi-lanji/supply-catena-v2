@@ -9,7 +9,7 @@ use Filament\Resources\Pages\ViewRecord;
 class ViewDeliveryNote extends ViewRecord
 {
     protected static string $resource = DeliveryNoteResource::class;
-
+    protected static string $view = 'filament.resources.delivery-notes.pages.view-delivery-note';
     protected function getHeaderActions(): array
     {
         return [
