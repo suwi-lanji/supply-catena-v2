@@ -14,6 +14,13 @@ class EditDeliveryNote extends EditRecord
     {
         return [
             Actions\DeleteAction::make(),
+            Actions\Action::make('pdf')
+                ->label('PDF/Print')
+                ->color('default')
+                ->icon('heroicon-s-arrow-down-tray')
+                ->action(function ($record) {
+                    return redirect('/delivery-note/'.\Filament\Facades\Filament::getTenant()->id.'/'.$record->id);
+                }),
         ];
     }
 }

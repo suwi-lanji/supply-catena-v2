@@ -164,7 +164,6 @@ class DeliveryNoteResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\ViewAction::make(),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
@@ -185,7 +184,6 @@ class DeliveryNoteResource extends Resource
         return [
             'index' => Pages\ListDeliveryNotes::route('/'),
             'create' => Pages\CreateDeliveryNote::route('/create'),
-            'view' => Pages\ViewDeliveryNote::route('/{record}'),
             'edit' => Pages\EditDeliveryNote::route('/{record}/edit'),
         ];
     }
