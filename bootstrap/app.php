@@ -20,9 +20,9 @@ return Application::configure(basePath: dirname(__DIR__))
                      Request::HEADER_X_FORWARDED_PROTO |
                      Request::HEADER_X_FORWARDED_AWS_ELB
         );
-    $middleware->append([
+    /*$middleware->append([
             \App\Http\Middleware\Force503Response::class,
-        ]);
+        ]);*/
     })
     ->withExceptions(function (Exceptions $exceptions) {
         //
