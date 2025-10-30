@@ -149,10 +149,10 @@
         {{-- SHIPPING DETAILS BOX (Customer Info) --}}
         <div class="header-box" style="margin-top: 10px; padding: 10px;">
             <p><strong>SHIP TO:</strong></p>
-            <p>{{ $customer->name ?? 'Customer Name' }}</p>
-            <p>{{ $customer->address_line_1 ?? 'Customer Address Line 1' }}</p>
-            <p>{{ $customer->city ?? 'City' }}, {{ $customer->state ?? 'Province' }}</p>
-            <p>{{ $customer->country ?? 'Country' }}</p>
+            <p>{{ $customer->company_display_name ?? '' }}</p>
+            <p>{{ $customer->billing_street_1 ?? '' }}</p>
+            <p>{{ $customer->billing_city ?? '' }}, {{ $customer->billing_province ?? 'Province' }}</p>
+            <p>{{ $customer->billing_country ?? '' }}</p>
         </div>
 
         {{-- ORDER INFORMATION TABLE --}}
@@ -168,10 +168,10 @@
             </thead>
             <tbody>
                 <tr>
-                    <td>{{ $customer->name ?? 'N/A' }}</td>
+                    <td>{{ $customer->company_display_name ?? 'N/A' }}</td>
                     {{-- Assuming salesOrder relationship exists on $deliveryNote --}}
-                    <td>{{ $deliveryNote->salesOrder->order_number ?? 'N/A' }}</td>
-                    <td>{{ $deliveryNote->salesOrder->order_date ?? 'N/A' }}</td>
+                    <td>{{ $deliveryNote->salesOrder->sales_order_number ?? 'N/A' }}</td>
+                    <td>{{ $deliveryNote->salesOrder->sales_order_date ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->created_at->format('d/m/Y') ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->mode_of_transport ?? 'N/A' }}</td>
                 </tr>
