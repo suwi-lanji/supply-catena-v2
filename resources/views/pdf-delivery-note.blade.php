@@ -127,6 +127,11 @@
             margin-top: 40px; 
             width: 50%;
         }
+        .company-logo {
+            max-width: 150px;
+            height: auto;
+            display: block;
+        }
         .page-footer {
             text-align: center;
             margin-top: 20px;
