@@ -170,6 +170,7 @@ class DeliveryNoteResource extends Resource
         return [
             'index' => Pages\ListDeliveryNotes::route('/'),
             'create' => Pages\CreateDeliveryNote::route('/create'),
+            'view' => Pages\ViewDeliveryNote::route('/{record}'),
             'edit' => Pages\EditDeliveryNote::route('/{record}/edit'),
         ];
     }
