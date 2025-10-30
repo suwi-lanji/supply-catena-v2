@@ -14,8 +14,9 @@
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 20px;
-            font-size: 10pt;
-            background-color: #f4f4f4; /* Added back for visual contrast on screen */
+            /* 💡 FONT SIZE REDUCTION: Changed from 10pt to 9pt */
+            font-size: 9pt; 
+            background-color: #f4f4f4;
             text-align: center;
         }
         /* Style for the download button */
@@ -53,7 +54,7 @@
             width: 50%;
             float: right;
             text-align: right;
-            padding-top: 20px;
+            /* 💡 HEADER ALIGNMENT FIX: Removed padding-top: 20px; */
         }
         .main-header .document-title-block h1 {
             margin: 0;
@@ -132,10 +133,7 @@
             height: auto;
             display: block;
         }
-        .page-footer {
-            text-align: center;
-            margin-top: 20px;
-        }
+        /* 💡 PAGE FOOTER REMOVED from CSS */
         .align-right {
             text-align: right;
         }
@@ -274,19 +272,19 @@
                 {{-- DELIVERED BY --}}
                 <div class="signature-field">
                     <strong>DELIVERED BY:</strong>
+                    <div class="signature-line"></div>
                 </div>
 
                 {{-- RECEIVED BY --}}
                 <div class="signature-field">
                     <strong>RECEIVED BY:</strong>
+                    <div class="signature-line"></div>
                 </div>
             </div>
 
         </div>
 
-        <div class="page-footer">
-            <p>PAGE **1 OF 1**</p>
-        </div>
+        {{-- 💡 PAGE FOOTER REMOVED --}}
 
     </div>
 
@@ -305,7 +303,7 @@
             button.style.display = 'none'; // Hide button
             document.body.style.backgroundColor = 'white'; // Ensure white background for PDF
 
-            // Ensure images are loaded correctly, especially across domains
+            // Ensure images are loaded correctly (critical for html2canvas)
             const images = content.querySelectorAll('img');
             const imagePromises = Array.from(images).map(img => {
                 if (img.complete) return Promise.resolve();
@@ -360,7 +358,7 @@
                 pdf.save(filename);
             } catch (error) {
                 console.error('Error generating PDF:', error);
-                alert('Error generating PDF. Please ensure all images are loaded and try again.');
+                alert('Error generating PDF. Please ensure all resources are loaded and try again.');
                 
                 // Restore styles even if there's an error
                 button.style.display = 'block';
