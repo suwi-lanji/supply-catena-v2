@@ -10,6 +10,6 @@ class DeliveryNoteController extends Controller
         $deliveryNote = \App\Models\DeliveryNote::findOrFail($id);
         $customer = \App\Models\Customer::findOrFail($deliveryNote->customer_id);
 
-        return view('pdf-delivery-note', ['record' => $deliveryNote, 'tenant' => $tenant, 'customer' => $customer]);
+        return view('pdf-delivery-note', ['deliveryNote' => $deliveryNote, 'tenant' => $tenant, 'customer' => $customer]);
     }
 }
