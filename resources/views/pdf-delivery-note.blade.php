@@ -32,7 +32,6 @@
         .container {
             max-width: 800px;
             margin: 0 auto;
-            border: 1px solid #000;
             padding: 10px;
             background-color: #fff;
             text-align: left;
@@ -277,13 +276,11 @@
                 {{-- DELIVERED BY --}}
                 <div class="signature-field">
                     <strong>DELIVERED BY:</strong>
-                    <div class="signature-line"></div>
                 </div>
 
                 {{-- RECEIVED BY --}}
                 <div class="signature-field">
                     <strong>RECEIVED BY:</strong>
-                    <div class="signature-line"></div>
                 </div>
             </div>
 
