@@ -200,4 +200,9 @@ class Team extends Model implements HasAvatar
     {
         return $this->hasMany(ItemsPurchased::class);
     }
+
+    public function deliveryNotes()
+    {
+        return $this->hasMany(DeliveryNote::class);
+    }
 }
