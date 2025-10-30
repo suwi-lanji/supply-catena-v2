@@ -41,7 +41,6 @@
             width: 100%;
             margin-bottom: 20px;
             overflow: hidden;
-            border-bottom: 2px solid #000;
             padding-bottom: 10px;
             display: flex; /* Use Flexbox */
             justify-content: space-between; /* Space out items */
@@ -133,7 +132,7 @@
             width: 50%;
         }
         .company-logo {
-            max-width: 150px;
+            max-width: 120px;
             height: auto;
             display: block; /* Ensure it behaves as a block element */
         }
