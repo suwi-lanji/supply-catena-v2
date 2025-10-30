@@ -147,7 +147,7 @@
         <div class="main-header">
             <div class="company-details-block">
                 {{-- Assuming $tenant has a logo and address fields --}}
-                @if ($tenant->logo_path ?? false)
+                @if ($tenant->logo ?? false)
                     <img id="companyLogo" class="company-logo" src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" crossOrigin="anonymous" />
                 @endif
                 <p>
