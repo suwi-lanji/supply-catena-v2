@@ -50,7 +50,7 @@ class QuotationResource extends Resource
                             ->live()
                             ->afterStateUpdated(function ($state, $set, $get) {
                                 if($state) {
-                                    $date = \Carbon\Carbon::date($state);
+                                    $date = \Carbon\Carbon::parse($state);
                                     $set('expected_shippment_date', $date->copy()->addDays(30));
                                 }
                             })
