@@ -17,12 +17,6 @@ class InvoicesObserver
      */
     public function created(Invoices $invoices): void
     {
-        $this->updateBalanceAndStatus($invoices);
-        $recipients = Team::find($invoices->team_id)->users;
-        $team = Team::find($invoices->team_id);
-        foreach ($recipients as $recipient) {
-            $recipient->notify(new DatabaseNotification('New invoice created', $invoices->invoice_number.' created successfully', route('filament.dashboard.resources.invoices.view', ['tenant' => $team->id, 'record' => $invoices->id]), $team->id));
-        }
         DB::transaction(function () use ($invoices) {
             SalesOrder::where('id', $invoices->order_number)
                 ->update(['invoiced' => true, 'status' => 'closed']);
