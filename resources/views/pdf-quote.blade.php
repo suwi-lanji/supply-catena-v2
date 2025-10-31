@@ -198,7 +198,6 @@
         <table class="items-table">
             <tr>
                 <th>ITEM</th>
-                <th>MATERIAL NO.</th>
                 <th>PART NO.</th>
                 <th>ALTERNATIVE</th>
                 <th class="description">DESCRIPTION</th>
@@ -216,7 +215,6 @@
                     @if ($itemModel)
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $item['sku'] ?? '' }}</td>
                             <td class="text-center">{{ $itemModel->part_number ?? '' }}</td>
                             <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
                             <td class="text-center">{{ $itemModel->description ?? '' }}</td>
