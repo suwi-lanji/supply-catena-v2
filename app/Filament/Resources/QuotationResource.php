@@ -47,9 +47,17 @@ class QuotationResource extends Resource
                         Forms\Components\TextInput::make('stock_in'),
                         Forms\Components\DatePicker::make('quotation_date')
                             ->native(false)->default(now())
+                            ->live()
+                            ->afterStateUpdated(function ($state, $set, $get) {
+                                if($state) {
+                                    $date = \Carbon\Carbon::date($state);
+                                    $set('expected_shippment_date', $date->copy()->addDays(30));
+                                }
+                            })
                             ->required(),
                         Forms\Components\DatePicker::make('expected_shippment_date')
-                            ->native(false)->default(now()),
+                            ->native(false)
+                            ->live(),
                         Forms\Components\Select::make('payment_term_id')
                             ->relationship('payment_term', 'name')
                             ->createOptionForm([
