@@ -200,6 +200,7 @@
                 <th>ITEM</th>
                 <th>MATERIAL NO.</th>
                 <th>PART NO.</th>
+                <th>PART NO.</th>
                 <th class="description">DESCRIPTION</th>
                 <th>LEAD TIME</th>
                 <th>QTY</th>
@@ -217,6 +218,7 @@
                             <td class="text-center">{{ $index + 1 }}</td>
                             <td class="text-center">{{ $item['sku'] ?? '' }}</td>
                             <td class="text-center">{{ $itemModel->part_number ?? '' }}</td>
+                            <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
                             <td class="text-center">{{ $itemModel->description ?? '' }}</td>
                             <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
                             <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
