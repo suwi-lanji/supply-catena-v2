@@ -200,7 +200,7 @@
                 <th>ITEM</th>
                 <th>MATERIAL NO.</th>
                 <th>PART NO.</th>
-                <th>PART NO.</th>
+                <th>ALTERNATIVE</th>
                 <th class="description">DESCRIPTION</th>
                 <th>LEAD TIME</th>
                 <th>QTY</th>
