@@ -215,7 +215,7 @@
                     @if ($itemModel)
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $itemModel->part_number ?? '' }}</td>
+                            <td class="text-center" style="padding-horizontal: 5px">{{ $itemModel->part_number ?? '' }}</td>
                             <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
                             <td class="text-center">{{ $itemModel->description ?? '' }}</td>
                             <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
