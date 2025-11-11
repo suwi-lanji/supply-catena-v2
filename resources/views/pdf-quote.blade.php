@@ -343,15 +343,29 @@ foreach ($record->items as $item) {
                     const canvas = document.createElement('canvas');
                     const ctx = canvas.getContext('2d');
                     
-                    canvas.width = img.naturalWidth;
-                    canvas.height = img.naturalHeight;
+                    // Resize very large images before embedding to reduce PDF size
+                    const maxWidth = 1200; // px
+                    const maxHeight = 1200; // px
+                    let targetWidth = img.naturalWidth;
+                    let targetHeight = img.naturalHeight;
+
+                    // Maintain aspect ratio while constraining to max dimensions
+                    if (targetWidth > maxWidth || targetHeight > maxHeight) {
+                        const widthRatio = maxWidth / targetWidth;
+                        const heightRatio = maxHeight / targetHeight;
+                        const ratio = Math.min(widthRatio, heightRatio);
+                        targetWidth = Math.round(targetWidth * ratio);
+                        targetHeight = Math.round(targetHeight * ratio);
+                    }
+
+                    canvas.width = targetWidth;
+                    canvas.height = targetHeight;
                     
                     // Draw image to canvas
-                    ctx.drawImage(img, 0, 0);
-                    
-                    // Convert to data URL
                     try {
-                        const dataURL = canvas.toDataURL('image/png');
+                        ctx.drawImage(img, 0, 0, targetWidth, targetHeight);
+                        // Convert to JPEG data URL with quality to reduce size
+                        const dataURL = canvas.toDataURL('image/jpeg', 0.75);
                         img.src = dataURL;
                     } catch (e) {
                         console.warn('Could not convert image to data URL:', e);
@@ -389,7 +403,7 @@ foreach ($record->items as $item) {
                 
                 // Generate the PDF
                 const canvas = await html2canvas(content, {
-                    scale: 2, // Improve resolution
+                    scale: 1.25, // Lower scale to reduce raster size and PDF weight
                     useCORS: true, // Enable CORS for images
                     allowTaint: true, // Allow tainted canvas
                     logging: false, // Disable logging for cleaner output
@@ -403,8 +417,8 @@ foreach ($record->items as $item) {
                 content.style.boxShadow = originalContainerShadow;
 
                 // --- CREATE PDF ---
-                const imgData = canvas.toDataURL('image/png');
-                const pdf = new jsPDF('p', 'mm', 'a4');
+                const imgData = canvas.toDataURL('image/jpeg', 0.82);
+                const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
                 const canvasWidth = canvas.width;
@@ -417,14 +431,14 @@ foreach ($record->items as $item) {
                 let heightLeft = imgHeight;
                 let position = 0;
 
-                pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pdfHeight;
 
                 // Handle multi-page content
                 while (heightLeft > 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
-                    pdf.addImage(imgData, 'PNG', 0, position, imgWidth, imgHeight);
+                    pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                     heightLeft -= pdfHeight;
                 }
 
