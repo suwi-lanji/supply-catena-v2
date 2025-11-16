@@ -199,8 +199,8 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
             </thead>
             <tbody>
                 <tr>
-                    <td>Sales Order No.</td>
-                    <td>{{$record->sales_order_number}}</td>
+                    <td>Order No.</td>
+                    <td>{{$record->purchase_order_number ?? $record->sales_order_number}}</td>
                 </tr>
                 <tr>
                     <td>Order Date</td>
