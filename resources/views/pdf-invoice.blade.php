@@ -204,6 +204,15 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
             </thead>
             <tbody>
                 <tr>
+                    <td>Order No.</td>
+                    <td>
+                        @php
+                            $salesOrder = \App\Models\SalesOrder::find($record->sales_order_number);
+                        @endphp
+                        {{ $salesOrder->sales_order_number }}
+                    </td>
+                </tr>
+                <tr>
                     <td>@if ($record->type === "profoma")
                         {{ "Profoma" }}
                     @endif
