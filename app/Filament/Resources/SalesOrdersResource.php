@@ -45,7 +45,7 @@ class SalesOrdersResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\TextInput::make('sales_order_number')
-                            ->default('SO-2304'.SalesOrder::where('team_id', Filament::getTenant()->id)->count() + 1),
+                            ->default(fn (): string => 'SO-2304'.str_pad(SalesOrder::where('team_id', Filament::getTenant()->id)->count() + 1, 3, 0, STR_PAD_LEFT)),
                         Forms\Components\TextInput::make('reference_number')
                             ->default('RN-0000'.SalesOrder::where('team_id', Filament::getTenant()->id)->count() + 1),
                         Forms\Components\TextInput::make('purchase_order_number')
