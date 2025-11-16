@@ -193,7 +193,7 @@
                 <tr>
                     <td>{{ $customer->company_display_name ?? 'N/A' }}</td>
                     {{-- Assuming salesOrder relationship exists on $deliveryNote --}}
-                    <td>{{ $deliveryNote->salesOrder->sales_order_number ?? 'N/A' }}</td>
+                    <td>{{ $deliveryNote->salesOrder->purchase_order_number ?? 'N/A' }}</td>
                     <td>{{ $deliveryNote->salesOrder->sales_order_date ?? 'N/A' }}</td>
                     @php
                         $itemsTotalWeight = 0;
