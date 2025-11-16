@@ -207,7 +207,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <td>Order No.</td>
                     <td>
                         @php
-                            $salesOrder = \App\Models\SalesOrder::find($record->sales_order_number);
+                            $salesOrder = \App\Models\SalesOrder::find($record->sales_order_id);
                         @endphp
                         {{ $salesOrder->sales_order_number }}
                     </td>
