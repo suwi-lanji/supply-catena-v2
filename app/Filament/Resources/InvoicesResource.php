@@ -334,6 +334,9 @@ class InvoicesResource extends Resource
                 Tables\Columns\TextColumn::make('due_date')
                     ->date()
                     ->searchable(),
+                Tables\Columns\TextColumn::make('created_at')
+                    ->date()
+                    ->searchable(),
             ])
             ->filters([
                 QueryBuilder::make()
