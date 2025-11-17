@@ -194,15 +194,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
         </table>
         <table class="invoice-table right">
             <thead class="table-dark">
-                <tr>
-                    <td>Purchase Order No.</td>
-                    <td>
-                        @php
-                            $salesOrder = \App\Models\SalesOrder::where('id', $record->order_number)->first();
-                        @endphp
-                        {{ $salesOrder?->purchase_order_number }}
-                    </td>
-                </tr>
+                
                 <tr>
                     <td colspan="2" class="text-center">
                         @if ($record->type === "profoma")
@@ -212,6 +204,15 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                 </tr>
             </thead>
             <tbody>
+                <tr>
+                    <td>Purchase Order No.</td>
+                    <td>
+                        @php
+                            $salesOrder = \App\Models\SalesOrder::where('id', $record->order_number)->first();
+                        @endphp
+                        {{ $salesOrder?->purchase_order_number }}
+                    </td>
+                </tr>
                 <tr>
                     <td>@if ($record->type === "profoma")
                         {{ "Profoma" }}
