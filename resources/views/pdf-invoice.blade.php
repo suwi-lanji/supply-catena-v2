@@ -209,7 +209,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                         @php
                             $salesOrder = \App\Models\SalesOrder::where('id', $record->order_number)->first();
                         @endphp
-                        {{ $salesOrder?->sales_order_number }}
+                        {{ $record->purchase_order_number ?? $salesOrder?->sales_order_number }}
                     </td>
                 </tr>
                 <tr>
