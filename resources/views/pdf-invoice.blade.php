@@ -195,6 +195,15 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
         <table class="invoice-table right">
             <thead class="table-dark">
                 <tr>
+                    <td>Order No.</td>
+                    <td>
+                        @php
+                            $salesOrder = \App\Models\SalesOrder::where('id', $record->order_number)->first();
+                        @endphp
+                        {{ $salesOrder?->sales_order_number }}
+                    </td>
+                </tr>
+                <tr>
                     <td colspan="2" class="text-center">
                         @if ($record->type === "profoma")
                         {{ "Profoma" }}
