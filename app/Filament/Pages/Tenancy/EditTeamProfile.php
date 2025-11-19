@@ -29,11 +29,6 @@ class EditTeamProfile extends EditTenantProfile
                     ]),
                 Fieldset::make('Company Information')
                     ->schema([
-                        FileUpload::make('logo')
-                            ->image()
-                            ->imageResizeMode('cover')
-                            ->imageCropAspectRatio('1:1')
-                            ->required(),
                         TextInput::make('name')
                             ->required(),
                         TextInput::make('portal_name')
