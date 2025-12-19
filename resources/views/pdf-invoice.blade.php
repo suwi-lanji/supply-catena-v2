@@ -301,18 +301,15 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
         </div>
         <div class="invoice-footer right">
             @php
-            $totalVat = array_reduce($record->items, function($carry, $item) {
-                return $carry + $item['tax'];
-            }, 0);
+            $totalVat = 16;
             $totalDiscount = array_reduce($record->items, function($carry, $item) {
                 return $carry + $item['discount'];
             }, 0);
             $totalDiscount += floatval($record->discount);
             @endphp
             <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }} {{$tenant->currency_code}}</span></p>
-            <p><b>Discount ({{$totalDiscount}}%):</b> <span class="fw-normal text-body">{{$totalDiscount}}%</span></p>
             <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
-            <h5>{{$tenant->currency_symbol}}{{$record->total}}</h5>
+            <h5>{{$tenant->currency_symbol}}{{$record->sub_total + $totalVat}}</h5>
         </div>
     </div>
 
