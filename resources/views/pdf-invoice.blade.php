@@ -251,7 +251,6 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <th>Weight</th>
                     <th>Lead Time</th>
                     <th>Unit Price</th>
-                    <th>Discount</th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -265,14 +264,9 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <td>{{$item['alternative']}}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('description')->first() }}</td>
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
-                    <td>{{$item['weight']}}</td>
+                    <td>{{$item['weight'] ?? 'N/A'}}</td>
                     <td>{{$item['lead_time']}}</td>
                     <td>{{$item['rate']}}</td>
-                    <td>
-                        @php
-                            echo Arr::get($item, 'discount', 0) . "%";
-                        @endphp
-                    </td>
                     <td>{{$item['amount']}}</td>
                 </tr>
                 @endforeach
