@@ -47,8 +47,8 @@ class Invoices extends Model
         return $this->hasOne(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
     }
 
-    public function sales_order(): HasOne
+    public function sales_order()
     {
-        return $this->hasOne(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
+        return $this->belongsTo(SalesOrder::class)->where('team_id', Filament::getTenant()->id);
     }
 }
