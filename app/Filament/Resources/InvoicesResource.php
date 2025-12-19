@@ -61,7 +61,7 @@ class InvoicesResource extends Resource
                                 }
                             })
                             ->live()
-                            ->native(false)->default(now()),
+                            ->native(false)->default('tax'),
                         Forms\Components\TextInput::make('invoice_number')
                             ->placeholder('Leave blank for auto generation')
                             ->required(),
