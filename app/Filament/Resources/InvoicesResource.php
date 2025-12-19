@@ -17,7 +17,6 @@ use Filament\Tables\Filters\QueryBuilder;
 use Filament\Tables\Filters\QueryBuilder\Constraints\NumberConstraint;
 use Filament\Tables\Table;
 use Icetalker\FilamentTableRepeater\Forms\Components\TableRepeater;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\DB;
 
 class InvoicesResource extends Resource
@@ -60,12 +59,12 @@ class InvoicesResource extends Resource
                         Forms\Components\TextInput::make('invoice_number')
                             ->placeholder('Leave blank for auto generation')
                             ->required(),
-                        Forms\Components\Select::make('order_number')
+                        Forms\Components\Select::make('sales_order_id')
                             ->relationship('sales_order', 'sales_order_number')
                             ->required(),
                         Forms\Components\DatePicker::make('invoice_date')->required()->native(false)->default(now()),
                         Forms\Components\Select::make('payment_terms_id')->required()
-                            ->relationship('paymentTerm', 'name')
+                            ->relationship('payment_term', 'name')
                             ->createOptionForm([
                                 Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('name')->required(),
@@ -87,7 +86,7 @@ class InvoicesResource extends Resource
                 Forms\Components\Fieldset::make('')
                     ->schema([
                         Forms\Components\Select::make('sales_person_id')->required()
-                            ->relationship('salesPerson', 'name')
+                            ->relationship('sales_person', 'name')
                             ->createOptionForm([
                                 Forms\Components\Hidden::make('team_id')->default(Filament::getTenant()->id),
                                 Forms\Components\TextInput::make('name')->required(),
@@ -238,13 +237,12 @@ class InvoicesResource extends Resource
                         Forms\Components\TextInput::make('tax')
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($get, $set) {
-                                $total = floatval($get('quantity')) * floatval($get('rate'));
+                                $total = floatval($get('quantity'])) * floatval($get('rate'));
                                 if (floatval($get('tax')) > 0) {
                                     $total += (floatval($get('tax')) / 100 * $total);
                                 }
                                 $set('amount', $total);
                             })
-                             ->default(16)
                             ->numeric(),
                         Forms\Components\TextInput::make('amount')
                             ->numeric(),
