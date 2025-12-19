@@ -115,7 +115,7 @@ class InvoicesResource extends Resource
                                                         'discount' => $item['discount'] ?? 0,
                                                         'weight' => $item['weight'] ?? '',
                                                         'lead_time' => $item['lead_time'] ?? '',
-                                                        'tax' => $item['tax'] ?? 0,
+                                                        'tax' => $item['tax'] ?? 16,
                                                         'amount' => $item['amount'] ?? 0,
                                                         'account' => $item['account'] ?? null,
                                                     ];
@@ -228,6 +228,7 @@ class InvoicesResource extends Resource
                                             $item = Item::find($state);
                                             if ($item) {
                                                 $set('rate', $item->selling_price);
+                                                $set('tax', 16);
                                                 $set('description', $item->description);
                                                 self::calculateItemTotal($get, $set);
                                             }
