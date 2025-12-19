@@ -237,7 +237,7 @@ class InvoicesResource extends Resource
                         Forms\Components\TextInput::make('tax')
                             ->live(onBlur: true)
                             ->afterStateUpdated(function ($get, $set) {
-                                $total = floatval($get('quantity'])) * floatval($get('rate'));
+                                $total = floatval($get(['quantity'])) * floatval($get('rate'));
                                 if (floatval($get('tax')) > 0) {
                                     $total += (floatval($get('tax')) / 100 * $total);
                                 }
