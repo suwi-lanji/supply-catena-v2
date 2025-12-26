@@ -301,10 +301,10 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
             }, 0);
             $totalDiscount += floatval($record->discount);
             @endphp
-            <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }} {{$tenant->currency_code}}</span></p>
-            <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
-            <h5>{{$tenant->currency_symbol}}{{number_format($record->sub_total + ($record->sub_total * ($totalVat/100)), 2)}}</h5>
-        </div>
+            <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ number_format($record->sub_total, 2) }} {{$tenant->currency_code}}</span></p>
+<p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
+<h5>{{$tenant->currency_symbol}}{{ number_format($record->sub_total + ($record->sub_total * ($totalVat/100)), 2) }}</h5>
+            </div>
     </div>
 
     <div style="margin-bottom: 50px">
