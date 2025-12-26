@@ -287,11 +287,11 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
             }, 0);
             $totalDiscount += floatval($record->discount);
             @endphp
-            <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }}</span></p>
-            <p><b>Discount ({{$totalDiscount}}%):</b> <span class="fw-normal text-body">{{$totalDiscount}}%</span></p>
-            <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
-            <h5>{{$tenant->currency_symbol}}{{$record->total}}  {{$tenant->currency_code}}</h5>
-        </div>
+            <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ number_format($record->sub_total, 2) }}</span></p>
+<p><b>Discount ({{$totalDiscount}}%):</b> <span class="fw-normal text-body">{{$totalDiscount}}%</span></p>
+<p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$totalVat}}%</span></p>
+<h5>{{$tenant->currency_symbol}}{{ number_format($record->total, 2) }}</h5>
+            </div>
     </div>
 
     <div style="margin-bottom: 50px">
