@@ -236,7 +236,7 @@
                 @endforeach
         </table>
         @php
-        $vat = 16;
+        $vat = 0;
 $discount = 0;
 
 // Calculate totals
