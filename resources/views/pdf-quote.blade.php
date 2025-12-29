@@ -274,7 +274,7 @@ foreach ($record->items as $item) {
                     <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
                 </tr>
                 <tr>
-                    <td>VAT @ 16%</td>
+                    <td>VAT @ {{$vat}}%</td>
                     <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
                 </tr>
                 <tr>
