@@ -59,7 +59,7 @@ class InvoicesResource extends Resource
                         Forms\Components\TextInput::make('invoice_number')
                             ->placeholder('Leave blank for auto generation')
                             ->required(),
-                        Forms\Components\Select::make('sales_order_id')
+                        Forms\Components\Select::make('order_number')
                             ->relationship('sales_order', 'sales_order_number')
                             ->required(),
                         Forms\Components\DatePicker::make('invoice_date')->required()->native(false)->default(now()),
