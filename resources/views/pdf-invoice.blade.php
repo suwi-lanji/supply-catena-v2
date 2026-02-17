@@ -295,7 +295,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
         </div>
         <div class="invoice-footer right">
             @php
-            $totalVat = 0;
+            $totalVat = 16;
             $totalDiscount = array_reduce($record->items, function($carry, $item) {
                 return $carry + $item['discount'];
             }, 0);
