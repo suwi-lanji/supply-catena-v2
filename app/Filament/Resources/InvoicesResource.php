@@ -45,31 +45,24 @@ class InvoicesResource extends Resource
                             ])
                             ->afterStateUpdated(function ($state, $set) {
     if ($state === 'tax') {
+        $prefix = 'INV-2304';
         $lastInvoice = Invoices::where('team_id', Filament::getTenant()->id)
             ->where('type', 'tax')
             ->latest()
             ->first();
 
-        if ($lastInvoice) {
-            $lastNumber = (int) substr($lastInvoice->invoice_number, strrpos($lastInvoice->invoice_number, '-') + 1);
-            $nextNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            $set('invoice_number', 'INV-2304' . $nextNumber);
-        } else {
-            $set('invoice_number', 'INV-2304001');
-        }
+        $lastNumber = $lastInvoice ? (int) substr($lastInvoice->invoice_number, strlen($prefix)) : 0;
+        $set('invoice_number', $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT));
+
     } else {
+        $prefix = 'PI-2304';
         $lastInvoice = Invoices::where('team_id', Filament::getTenant()->id)
             ->where('type', 'proforma')
             ->latest()
             ->first();
 
-        if ($lastInvoice) {
-            $lastNumber = (int) substr($lastInvoice->invoice_number, strrpos($lastInvoice->invoice_number, '-') + 1);
-            $nextNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
-            $set('invoice_number', 'PI-2304' . $nextNumber);
-        } else {
-            $set('invoice_number', 'PI-2304001');
-        }
+        $lastNumber = $lastInvoice ? (int) substr($lastInvoice->invoice_number, strlen($prefix)) : 0;
+        $set('invoice_number', $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT));
     }
 })
                             ->live()
