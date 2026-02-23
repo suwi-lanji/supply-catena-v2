@@ -44,18 +44,36 @@ class InvoicesResource extends Resource
                                 'proforma' => 'Proforma',
                             ])
                             ->afterStateUpdated(function ($state, $set) {
-                                if ($state === 'tax') {
-                                    $set('invoice_number', 'INV-2304'.str_pad(Invoices::where('team_id', Filament::getTenant()->id)
-                                        ->where('type', 'tax')
-                                        ->count() + 1, 3, 0, STR_PAD_LEFT));
-                                } else {
-                                    $set('invoice_number', 'PI-2304'.str_pad(Invoices::where('team_id', Filament::getTenant()->id)
-                                        ->where('type', 'proforma')
-                                        ->count() + 1, 3, 0, STR_PAD_LEFT));
-                                }
-                            })
+    if ($state === 'tax') {
+        $lastInvoice = Invoices::where('team_id', Filament::getTenant()->id)
+            ->where('type', 'tax')
+            ->latest()
+            ->first();
+
+        if ($lastInvoice) {
+            $lastNumber = (int) substr($lastInvoice->invoice_number, strrpos($lastInvoice->invoice_number, '-') + 1);
+            $nextNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $set('invoice_number', 'INV-2304' . $nextNumber);
+        } else {
+            $set('invoice_number', 'INV-2304001');
+        }
+    } else {
+        $lastInvoice = Invoices::where('team_id', Filament::getTenant()->id)
+            ->where('type', 'proforma')
+            ->latest()
+            ->first();
+
+        if ($lastInvoice) {
+            $lastNumber = (int) substr($lastInvoice->invoice_number, strrpos($lastInvoice->invoice_number, '-') + 1);
+            $nextNumber = str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
+            $set('invoice_number', 'PI-2304' . $nextNumber);
+        } else {
+            $set('invoice_number', 'PI-2304001');
+        }
+    }
+})
                             ->live()
-                            ->default('tax'),
+                            ->required(),
                         Forms\Components\TextInput::make('invoice_number')
                             ->placeholder('Leave blank for auto generation')
                             ->required(),
