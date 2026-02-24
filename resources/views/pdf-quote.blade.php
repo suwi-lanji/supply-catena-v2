@@ -265,6 +265,16 @@ foreach ($record->items as $item) {
             @else
                 <p>Payment terms information not available.</p>
             @endif
+            @if($record->terms_and_conditions)
+                    <div class="">
+            <h4>Terms and Conditions</h4>
+            <ul>
+                @foreach ($record->terms_and_conditions as $index => $t_and_c)
+                <li><small>{{ $t_and_c['terms_and_conditions'] }}</small></li>
+                @endforeach
+            </ul>
+        </div>
+            @endif
         </div>
             </div>
             <div class="">
