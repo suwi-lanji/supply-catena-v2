@@ -250,6 +250,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <th>Condition</th>
                     <th>Weight</th>
                     <th>Unit Price</th>
+                    <th>Discount</th>
                     <th>Amount</th>
                 </tr>
             </thead>
@@ -265,6 +266,7 @@ $fullpath = base_path() . '/storage/app/public/' . $tenant->logo;
                     <td>{{ \App\Models\Item::where('id', $item['item'])->pluck('condition')->first() }}</td>
                     <td>{{$item['weight'] ?? 'N/A'}}</td>
                     <td>{{$item['rate']}}</td>
+                    <td>{{$item['discount']}}</td>
                     <td>{{$item['amount']}}</td>
                 </tr>
                 @endforeach
