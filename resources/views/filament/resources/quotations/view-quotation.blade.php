@@ -220,6 +220,9 @@ $fullpath = base_path() . "/storage/app/public/" . $tenant->logo;
             </tbody>
         </table>
     </div>
+    @php
+        $itemsHaveVat = false;
+    @endphp
     <div class="invoice-body">
         <table class="table table-sm table-centered table-hover table-borderless mb-0 mt-3">
             <thead class="border-top border-bottom border-light">
@@ -258,6 +261,9 @@ $fullpath = base_path() . "/storage/app/public/" . $tenant->logo;
                     </td>
                     <td>{{$item["amount"]}}</td>
                 </tr>
+                @if((int)$item['tax'] > 0)
+                    $itemHasVat = true;
+                @endif
                 @endforeach
                 <tr>
                     <td colspan="5"></td>
@@ -284,7 +290,8 @@ $fullpath = base_path() . "/storage/app/public/" . $tenant->logo;
         </div>
         <div class="invoice-footer">
             @php
-            $totalVat = 16;
+            $totalVat = 0;
+            if($itemHasVat) $totalVat = 16;
             $totalDiscount = array_reduce($record->items, function($carry, $item) {
                 return $carry + $item["discount"];
             }, 0);
