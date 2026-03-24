@@ -299,7 +299,7 @@ $fullpath = base_path() . "/storage/app/public/" . $tenant->logo;
             @endphp
             <p><b>Sub-total: </b><span class="float-end">{{$tenant->currency_symbol}}{{ $record->sub_total }} {{$tenant->currency_code}}</span></p>
             <p><b>Discount ({{$totalDiscount}}%):</b> <span class="fw-normal text-body">{{$totalDiscount}}%</span></p>
-            <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$record->sub_total * totalVat/100}}</span></p>
+            <p><b>VAT ({{$totalVat}}%):</b> <span class="fw-normal text-body">{{$tenant->currency_symbol}}{{$record->sub_total * totalVat/100}}</span></p>
             <h5>{{$tenant->currency_symbol}}{{$record->sub_total + ($record->sub_total * 0.16)}}</h5>
         </div>
     </div>
