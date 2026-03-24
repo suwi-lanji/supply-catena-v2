@@ -208,6 +208,9 @@
                 <th>DISC%</th>
                 <th>TOTAL PRICE(EXCL)</th>
             </tr>
+            @php
+            $itemsHaveVat = false;
+            @endphp
             @foreach ($record->items as $index => $item)
                     @php
                         $itemModel = \App\Models\Item::find($item['item']);
@@ -225,6 +228,7 @@
                             <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
                             <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
                         </tr>
+                        if((int)$item['tax'] > 0) $itemsHaveVat = true;
                     @else
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
@@ -236,7 +240,8 @@
                 @endforeach
         </table>
         @php
-        $vat = 16;
+        $vat = 0;
+        if($itemsHaveVat) $vat = 16;
 $discount = 0;
 
 // Calculate totals
