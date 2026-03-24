@@ -228,7 +228,9 @@
                             <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
                             <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
                         </tr>
+                        @php
                         if((int)$item['tax'] > 0) $itemsHaveVat = true;
+                        @endphp
                     @else
                         <tr>
                             <td class="text-center">{{ $index + 1 }}</td>
