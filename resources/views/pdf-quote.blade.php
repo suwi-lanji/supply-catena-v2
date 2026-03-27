@@ -137,8 +137,9 @@
     </style>
 </head>
 <body>
-    <!-- Action Button -->
+    <!-- Action Buttons -->
     <button class="action-button" onclick="generatePDF()">Download as PDF</button>
+    <button class="action-button" style="background-color: #28a745;" onclick="generateVatExclusivePDF()">Download VAT Exclusive PDF</button>
 
     <!-- Quotation Content -->
     <div id="quotationContent" class="container">
@@ -228,9 +229,6 @@
                         <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
                         <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
                     </tr>
-                    @php
-                        if ((int) $item['tax'] > 0) $itemsHaveVat = true;
-                    @endphp
                 @else
                     <tr>
                         <td class="text-center">{{ $index + 1 }}</td>
@@ -243,8 +241,7 @@
         </table>
 
         @php
-            $vat = 0;
-            if ($itemsHaveVat) $vat = 16;
+            $vat = 16;
             $discount = 0;
 
             foreach ($record->items as $item) {
@@ -300,6 +297,146 @@
                     <tr>
                         <td>GRAND TOTAL</td>
                         <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat / 100)) - ($record->discount ?? $discount), 2) }}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- VAT Exclusive Quotation Content (hidden, used only for PDF generation) -->
+    <div id="vatExclusiveContent" class="container" style="display:none;">
+        <div class="main-header">
+            <div class="company-details">
+                <img class="company-logo" src="{{ asset('storage/' . $tenant->logo) }}" alt="Company Logo" crossOrigin="anonymous" />
+            </div>
+            <div class="quotation-info">
+                <h3>{{ $tenant->portal_name }}</h3>
+                <p>
+                    {{ $tenant->street_1 }}<br>
+                    {{ $tenant->city }}, {{ $tenant->province }}, {{ $tenant->business_location }}<br>
+                    Phone: {{ $tenant->phone }}<br>
+                </p>
+            </div>
+        </div>
+
+        <div class="sub-header">
+            <div class="delivery-address">
+                DELIVERY ADDRESS<br>
+                Attention: {{ $customer->company_display_name }}<br>
+                {{ $customer->company_display_name }}<br>
+                {{ $customer->billing_street_1 }}<br>
+                {{ $customer->billing_city }}, {{ $customer->billing_province }}<br>
+                {{ $customer->billing_country }}
+            </div>
+            <div class="contact-info">
+                <strong>OFFICE CELL:</strong> {{ $tenant->phone }}<br>
+                <strong>EMAIL: {{ $tenant->email }}</strong>
+            </div>
+        </div>
+
+        <table class="details-table">
+            <tr>
+                <th>VALID DATE</th>
+                <th>CLIENT</th>
+                <th>VENDOR NO.</th>
+                <th>QUOTATION NO</th>
+                <th>INCO TERM</th>
+                <th>STOCK IN</th>
+                <th>LEAD TIME</th>
+                <th>PAYMENT TERM</th>
+            </tr>
+            <tr>
+                <td>{{ $record->quotation_date }} - {{ $record->expected_shippment_date }}</td>
+                <td>{{ $customer->company_display_name }}</td>
+                <td>{{ $customer->vendor_number }}</td>
+                <td>{{ $record->quotation_number }}</td>
+                <td>{{ $record->inco_term }}</td>
+                <td>{{ $record->stock_in }}</td>
+                <td>{{ $record->lead_time }}</td>
+                <td>{{ $record->payment_time }} DAYS</td>
+            </tr>
+        </table>
+
+        <table class="items-table">
+            <tr>
+                <th>ITEM</th>
+                <th style="padding: 0px 5px">PART NO.</th>
+                <th>ALTERNATIVE</th>
+                <th class="description">DESCRIPTION</th>
+                <th>LEAD TIME</th>
+                <th>QTY</th>
+                <th>UNIT PRICE(EXCL)</th>
+                <th>DISC%</th>
+                <th>TOTAL PRICE(EXCL)</th>
+            </tr>
+            @foreach ($record->items as $index => $item)
+                @php
+                    $itemModelExcl = \App\Models\Item::find($item['item']);
+                @endphp
+                @if ($itemModelExcl)
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="text-center">{{ $itemModelExcl->part_number ?? '' }}</td>
+                        <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
+                        <td class="text-center">{{ $itemModelExcl->description ?? '' }}</td>
+                        <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
+                        <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
+                        <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
+                        <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
+                        <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
+                    </tr>
+                @else
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td colspan="8" class="text-center" style="color: red;">
+                            Item data not available
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
+        </table>
+
+        <div class="footer-section" style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
+            <div class="">
+                <div class="payment-terms-section">
+                    <h4>PAYMENT TERMS</h4>
+                    @if ($terms)
+                        <p>Please make payment by check or bank transfer to the following account:</p>
+                        <div>
+                            <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
+                            <p><strong>Bank:</strong> {{ $terms->bank }}</p>
+                            <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
+                            <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
+                            <p><strong>Branch:</strong> {{ $terms->branch }}</p>
+                            <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
+                            <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+                        </div>
+                    @else
+                        <p>Payment terms information not available.</p>
+                    @endif
+                </div>
+
+                @if ($record->terms_and_conditions)
+                    <div class="">
+                        <h4>Terms and Conditions</h4>
+                        <ul>
+                            @foreach ($record->terms_and_conditions as $index => $t_and_c)
+                                <li><small>{{ $t_and_c['terms_and_conditions'] }}</small></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
+            </div>
+
+            <div class="">
+                <table class="totals-table">
+                    <tr>
+                        <td>SUB TOTAL (EXCL VAT)</td>
+                        <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>GRAND TOTAL (EXCL VAT)</td>
+                        <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total - ($record->discount ?? $discount), 2) }}</td>
                     </tr>
                 </table>
             </div>
@@ -399,62 +536,51 @@
             });
         }
 
-        async function generatePDF() {
-            const content = document.getElementById('quotationContent');
-            const button = document.querySelector('.action-button');
-            
-            // --- PREPARE FOR CAPTURE ---
-            // Store original styles
+        // Shared helper: captures any element and saves as PDF
+        async function captureAndSavePDF(contentEl, filename, allButtons) {
             const originalBodyBg = document.body.style.backgroundColor;
-            const originalContainerShadow = content.style.boxShadow;
-            
-            // Temporarily change styles for a clean capture
-            button.style.display = 'none'; // Hide button
-            document.body.style.backgroundColor = 'white'; // Remove gray background
-            content.style.boxShadow = 'none'; // Remove container shadow
+            const originalShadow = contentEl.style.boxShadow;
+            const originalDisplay = contentEl.style.display;
+
+            // Show the target element, hide buttons
+            contentEl.style.display = 'block';
+            contentEl.style.boxShadow = 'none';
+            document.body.style.backgroundColor = 'white';
+            allButtons.forEach(btn => btn.style.display = 'none');
 
             try {
-                // Preload and convert images
                 await preloadImages();
                 await convertImagesToDataURLs();
-                
-                // Give a small delay to ensure all images are properly rendered
                 await new Promise(resolve => setTimeout(resolve, 500));
-                
-                // Generate the PDF
-                const canvas = await html2canvas(content, {
-                    scale: 1.25, // Lower scale to reduce raster size and PDF weight
-                    useCORS: true, // Enable CORS for images
-                    allowTaint: true, // Allow tainted canvas
-                    logging: false, // Disable logging for cleaner output
-                    backgroundColor: '#ffffff' // Ensure white background
-                });
-                
-                // --- RESTORE ORIGINAL STYLES ---
-                // Change styles back immediately after capture
-                button.style.display = 'block';
-                document.body.style.backgroundColor = originalBodyBg;
-                content.style.boxShadow = originalContainerShadow;
 
-                // --- CREATE PDF ---
+                const canvas = await html2canvas(contentEl, {
+                    scale: 1.25,
+                    useCORS: true,
+                    allowTaint: true,
+                    logging: false,
+                    backgroundColor: '#ffffff'
+                });
+
+                // Restore
+                allButtons.forEach(btn => btn.style.display = 'inline-block');
+                document.body.style.backgroundColor = originalBodyBg;
+                contentEl.style.boxShadow = originalShadow;
+                contentEl.style.display = originalDisplay;
+
                 const imgData = canvas.toDataURL('image/jpeg', 0.82);
                 const pdf = new jsPDF({ orientation: 'p', unit: 'mm', format: 'a4', compress: true });
                 const pdfWidth = pdf.internal.pageSize.getWidth();
                 const pdfHeight = pdf.internal.pageSize.getHeight();
-                const canvasWidth = canvas.width;
-                const canvasHeight = canvas.height;
-                const ratio = canvasWidth / canvasHeight;
+                const ratio = canvas.width / canvas.height;
                 const imgWidth = pdfWidth;
                 const imgHeight = pdfWidth / ratio;
 
-                // Check if content fits on one page
                 let heightLeft = imgHeight;
                 let position = 0;
 
                 pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
                 heightLeft -= pdfHeight;
 
-                // Handle multi-page content
                 while (heightLeft > 0) {
                     position = heightLeft - imgHeight;
                     pdf.addPage();
@@ -462,17 +588,28 @@
                     heightLeft -= pdfHeight;
                 }
 
-                // Download the PDF
-                pdf.save('{{ $record->quotation_number }}.pdf');
+                pdf.save(filename);
             } catch (error) {
                 console.error('Error generating PDF:', error);
                 alert('Error generating PDF. Please try again.');
-                
-                // Restore styles even if there's an error
-                button.style.display = 'block';
+
+                allButtons.forEach(btn => btn.style.display = 'inline-block');
                 document.body.style.backgroundColor = originalBodyBg;
-                content.style.boxShadow = originalContainerShadow;
+                contentEl.style.boxShadow = originalShadow;
+                contentEl.style.display = originalDisplay;
             }
+        }
+
+        async function generatePDF() {
+            const content = document.getElementById('quotationContent');
+            const allButtons = Array.from(document.querySelectorAll('.action-button'));
+            await captureAndSavePDF(content, '{{ $record->quotation_number }}.pdf', allButtons);
+        }
+
+        async function generateVatExclusivePDF() {
+            const content = document.getElementById('vatExclusiveContent');
+            const allButtons = Array.from(document.querySelectorAll('.action-button'));
+            await captureAndSavePDF(content, '{{ $record->quotation_number }}_excl_vat.pdf', allButtons);
         }
     </script>
 </body>
