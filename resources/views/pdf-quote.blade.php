@@ -145,7 +145,7 @@
         <div class="main-header">
             <div class="company-details">
                 <!-- Company Logo with crossOrigin attribute for CORS -->
-                <img id="companyLogo" class="company-logo" src="{{asset('storage/' . $tenant->logo)}}" alt="Company Logo" crossOrigin="anonymous" />
+                <img id="companyLogo" class="company-logo" src="{{ asset('storage/' . $tenant->logo) }}" alt="Company Logo" crossOrigin="anonymous" />
             </div>
             <div class="quotation-info">
                 <h3>{{ $tenant->portal_name }}</h3>
@@ -209,97 +209,99 @@
                 <th>TOTAL PRICE(EXCL)</th>
             </tr>
             @php
-            $itemsHaveVat = false;
+                $itemsHaveVat = false;
             @endphp
             @foreach ($record->items as $index => $item)
+                @php
+                    $itemModel = \App\Models\Item::find($item['item']);
+                @endphp
+                @if ($itemModel)
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td class="text-center">{{ $itemModel->part_number ?? '' }}</td>
+                        <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
+                        <td class="text-center">{{ $itemModel->description ?? '' }}</td>
+                        <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
+                        <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
+                        <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
+                        <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'] * (1 + ($item['tax'] ?? 0) / 100), 2) }}</td>
+                        <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
+                        <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
+                    </tr>
                     @php
-                        $itemModel = \App\Models\Item::find($item['item']);
+                        if ((int) $item['tax'] > 0) $itemsHaveVat = true;
                     @endphp
-                    @if ($itemModel)
-                        <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td class="text-center">{{ $itemModel->part_number ?? '' }}</td>
-                            <td class="text-center">{{ $item['alternative'] ?? '' }}</td>
-                            <td class="text-center">{{ $itemModel->description ?? '' }}</td>
-                            <td class="text-center">{{ $item['lead_time'] ?? '' }}</td>
-                            <td class="text-center">{{ $item['quantity'] ?? '0' }}</td>
-                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'], 2) }}</td>
-                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['rate'] * (1 + ($item['tax'] ?? 0) / 100), 2) }}</td>
-                            <td class="text-center">{{ $item['discount'] ?? '0' }}%</td>
-                            <td class="text-center">{{ $tenant->currency_symbol }}{{ number_format($item['amount'], 2) }}</td>
-                        </tr>
-                        @php
-                        if((int)$item['tax'] > 0) $itemsHaveVat = true;
-                        @endphp
-                    @else
-                        <tr>
-                            <td class="text-center">{{ $index + 1 }}</td>
-                            <td colspan="9" class="text-center" style="color: red;">
-                                Item data not available
-                            </td>
-                        </tr>
-                    @endif
-                @endforeach
+                @else
+                    <tr>
+                        <td class="text-center">{{ $index + 1 }}</td>
+                        <td colspan="9" class="text-center" style="color: red;">
+                            Item data not available
+                        </td>
+                    </tr>
+                @endif
+            @endforeach
         </table>
-        @php
-        $vat = 0;
-        if($itemsHaveVat) $vat = 16;
-$discount = 0;
 
-// Calculate totals
-foreach ($record->items as $item) {
-    $discount += $item["discount"] ?? 0;
-}
+        @php
+            $vat = 0;
+            if ($itemsHaveVat) $vat = 16;
+            $discount = 0;
+
+            foreach ($record->items as $item) {
+                $discount += $item['discount'] ?? 0;
+            }
         @endphp
+
         <div class="footer-section" style="display: flex; flex-direction: row; align-items: flex-start; justify-content: space-between;">
             <div class="">
                 <div class="payment-terms-section">
-            <h4>PAYMENT TERMS</h4>
-            @php
-            $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
-            @endphp
-            @if($terms)
-                <p>Please make payment by check or bank transfer to the following account:</p>
-                <div>
-                    <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
-                    <p><strong>Bank:</strong> {{ $terms->bank }}</p>
-                    <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
-                    <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
-                    <p><strong>Branch:</strong> {{ $terms->branch }}</p>
-                    <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
-                    <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+                    <h4>PAYMENT TERMS</h4>
+                    @php
+                        $terms = \App\Models\PaymentTerm::find($record->payment_term_id);
+                    @endphp
+                    @if ($terms)
+                        <p>Please make payment by check or bank transfer to the following account:</p>
+                        <div>
+                            <p><strong>Account Type:</strong> {{ $terms->account_type }}</p>
+                            <p><strong>Bank:</strong> {{ $terms->bank }}</p>
+                            <p><strong>A/C Name:</strong> {{ $terms->account_name }}</p>
+                            <p><strong>Account No:</strong> {{ $terms->account_number }}</p>
+                            <p><strong>Branch:</strong> {{ $terms->branch }}</p>
+                            <p><strong>Swift Code:</strong> {{ $terms->swift_code }}</p>
+                            <p><strong>Branch No:</strong> {{ $terms->branch_number }}</p>
+                        </div>
+                    @else
+                        <p>Payment terms information not available.</p>
+                    @endif
                 </div>
-            @else
-                <p>Payment terms information not available.</p>
-            @endif
-            
-        </div>
-        @if($record->terms_and_conditions)
+
+                @if ($record->terms_and_conditions)
                     <div class="">
-            <h4>Terms and Conditions</h4>
-            <ul>
-                @foreach ($record->terms_and_conditions as $index => $t_and_c)
-                <li><small>{{ $t_and_c['terms_and_conditions'] }}</small></li>
-                @endforeach
-            </ul>
-        </div>
-            @endif
+                        <h4>Terms and Conditions</h4>
+                        <ul>
+                            @foreach ($record->terms_and_conditions as $index => $t_and_c)
+                                <li><small>{{ $t_and_c['terms_and_conditions'] }}</small></li>
+                            @endforeach
+                        </ul>
+                    </div>
+                @endif
             </div>
+
             <div class="">
                 <table class="totals-table">
-                <tr>
-                    <td>SUB TOTAL</td>
-                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
-                </tr>
-                <tr>
-                    <td>VAT @ {{$vat}}%</td>
-                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total * ($vat/100), 2) }}</td>
-                </tr>
-                <tr>
-                    <td>GRAND TOTAL</td>
-                    <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat/100)) - ($record->discount ?? $discount), 2) }}</td>
-                </tr>
-            </table>
+                    <tr>
+                        <td>SUB TOTAL</td>
+                        <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total, 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>VAT @ {{ $vat }}%</td>
+                        <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total * ($vat / 100), 2) }}</td>
+                    </tr>
+                    <tr>
+                        <td>GRAND TOTAL</td>
+                        <td style="text-align:right;">{{ $tenant->currency_symbol }}{{ number_format($record->sub_total + ($record->sub_total * ($vat / 100)) - ($record->discount ?? $discount), 2) }}</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -461,7 +463,7 @@ foreach ($record->items as $item) {
                 }
 
                 // Download the PDF
-                pdf.save('{{$record->quotation_number}}.pdf');
+                pdf.save('{{ $record->quotation_number }}.pdf');
             } catch (error) {
                 console.error('Error generating PDF:', error);
                 alert('Error generating PDF. Please try again.');
