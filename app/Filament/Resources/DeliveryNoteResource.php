@@ -55,7 +55,6 @@ class DeliveryNoteResource extends Resource
                             ->relationship('salesOrder', 'sales_order_number')
                             ->searchable()
                             ->preload()
-                            ->required()
                             ->columnSpan(1)
                             ->live()
                             ->afterStateUpdated(function ($get, $set, $state) {
