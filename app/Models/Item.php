@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Support\Facades\DB;
 
 class Item extends Model
 {
@@ -16,6 +17,45 @@ class Item extends Model
     protected $table = 'item';
 
     protected $guarded = [];
+
+    protected $appends = ['stock_on_hand', 'track_inventory', 'allow_negative_stock'];
+
+    /**
+     * Get the total stock on hand across all warehouses.
+     */
+    public function getStockOnHandAttribute(): float
+    {
+        // If opening_stock is set and no warehouse_items exist, use opening_stock
+        $warehouseStock = DB::table('warehouse_items')
+            ->where('item_id', $this->id)
+            ->sum('quantity');
+
+        return $warehouseStock > 0 ? $warehouseStock : ($this->opening_stock ?? 0);
+    }
+
+    /**
+     * Check if inventory is tracked for this item.
+     */
+    public function getTrackInventoryAttribute(): bool
+    {
+        return (bool) $this->track_inventory_for_this_item;
+    }
+
+    /**
+     * Get whether negative stock is allowed (default false).
+     */
+    public function getAllowNegativeStockAttribute(): bool
+    {
+        return false; // Default to not allowing negative stock
+    }
+
+    /**
+     * Alias for selling_price.
+     */
+    public function getSalesPriceAttribute(): float
+    {
+        return $this->selling_price ?? 0;
+    }
 
     public function team(): BelongsTo
     {
@@ -65,5 +105,13 @@ class Item extends Model
     public function warehouse(): HasOne
     {
         return $this->hasOne(Warehouse::class)->where('team_id', Filament::getTenant()->id);
+    }
+
+    /**
+     * Get warehouse items relationship.
+     */
+    public function warehouseItems()
+    {
+        return $this->hasMany(WarehouseItem::class, 'item_id');
     }
 }

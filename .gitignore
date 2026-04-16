@@ -1,3 +1,12 @@
 /vendor
 /node_modules
 /storage/**/*
+.phpunit.result.cache
+bootstrap/cache/*.php
+database/database.sqlite
+*.log
+.env
+.env.backup
+.env.testing
+public/storage
+public/hot

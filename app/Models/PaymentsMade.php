@@ -6,11 +6,15 @@ use Filament\Facades\Filament;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class PaymentsMade extends Model
 {
     use HasFactory;
+
+    // Status constants
+    public const STATUS_PAID = 'paid';
+    public const STATUS_VOIDED = 'voided';
 
     protected $guarded = [];
 
@@ -18,6 +22,8 @@ class PaymentsMade extends Model
     {
         return [
             'items' => 'array',
+            'payment_date' => 'date',
+            'amount' => 'decimal:2',
         ];
     }
 
@@ -26,8 +32,17 @@ class PaymentsMade extends Model
         return $this->belongsTo(Team::class);
     }
 
-    public function vendor(): HasOne
+    public function vendor(): BelongsTo
     {
-        return $this->hasOne(Vendor::class)->where('team_id', Filament::getTenant()->id);
+        return $this->belongsTo(Vendor::class)->where('team_id', Filament::getTenant()?->id);
+    }
+
+    /**
+     * Get the journal entries for this payment.
+     */
+    public function journalEntries(): HasMany
+    {
+        return $this->hasMany(JournalEntry::class, 'reference_id')
+            ->where('reference_type', self::class);
     }
 }
