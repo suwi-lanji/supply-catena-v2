@@ -49,26 +49,41 @@ class PaymentMadeService extends BaseService
             $payment = new PaymentsMade();
             $payment->team_id = $team->id;
             $payment->vendor_id = $data['vendor_id'];
+            $payment->payment_number = $data['payment_number'] ?? $this->generatePaymentNumber($team);
             $payment->payment_date = $data['payment_date'] ?? now();
-            $payment->amount = $data['amount'];
-            $payment->payment_method = $data['payment_method'];
-            $payment->reference = $data['reference'] ?? null;
+            $payment->amount = $data['amount'] ?? 0;
+            $payment->bank_charges = $data['bank_charges'] ?? 0;
+            $payment->payment_mode = $data['payment_mode'] ?? null;
+            $payment->paid_through = $data['paid_through'] ?? null;
+            $payment->reference_number = $data['reference_number'] ?? null;
             $payment->notes = $data['notes'] ?? null;
+            $payment->items = $data['items'] ?? [];
             $payment->status = PaymentsMade::STATUS_PAID;
             $payment->save();
 
             // Apply to bills if specified
-            if (isset($data['bills']) && is_array($data['bills'])) {
-                $this->applyToBills($payment, $data['bills']);
+            if (isset($data['items']) && is_array($data['items'])) {
+                $this->applyToBills($payment, $data['items']);
             }
 
-            // Create journal entry
-            if ($data['create_journal_entry'] ?? true) {
-                $this->createPaymentJournalEntry($payment, $team, $data['user_id'] ?? null);
+            // Try to create journal entry
+            try {
+                $team = $payment->team;
+                $existingAccounts = \App\Models\LedgerAccount::where('team_id', $team->id)->count();
+                if ($existingAccounts === 0) {
+                    $this->chartOfAccountsService->initializeDefaultAccounts($team);
+                }
+                $this->createPaymentJournalEntry($payment, $team, auth()->id());
+            } catch (Exception $e) {
+                $this->logError('Failed to create journal entry for payment', [
+                    'payment_id' => $payment->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
             $this->logAction('payment_made_created', [
                 'payment_id' => $payment->id,
+                'payment_number' => $payment->payment_number,
                 'vendor_id' => $vendor->id,
                 'amount' => $payment->amount,
             ]);
@@ -87,10 +102,20 @@ class PaymentMadeService extends BaseService
     public function applyToBills(PaymentsMade $payment, array $billAllocations): void
     {
         foreach ($billAllocations as $allocation) {
-            $bill = Bill::find($allocation['bill_id']);
+            if (!isset($allocation['bill_id']) && !isset($allocation['invoice_id'])) {
+                // Support both bill_id and invoice_id (as bills are sometimes called invoices in purchases)
+                continue;
+            }
+
+            $billId = $allocation['bill_id'] ?? $allocation['invoice_id'] ?? null;
+            $bill = Bill::find($billId);
 
             if ($bill && $bill->vendor_id === $payment->vendor_id) {
-                $amount = min($allocation['amount'], $bill->balance_due);
+                $amount = min(floatval($allocation['payment'] ?? $allocation['amount'] ?? 0), $bill->balance_due);
+
+                if ($amount <= 0) {
+                    continue;
+                }
 
                 // Record the allocation
                 DB::table('payment_bill_allocations')->insert([
@@ -98,6 +123,7 @@ class PaymentMadeService extends BaseService
                     'bill_id' => $bill->id,
                     'amount' => $amount,
                     'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 // Update bill balance
@@ -107,14 +133,26 @@ class PaymentMadeService extends BaseService
     }
 
     /**
+     * Generate a unique payment number.
+     *
+     * @param Team $team
+     * @return string
+     */
+    protected function generatePaymentNumber(Team $team): string
+    {
+        $count = PaymentsMade::where('team_id', $team->id)->count() + 1;
+        return 'PM-' . str_pad($count, 5, '0', STR_PAD_LEFT);
+    }
+
+    /**
      * Create journal entry for a payment.
      *
      * @param PaymentsMade $payment
      * @param Team $team
      * @param int|null $userId
-     * @return JournalEntry
+     * @return JournalEntry|null
      */
-    protected function createPaymentJournalEntry(PaymentsMade $payment, Team $team, ?int $userId): JournalEntry
+    protected function createPaymentJournalEntry(PaymentsMade $payment, Team $team, ?int $userId): ?JournalEntry
     {
         // Get accounts
         $cashAccount = $this->chartOfAccountsService->getCash($team) ??
@@ -122,12 +160,14 @@ class PaymentMadeService extends BaseService
         $accountsPayable = $this->chartOfAccountsService->getAccountsPayable($team);
 
         if (!$cashAccount || !$accountsPayable) {
-            throw new Exception('Required accounts not found. Please set up chart of accounts.');
+            return null;
         }
+
+        $vendorName = $payment->vendor ? ($payment->vendor->vendor_display_name ?? $payment->vendor->vendor_name ?? 'Vendor') : 'Vendor';
 
         return $this->journalEntryService->createAndPost($team, [
             'entry_date' => $payment->payment_date,
-            'description' => "Payment made to {$payment->vendor->name} - Ref: {$payment->reference}",
+            'description' => "Payment made to {$vendorName} - Ref: {$payment->reference_number}",
             'reference_type' => get_class($payment),
             'reference_id' => $payment->id,
             'user_id' => $userId,
@@ -136,13 +176,13 @@ class PaymentMadeService extends BaseService
                     'ledger_account_id' => $accountsPayable->id,
                     'type' => 'debit',
                     'amount' => $payment->amount,
-                    'description' => "Payment to {$payment->vendor->name}",
+                    'description' => "Payment to {$vendorName}",
                 ],
                 [
                     'ledger_account_id' => $cashAccount->id,
                     'type' => 'credit',
                     'amount' => $payment->amount,
-                    'description' => "Payment to {$payment->vendor->name}",
+                    'description' => "Payment to {$vendorName}",
                 ],
             ],
         ], $userId);
@@ -188,7 +228,14 @@ class PaymentMadeService extends BaseService
             // Void journal entry
             $journalEntry = $payment->journalEntries()->first();
             if ($journalEntry) {
-                $this->journalEntryService->void($journalEntry, $userId, $reason);
+                try {
+                    $this->journalEntryService->void($journalEntry, $userId, $reason);
+                } catch (Exception $e) {
+                    $this->logError('Failed to void journal entry', [
+                        'payment_id' => $payment->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             $payment->status = PaymentsMade::STATUS_VOIDED;

@@ -49,26 +49,34 @@ class InvoiceService extends BaseService
                 throw new Exception('Customer does not belong to this team.');
             }
 
+            // Calculate totals from items
+            $calculations = $this->calculateTotals($data['items'] ?? [], $data['discount'] ?? 0, $data['adjustment'] ?? 0);
+
             // Create the invoice
             $invoice = new Invoices();
             $invoice->team_id = $team->id;
             $invoice->customer_id = $data['customer_id'];
+            $invoice->invoice_number = $data['invoice_number'] ?? $this->generateInvoiceNumber($team, $data['type'] ?? 'tax');
+            $invoice->type = $data['type'] ?? 'tax';
             $invoice->invoice_date = $data['invoice_date'] ?? now();
             $invoice->due_date = $data['due_date'] ?? now()->addDays(30);
+            $invoice->order_number = $data['order_number'] ?? null;
+            $invoice->payment_terms_id = $data['payment_terms_id'] ?? null;
+            $invoice->sales_person_id = $data['sales_person_id'] ?? null;
+            $invoice->subject = $data['subject'] ?? null;
+            $invoice->customer_notes = $data['customer_notes'] ?? null;
+            $invoice->terms_and_conditions = $data['terms_and_conditions'] ?? null;
+            $invoice->items = $data['items'] ?? [];
+            $invoice->sub_total = $calculations['sub_total'];
+            $invoice->discount = $calculations['discount'];
+            $invoice->adjustment = $calculations['adjustment'];
+            $invoice->total = $calculations['total'];
             $invoice->status = Invoices::STATUS_DRAFT;
-            $invoice->notes = $data['notes'] ?? null;
-            $invoice->terms = $data['terms'] ?? null;
-
-            // Calculate totals
-            $this->calculateTotals($invoice, $data['items']);
-
             $invoice->save();
-
-            // Create invoice items
-            $this->createInvoiceItems($invoice, $data['items']);
 
             $this->logAction('invoice_created', [
                 'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
                 'customer_id' => $customer->id,
                 'total' => $invoice->total,
             ]);
@@ -87,41 +95,39 @@ class InvoiceService extends BaseService
      */
     public function update(Invoices $invoice, array $data): Invoices
     {
-        if ($invoice->status !== Invoices::STATUS_DRAFT) {
+        if (!in_array($invoice->status, [Invoices::STATUS_DRAFT, 'open'])) {
             throw new Exception('Only draft invoices can be updated.');
         }
 
         return $this->transaction(function () use ($invoice, $data) {
+            // Calculate totals from items
+            $calculations = $this->calculateTotals($data['items'] ?? $invoice->items, $data['discount'] ?? $invoice->discount, $data['adjustment'] ?? $invoice->adjustment);
+
             // Update basic fields
-            if (isset($data['customer_id'])) {
-                $invoice->customer_id = $data['customer_id'];
-            }
-            if (isset($data['invoice_date'])) {
-                $invoice->invoice_date = $data['invoice_date'];
-            }
-            if (isset($data['due_date'])) {
-                $invoice->due_date = $data['due_date'];
-            }
-            if (isset($data['notes'])) {
-                $invoice->notes = $data['notes'];
-            }
-            if (isset($data['terms'])) {
-                $invoice->terms = $data['terms'];
+            $fillableFields = [
+                'customer_id', 'invoice_number', 'type', 'invoice_date', 'due_date',
+                'order_number', 'payment_terms_id', 'sales_person_id', 'subject',
+                'customer_notes', 'terms_and_conditions', 'items', 'sub_total',
+                'discount', 'adjustment', 'total'
+            ];
+
+            foreach ($fillableFields as $field) {
+                if (isset($data[$field])) {
+                    $invoice->$field = $data[$field];
+                }
             }
 
-            // Update items if provided
-            if (isset($data['items'])) {
-                $invoice->items()->delete();
-                $this->createInvoiceItems($invoice, $data['items']);
-            }
-
-            // Recalculate totals
-            $this->calculateTotals($invoice, $data['items'] ?? []);
+            // Update calculated fields
+            $invoice->sub_total = $calculations['sub_total'];
+            $invoice->discount = $calculations['discount'];
+            $invoice->adjustment = $calculations['adjustment'];
+            $invoice->total = $calculations['total'];
 
             $invoice->save();
 
             $this->logAction('invoice_updated', [
                 'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
             ]);
 
             return $invoice;
@@ -138,7 +144,7 @@ class InvoiceService extends BaseService
      */
     public function send(Invoices $invoice, int $userId): Invoices
     {
-        if ($invoice->status !== Invoices::STATUS_DRAFT) {
+        if (!in_array($invoice->status, [Invoices::STATUS_DRAFT, 'open'])) {
             throw new Exception('Only draft invoices can be sent.');
         }
 
@@ -147,24 +153,31 @@ class InvoiceService extends BaseService
             $invoice->balance_due = $invoice->total;
             $invoice->save();
 
-            // Create journal entry for the invoice
-            $this->createInvoiceJournalEntry($invoice, $invoice->team, $userId);
-
-            // Decrement inventory for each item
-            foreach ($invoice->items as $item) {
-                if ($item->item_id) {
-                    $this->inventoryService->decrementStock(
-                        $item->item,
-                        $item->quantity,
-                        'invoice',
-                        $invoice->id,
-                        "Invoice #{$invoice->invoice_number}"
-                    );
+            // Try to create journal entry and decrement inventory
+            try {
+                // Initialize chart of accounts if needed
+                $team = $invoice->team;
+                $existingAccounts = \App\Models\LedgerAccount::where('team_id', $team->id)->count();
+                if ($existingAccounts === 0) {
+                    $this->chartOfAccountsService->initializeDefaultAccounts($team);
                 }
+
+                // Create journal entry for the invoice
+                $this->createInvoiceJournalEntry($invoice, $team, $userId);
+
+                // Decrement inventory for each item
+                $this->decrementInventoryForInvoice($invoice);
+            } catch (Exception $e) {
+                // Log but don't fail if accounting is not set up
+                $this->logError('Failed to create journal entry for invoice', [
+                    'invoice_id' => $invoice->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
             $this->logAction('invoice_sent', [
                 'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
                 'sent_by' => $userId,
             ]);
 
@@ -195,6 +208,7 @@ class InvoiceService extends BaseService
 
             $this->logAction('invoice_payment_applied', [
                 'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
                 'amount' => $amount,
                 'payment_id' => $paymentId,
             ]);
@@ -220,23 +234,20 @@ class InvoiceService extends BaseService
 
         return $this->transaction(function () use ($invoice, $userId, $reason) {
             // Reverse inventory if invoice was sent
-            if ($invoice->status === Invoices::STATUS_SENT || $invoice->status === Invoices::STATUS_PARTIAL) {
-                foreach ($invoice->items as $item) {
-                    if ($item->item_id) {
-                        $this->inventoryService->incrementStock(
-                            $item->item,
-                            $item->quantity,
-                            'invoice_cancellation',
-                            $invoice->id,
-                            "Cancelled Invoice #{$invoice->invoice_number}"
-                        );
-                    }
-                }
+            if (in_array($invoice->status, [Invoices::STATUS_SENT, Invoices::STATUS_PARTIAL])) {
+                try {
+                    $this->incrementInventoryForInvoice($invoice);
 
-                // Void the journal entry
-                $journalEntry = $invoice->journalEntries()->first();
-                if ($journalEntry) {
-                    $this->journalEntryService->void($journalEntry, $userId, $reason);
+                    // Void the journal entry
+                    $journalEntry = $invoice->journalEntries()->first();
+                    if ($journalEntry) {
+                        $this->journalEntryService->void($journalEntry, $userId, $reason);
+                    }
+                } catch (Exception $e) {
+                    $this->logError('Failed to reverse inventory for cancelled invoice', [
+                        'invoice_id' => $invoice->id,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 
@@ -245,6 +256,7 @@ class InvoiceService extends BaseService
 
             $this->logAction('invoice_cancelled', [
                 'invoice_id' => $invoice->id,
+                'invoice_number' => $invoice->invoice_number,
                 'cancelled_by' => $userId,
                 'reason' => $reason,
             ]);
@@ -254,57 +266,93 @@ class InvoiceService extends BaseService
     }
 
     /**
-     * Calculate totals for an invoice.
+     * Delete a draft invoice.
      *
      * @param Invoices $invoice
-     * @param array $items
-     * @return void
+     * @return bool
+     * @throws Exception
      */
-    protected function calculateTotals(Invoices $invoice, array $items): void
+    public function delete(Invoices $invoice): bool
     {
-        $subtotal = 0;
-        $taxTotal = 0;
-        $discountTotal = 0;
-
-        foreach ($items as $item) {
-            $lineTotal = $item['quantity'] * $item['rate'];
-            $subtotal += $lineTotal;
-
-            if (isset($item['tax_rate']) && $item['tax_rate'] > 0) {
-                $taxTotal += $lineTotal * ($item['tax_rate'] / 100);
-            }
-
-            if (isset($item['discount']) && $item['discount'] > 0) {
-                $discountTotal += $item['discount'];
-            }
+        if (!in_array($invoice->status, [Invoices::STATUS_DRAFT, 'open'])) {
+            throw new Exception('Only draft invoices can be deleted.');
         }
 
-        $invoice->subtotal = $subtotal;
-        $invoice->tax = $taxTotal;
-        $invoice->discount = $discountTotal;
-        $invoice->total = $subtotal + $taxTotal - $discountTotal;
+        $invoiceNumber = $invoice->invoice_number;
+        $invoice->delete();
+
+        $this->logAction('invoice_deleted', [
+            'invoice_number' => $invoiceNumber,
+        ]);
+
+        return true;
     }
 
     /**
-     * Create invoice items.
+     * Calculate totals for an invoice.
      *
-     * @param Invoices $invoice
      * @param array $items
-     * @return void
+     * @param float $discountPercent
+     * @param float $adjustment
+     * @return array
      */
-    protected function createInvoiceItems(Invoices $invoice, array $items): void
+    protected function calculateTotals(array $items, float $discountPercent = 0, float $adjustment = 0): array
     {
-        foreach ($items as $itemData) {
-            $invoice->items()->create([
-                'item_id' => $itemData['item_id'] ?? null,
-                'description' => $itemData['description'],
-                'quantity' => $itemData['quantity'],
-                'rate' => $itemData['rate'],
-                'tax_rate' => $itemData['tax_rate'] ?? 0,
-                'discount' => $itemData['discount'] ?? 0,
-                'total' => $itemData['quantity'] * $itemData['rate'],
-            ]);
+        $subTotal = 0;
+        $taxTotal = 0;
+
+        foreach ($items as $item) {
+            $lineTotal = floatval($item['quantity'] ?? 0) * floatval($item['rate'] ?? 0);
+            $subTotal += floatval($item['amount'] ?? $lineTotal);
+
+            if (isset($item['tax']) && floatval($item['tax']) > 0) {
+                $taxTotal += (floatval($item['tax']) / 100) * $lineTotal;
+            }
         }
+
+        $total = $subTotal + $taxTotal;
+        
+        if ($discountPercent > 0) {
+            $total = $total - ($discountPercent / 100 * $total);
+        }
+        
+        $total += $adjustment;
+
+        return [
+            'sub_total' => round($subTotal, 2),
+            'discount' => round($discountPercent, 2),
+            'adjustment' => round($adjustment, 2),
+            'total' => round($total, 2),
+        ];
+    }
+
+    /**
+     * Generate a unique invoice number.
+     *
+     * @param Team $team
+     * @param string $type
+     * @return string
+     */
+    protected function generateInvoiceNumber(Team $team, string $type = 'tax'): string
+    {
+        if ($type === 'proforma') {
+            $prefix = 'PI-' . now()->format('my');
+            $lastInvoice = Invoices::where('team_id', $team->id)
+                ->where('type', 'proforma')
+                ->where('invoice_number', 'like', $prefix . '%')
+                ->latest()
+                ->first();
+        } else {
+            $prefix = 'INV-' . now()->format('my');
+            $lastInvoice = Invoices::where('team_id', $team->id)
+                ->where('type', 'tax')
+                ->where('invoice_number', 'like', $prefix . '%')
+                ->latest()
+                ->first();
+        }
+
+        $lastNumber = $lastInvoice ? (int) substr($lastInvoice->invoice_number, strlen($prefix)) : 0;
+        return $prefix . str_pad($lastNumber + 1, 3, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -313,19 +361,17 @@ class InvoiceService extends BaseService
      * @param Invoices $invoice
      * @param Team $team
      * @param int $userId
-     * @return JournalEntry
+     * @return JournalEntry|null
      */
-    protected function createInvoiceJournalEntry(Invoices $invoice, Team $team, int $userId): JournalEntry
+    protected function createInvoiceJournalEntry(Invoices $invoice, Team $team, int $userId): ?JournalEntry
     {
         // Get accounts
         $accountsReceivable = $this->chartOfAccountsService->getAccountsReceivable($team);
         $salesRevenue = $this->chartOfAccountsService->getSalesRevenue($team);
         $salesTaxPayable = $this->chartOfAccountsService->getDefaultAccount($team, 'sales_tax_payable');
-        $inventory = $this->chartOfAccountsService->getInventory($team);
-        $cogs = $this->chartOfAccountsService->getCostOfGoodsSold($team);
 
         if (!$accountsReceivable || !$salesRevenue) {
-            throw new Exception('Required accounts not found. Please set up chart of accounts.');
+            return null;
         }
 
         $lines = [];
@@ -335,45 +381,26 @@ class InvoiceService extends BaseService
             'ledger_account_id' => $accountsReceivable->id,
             'type' => 'debit',
             'amount' => $invoice->total,
-            'description' => "Invoice #{$invoice->invoice_number} - {$invoice->customer->name}",
+            'description' => "Invoice #{$invoice->invoice_number}",
         ];
 
         // Credit Sales Revenue
         $lines[] = [
             'ledger_account_id' => $salesRevenue->id,
             'type' => 'credit',
-            'amount' => $invoice->subtotal,
+            'amount' => $invoice->sub_total,
             'description' => "Invoice #{$invoice->invoice_number}",
         ];
 
         // Credit Sales Tax Payable (if applicable)
-        if ($invoice->tax > 0 && $salesTaxPayable) {
-            $lines[] = [
-                'ledger_account_id' => $salesTaxPayable->id,
-                'type' => 'credit',
-                'amount' => $invoice->tax,
-                'description' => "Sales Tax - Invoice #{$invoice->invoice_number}",
-            ];
-        }
-
-        // If tracking inventory, add COGS entry
-        if ($inventory && $cogs) {
-            $costOfGoods = $this->calculateCostOfGoods($invoice);
-            if ($costOfGoods > 0) {
-                // Debit COGS
+        if ($salesTaxPayable) {
+            $taxAmount = $this->calculateTaxAmount($invoice);
+            if ($taxAmount > 0) {
                 $lines[] = [
-                    'ledger_account_id' => $cogs->id,
-                    'type' => 'debit',
-                    'amount' => $costOfGoods,
-                    'description' => "COGS - Invoice #{$invoice->invoice_number}",
-                ];
-
-                // Credit Inventory
-                $lines[] = [
-                    'ledger_account_id' => $inventory->id,
+                    'ledger_account_id' => $salesTaxPayable->id,
                     'type' => 'credit',
-                    'amount' => $costOfGoods,
-                    'description' => "Inventory - Invoice #{$invoice->invoice_number}",
+                    'amount' => $taxAmount,
+                    'description' => "Sales Tax - Invoice #{$invoice->invoice_number}",
                 ];
             }
         }
@@ -389,22 +416,69 @@ class InvoiceService extends BaseService
     }
 
     /**
-     * Calculate cost of goods sold for an invoice.
+     * Calculate tax amount for an invoice.
      *
      * @param Invoices $invoice
      * @return float
      */
-    protected function calculateCostOfGoods(Invoices $invoice): float
+    protected function calculateTaxAmount(Invoices $invoice): float
     {
-        $total = 0;
-
-        foreach ($invoice->items as $item) {
-            if ($item->item && $item->item->cost_price) {
-                $total += $item->quantity * $item->item->cost_price;
+        $taxTotal = 0;
+        foreach ($invoice->items ?? [] as $item) {
+            if (isset($item['tax']) && floatval($item['tax']) > 0) {
+                $lineTotal = floatval($item['quantity'] ?? 0) * floatval($item['rate'] ?? 0);
+                $taxTotal += (floatval($item['tax']) / 100) * $lineTotal;
             }
         }
+        return round($taxTotal, 2);
+    }
 
-        return $total;
+    /**
+     * Decrement inventory for invoice items.
+     *
+     * @param Invoices $invoice
+     * @return void
+     */
+    protected function decrementInventoryForInvoice(Invoices $invoice): void
+    {
+        foreach ($invoice->items ?? [] as $item) {
+            if (isset($item['item']) && $item['item']) {
+                $inventoryItem = Item::find($item['item']);
+                if ($inventoryItem && $inventoryItem->track_inventory_for_this_item) {
+                    $this->inventoryService->decrementStock(
+                        $inventoryItem,
+                        floatval($item['quantity'] ?? 0),
+                        'invoice',
+                        $invoice->id,
+                        "Invoice #{$invoice->invoice_number}"
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Increment inventory for cancelled invoice items.
+     *
+     * @param Invoices $invoice
+     * @return void
+     */
+    protected function incrementInventoryForInvoice(Invoices $invoice): void
+    {
+        foreach ($invoice->items ?? [] as $item) {
+            if (isset($item['item']) && $item['item']) {
+                $inventoryItem = Item::find($item['item']);
+                if ($inventoryItem && $inventoryItem->track_inventory_for_this_item) {
+                    $this->inventoryService->incrementStock(
+                        $inventoryItem,
+                        floatval($item['quantity'] ?? 0),
+                        'invoice_cancellation',
+                        $invoice->id,
+                        "Cancelled Invoice #{$invoice->invoice_number}"
+                    );
+                }
+            }
+        }
     }
 
     /**

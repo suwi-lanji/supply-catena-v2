@@ -49,28 +49,43 @@ class PaymentReceivedService extends BaseService
             $payment = new PaymentsReceived();
             $payment->team_id = $team->id;
             $payment->customer_id = $data['customer_id'];
+            $payment->payment_number = $data['payment_number'] ?? $this->generatePaymentNumber($team);
             $payment->payment_date = $data['payment_date'] ?? now();
-            $payment->amount = $data['amount'];
-            $payment->payment_method = $data['payment_method'];
-            $payment->reference = $data['reference'] ?? null;
+            $payment->amount_received = $data['amount_received'] ?? 0;
+            $payment->bank_charges = $data['bank_charges'] ?? 0;
+            $payment->payment_mode = $data['payment_mode'] ?? null;
+            $payment->paid_through = $data['paid_through'] ?? null;
+            $payment->reference_number = $data['reference_number'] ?? null;
             $payment->notes = $data['notes'] ?? null;
+            $payment->items = $data['items'] ?? [];
             $payment->status = PaymentsReceived::STATUS_RECEIVED;
             $payment->save();
 
             // Apply to invoices if specified
-            if (isset($data['invoices']) && is_array($data['invoices'])) {
-                $this->applyToInvoices($payment, $data['invoices']);
+            if (isset($data['items']) && is_array($data['items'])) {
+                $this->applyToInvoices($payment, $data['items']);
             }
 
-            // Create journal entry
-            if ($data['create_journal_entry'] ?? true) {
-                $this->createPaymentJournalEntry($payment, $team, $data['user_id'] ?? null);
+            // Try to create journal entry
+            try {
+                $team = $payment->team;
+                $existingAccounts = \App\Models\LedgerAccount::where('team_id', $team->id)->count();
+                if ($existingAccounts === 0) {
+                    $this->chartOfAccountsService->initializeDefaultAccounts($team);
+                }
+                $this->createPaymentJournalEntry($payment, $team, auth()->id());
+            } catch (Exception $e) {
+                $this->logError('Failed to create journal entry for payment', [
+                    'payment_id' => $payment->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
             $this->logAction('payment_received_created', [
                 'payment_id' => $payment->id,
+                'payment_number' => $payment->payment_number,
                 'customer_id' => $customer->id,
-                'amount' => $payment->amount,
+                'amount' => $payment->amount_received,
             ]);
 
             return $payment;
@@ -81,16 +96,24 @@ class PaymentReceivedService extends BaseService
      * Apply payment to specific invoices.
      *
      * @param PaymentsReceived $payment
-     * @param array $invoiceAllocations [[invoice_id => amount], ...]
+     * @param array $invoiceAllocations
      * @return void
      */
     public function applyToInvoices(PaymentsReceived $payment, array $invoiceAllocations): void
     {
         foreach ($invoiceAllocations as $allocation) {
+            if (!isset($allocation['invoice_id']) || !isset($allocation['payment'])) {
+                continue;
+            }
+
             $invoice = Invoices::find($allocation['invoice_id']);
 
             if ($invoice && $invoice->customer_id === $payment->customer_id) {
-                $amount = min($allocation['amount'], $invoice->balance_due);
+                $amount = min(floatval($allocation['payment']), $invoice->balance_due);
+
+                if ($amount <= 0) {
+                    continue;
+                }
 
                 // Record the allocation
                 DB::table('payment_invoice_allocations')->insert([
@@ -98,6 +121,7 @@ class PaymentReceivedService extends BaseService
                     'invoice_id' => $invoice->id,
                     'amount' => $amount,
                     'created_at' => now(),
+                    'updated_at' => now(),
                 ]);
 
                 // Update invoice balance
@@ -107,14 +131,26 @@ class PaymentReceivedService extends BaseService
     }
 
     /**
+     * Generate a unique payment number.
+     *
+     * @param Team $team
+     * @return string
+     */
+    protected function generatePaymentNumber(Team $team): string
+    {
+        $count = PaymentsReceived::where('team_id', $team->id)->count() + 1;
+        return (string) $count;
+    }
+
+    /**
      * Create journal entry for a payment.
      *
      * @param PaymentsReceived $payment
      * @param Team $team
      * @param int|null $userId
-     * @return JournalEntry
+     * @return JournalEntry|null
      */
-    protected function createPaymentJournalEntry(PaymentsReceived $payment, Team $team, ?int $userId): JournalEntry
+    protected function createPaymentJournalEntry(PaymentsReceived $payment, Team $team, ?int $userId): ?JournalEntry
     {
         // Get accounts
         $cashAccount = $this->chartOfAccountsService->getCash($team) ??
@@ -122,12 +158,14 @@ class PaymentReceivedService extends BaseService
         $accountsReceivable = $this->chartOfAccountsService->getAccountsReceivable($team);
 
         if (!$cashAccount || !$accountsReceivable) {
-            throw new Exception('Required accounts not found. Please set up chart of accounts.');
+            return null;
         }
+
+        $customerName = $payment->customer ? ($payment->customer->company_display_name ?? $payment->customer->company_name ?? 'Customer') : 'Customer';
 
         return $this->journalEntryService->createAndPost($team, [
             'entry_date' => $payment->payment_date,
-            'description' => "Payment received from {$payment->customer->name} - Ref: {$payment->reference}",
+            'description' => "Payment received from {$customerName} - Ref: {$payment->reference_number}",
             'reference_type' => get_class($payment),
             'reference_id' => $payment->id,
             'user_id' => $userId,
@@ -135,14 +173,14 @@ class PaymentReceivedService extends BaseService
                 [
                     'ledger_account_id' => $cashAccount->id,
                     'type' => 'debit',
-                    'amount' => $payment->amount,
-                    'description' => "Payment from {$payment->customer->name}",
+                    'amount' => $payment->amount_received,
+                    'description' => "Payment from {$customerName}",
                 ],
                 [
                     'ledger_account_id' => $accountsReceivable->id,
                     'type' => 'credit',
-                    'amount' => $payment->amount,
-                    'description' => "Payment from {$payment->customer->name}",
+                    'amount' => $payment->amount_received,
+                    'description' => "Payment from {$customerName}",
                 ],
             ],
         ], $userId);
@@ -188,7 +226,14 @@ class PaymentReceivedService extends BaseService
             // Void journal entry
             $journalEntry = $payment->journalEntries()->first();
             if ($journalEntry) {
-                $this->journalEntryService->void($journalEntry, $userId, $reason);
+                try {
+                    $this->journalEntryService->void($journalEntry, $userId, $reason);
+                } catch (Exception $e) {
+                    $this->logError('Failed to void journal entry', [
+                        'payment_id' => $payment->id,
+                        'error' => $e->getMessage(),
+                    ]);
+                }
             }
 
             $payment->status = PaymentsReceived::STATUS_VOIDED;
@@ -229,7 +274,7 @@ class PaymentReceivedService extends BaseService
             ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('payment_invoice_allocations')
-                    ->whereColumn('payment_id', 'payments_received.id');
+                    ->whereColumn('payment_id', 'payments_receiveds.id');
             })
             ->orderBy('payment_date')
             ->get();

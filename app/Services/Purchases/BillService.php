@@ -4,6 +4,7 @@ namespace App\Services\Purchases;
 
 use App\Models\Bill;
 use App\Models\Vendor;
+use App\Models\Item;
 use App\Models\Team;
 use App\Models\JournalEntry;
 use App\Services\BaseService;
@@ -46,28 +47,81 @@ class BillService extends BaseService
                 throw new Exception('Vendor does not belong to this team.');
             }
 
+            // Calculate totals from items
+            $calculations = $this->calculateTotals($data['items'] ?? [], $data['discount'] ?? 0, $data['adjustment'] ?? 0);
+
             $bill = new Bill();
             $bill->team_id = $team->id;
             $bill->vendor_id = $data['vendor_id'];
+            $bill->bill_number = $data['bill_number'] ?? $this->generateBillNumber($team);
+            $bill->order_number = $data['order_number'] ?? null;
             $bill->bill_date = $data['bill_date'] ?? now();
             $bill->due_date = $data['due_date'] ?? now()->addDays(30);
-            $bill->bill_number = $data['bill_number'] ?? $this->generateBillNumber($team);
-            $bill->status = Bill::STATUS_OPEN;
+            $bill->payment_terms = $data['payment_terms'] ?? null;
+            $bill->subject = $data['subject'] ?? null;
+            $bill->items = $data['items'] ?? [];
+            $bill->sub_total = $calculations['sub_total'];
+            $bill->discount = $calculations['discount'];
+            $bill->adjustment = $calculations['adjustment'];
+            $bill->total = $calculations['total'];
+            $bill->balance_due = $calculations['total'];
             $bill->notes = $data['notes'] ?? null;
-
-            // Calculate totals
-            $this->calculateTotals($bill, $data['items']);
-            $bill->balance_due = $bill->total;
-
+            $bill->status = Bill::STATUS_OPEN;
             $bill->save();
-
-            // Create bill items
-            $this->createBillItems($bill, $data['items']);
 
             $this->logAction('bill_created', [
                 'bill_id' => $bill->id,
+                'bill_number' => $bill->bill_number,
                 'vendor_id' => $vendor->id,
                 'total' => $bill->total,
+            ]);
+
+            return $bill;
+        });
+    }
+
+    /**
+     * Update a bill.
+     *
+     * @param Bill $bill
+     * @param array $data
+     * @return Bill
+     * @throws Exception
+     */
+    public function update(Bill $bill, array $data): Bill
+    {
+        if (!in_array($bill->status, [Bill::STATUS_OPEN, 'open'])) {
+            throw new Exception('Only open bills can be updated.');
+        }
+
+        return $this->transaction(function () use ($bill, $data) {
+            // Calculate totals from items
+            $calculations = $this->calculateTotals($data['items'] ?? $bill->items, $data['discount'] ?? $bill->discount, $data['adjustment'] ?? $bill->adjustment);
+
+            $fillableFields = [
+                'vendor_id', 'bill_number', 'order_number', 'bill_date', 'due_date',
+                'payment_terms', 'subject', 'items', 'sub_total', 'discount',
+                'adjustment', 'total', 'notes'
+            ];
+
+            foreach ($fillableFields as $field) {
+                if (isset($data[$field])) {
+                    $bill->$field = $data[$field];
+                }
+            }
+
+            // Update calculated fields
+            $bill->sub_total = $calculations['sub_total'];
+            $bill->discount = $calculations['discount'];
+            $bill->adjustment = $calculations['adjustment'];
+            $bill->total = $calculations['total'];
+            $bill->balance_due = $calculations['total'];
+
+            $bill->save();
+
+            $this->logAction('bill_updated', [
+                'bill_id' => $bill->id,
+                'bill_number' => $bill->bill_number,
             ]);
 
             return $bill;
@@ -84,7 +138,7 @@ class BillService extends BaseService
      */
     public function approve(Bill $bill, int $userId): Bill
     {
-        if ($bill->status !== Bill::STATUS_OPEN) {
+        if (!in_array($bill->status, [Bill::STATUS_OPEN, 'open'])) {
             throw new Exception('Only open bills can be approved.');
         }
 
@@ -94,27 +148,29 @@ class BillService extends BaseService
             $bill->approved_at = now();
             $bill->save();
 
-            // Create journal entry
-            $this->createBillJournalEntry($bill, $bill->team, $userId);
-
-            // Increment inventory for each item
-            foreach ($bill->items as $item) {
-                if ($item->item_id) {
-                    $inventoryItem = \App\Models\Item::find($item->item_id);
-                    if ($inventoryItem) {
-                        $this->inventoryService->incrementStock(
-                            $inventoryItem,
-                            $item->quantity,
-                            'bill',
-                            $bill->id,
-                            "Bill #{$bill->bill_number}"
-                        );
-                    }
+            // Try to create journal entry and increment inventory
+            try {
+                $team = $bill->team;
+                $existingAccounts = \App\Models\LedgerAccount::where('team_id', $team->id)->count();
+                if ($existingAccounts === 0) {
+                    $this->chartOfAccountsService->initializeDefaultAccounts($team);
                 }
+
+                // Create journal entry
+                $this->createBillJournalEntry($bill, $team, $userId);
+
+                // Increment inventory for each item
+                $this->incrementInventoryForBill($bill);
+            } catch (Exception $e) {
+                $this->logError('Failed to create journal entry for bill', [
+                    'bill_id' => $bill->id,
+                    'error' => $e->getMessage(),
+                ]);
             }
 
             $this->logAction('bill_approved', [
                 'bill_id' => $bill->id,
+                'bill_number' => $bill->bill_number,
                 'approved_by' => $userId,
             ]);
 
@@ -145,6 +201,7 @@ class BillService extends BaseService
 
             $this->logAction('bill_payment_applied', [
                 'bill_id' => $bill->id,
+                'bill_number' => $bill->bill_number,
                 'amount' => $amount,
                 'payment_id' => $paymentId,
             ]);
@@ -170,26 +227,20 @@ class BillService extends BaseService
 
         return $this->transaction(function () use ($bill, $userId, $reason) {
             // Reverse inventory if bill was approved
-            if ($bill->status === Bill::STATUS_APPROVED || $bill->status === Bill::STATUS_PARTIAL) {
-                foreach ($bill->items as $item) {
-                    if ($item->item_id) {
-                        $inventoryItem = \App\Models\Item::find($item->item_id);
-                        if ($inventoryItem) {
-                            $this->inventoryService->decrementStock(
-                                $inventoryItem,
-                                $item->quantity,
-                                'bill_cancellation',
-                                $bill->id,
-                                "Cancelled Bill #{$bill->bill_number}"
-                            );
-                        }
-                    }
-                }
+            if (in_array($bill->status, [Bill::STATUS_APPROVED, Bill::STATUS_PARTIAL])) {
+                try {
+                    $this->decrementInventoryForBill($bill);
 
-                // Void the journal entry
-                $journalEntry = $bill->journalEntries()->first();
-                if ($journalEntry) {
-                    $this->journalEntryService->void($journalEntry, $userId, $reason);
+                    // Void the journal entry
+                    $journalEntry = $bill->journalEntries()->first();
+                    if ($journalEntry) {
+                        $this->journalEntryService->void($journalEntry, $userId, $reason);
+                    }
+                } catch (Exception $e) {
+                    $this->logError('Failed to reverse inventory for cancelled bill', [
+                        'bill_id' => $bill->id,
+                        'error' => $e->getMessage(),
+                    ]);
                 }
             }
 
@@ -198,6 +249,7 @@ class BillService extends BaseService
 
             $this->logAction('bill_cancelled', [
                 'bill_id' => $bill->id,
+                'bill_number' => $bill->bill_number,
                 'cancelled_by' => $userId,
                 'reason' => $reason,
             ]);
@@ -207,50 +259,59 @@ class BillService extends BaseService
     }
 
     /**
-     * Calculate totals for a bill.
+     * Delete an open bill.
      *
      * @param Bill $bill
-     * @param array $items
-     * @return void
+     * @return bool
+     * @throws Exception
      */
-    protected function calculateTotals(Bill $bill, array $items): void
+    public function delete(Bill $bill): bool
     {
-        $subtotal = 0;
-        $taxTotal = 0;
-
-        foreach ($items as $item) {
-            $lineTotal = $item['quantity'] * $item['rate'];
-            $subtotal += $lineTotal;
-
-            if (isset($item['tax_rate']) && $item['tax_rate'] > 0) {
-                $taxTotal += $lineTotal * ($item['tax_rate'] / 100);
-            }
+        if (!in_array($bill->status, [Bill::STATUS_OPEN, 'open'])) {
+            throw new Exception('Only open bills can be deleted.');
         }
 
-        $bill->subtotal = $subtotal;
-        $bill->tax = $taxTotal;
-        $bill->total = $subtotal + $taxTotal;
+        $billNumber = $bill->bill_number;
+        $bill->delete();
+
+        $this->logAction('bill_deleted', [
+            'bill_number' => $billNumber,
+        ]);
+
+        return true;
     }
 
     /**
-     * Create bill items.
+     * Calculate totals for a bill.
      *
-     * @param Bill $bill
      * @param array $items
-     * @return void
+     * @param float $discountPercent
+     * @param float $adjustment
+     * @return array
      */
-    protected function createBillItems(Bill $bill, array $items): void
+    protected function calculateTotals(array $items, float $discountPercent = 0, float $adjustment = 0): array
     {
-        foreach ($items as $itemData) {
-            $bill->items()->create([
-                'item_id' => $itemData['item_id'] ?? null,
-                'description' => $itemData['description'],
-                'quantity' => $itemData['quantity'],
-                'rate' => $itemData['rate'],
-                'tax_rate' => $itemData['tax_rate'] ?? 0,
-                'total' => $itemData['quantity'] * $itemData['rate'],
-            ]);
+        $subTotal = 0;
+
+        foreach ($items as $item) {
+            $lineTotal = floatval($item['quantity'] ?? 0) * floatval($item['rate'] ?? 0);
+            $subTotal += floatval($item['amount'] ?? $lineTotal);
         }
+
+        $total = $subTotal;
+        
+        if ($discountPercent > 0) {
+            $total = $total - ($discountPercent / 100 * $total);
+        }
+        
+        $total += $adjustment;
+
+        return [
+            'sub_total' => round($subTotal, 2),
+            'discount' => round($discountPercent, 2),
+            'adjustment' => round($adjustment, 2),
+            'total' => round($total, 2),
+        ];
     }
 
     /**
@@ -261,9 +322,9 @@ class BillService extends BaseService
      */
     protected function generateBillNumber(Team $team): string
     {
-        $prefix = 'BILL';
+        $prefix = 'BL-';
         $count = Bill::where('team_id', $team->id)->count() + 1;
-        return "{$prefix}-" . str_pad($count, 6, '0', STR_PAD_LEFT);
+        return $prefix . str_pad($count, 5, '0', STR_PAD_LEFT);
     }
 
     /**
@@ -272,17 +333,16 @@ class BillService extends BaseService
      * @param Bill $bill
      * @param Team $team
      * @param int $userId
-     * @return JournalEntry
+     * @return JournalEntry|null
      */
-    protected function createBillJournalEntry(Bill $bill, Team $team, int $userId): JournalEntry
+    protected function createBillJournalEntry(Bill $bill, Team $team, int $userId): ?JournalEntry
     {
-        // Get accounts
         $accountsPayable = $this->chartOfAccountsService->getAccountsPayable($team);
         $inventory = $this->chartOfAccountsService->getInventory($team);
         $salesTaxPayable = $this->chartOfAccountsService->getDefaultAccount($team, 'sales_tax_payable');
 
         if (!$accountsPayable || !$inventory) {
-            throw new Exception('Required accounts not found. Please set up chart of accounts.');
+            return null;
         }
 
         $lines = [];
@@ -291,18 +351,21 @@ class BillService extends BaseService
         $lines[] = [
             'ledger_account_id' => $inventory->id,
             'type' => 'debit',
-            'amount' => $bill->subtotal,
-            'description' => "Bill #{$bill->bill_number} - {$bill->vendor->name}",
+            'amount' => $bill->sub_total,
+            'description' => "Bill #{$bill->bill_number}",
         ];
 
         // Debit Tax (if applicable)
-        if ($bill->tax > 0 && $salesTaxPayable) {
-            $lines[] = [
-                'ledger_account_id' => $salesTaxPayable->id,
-                'type' => 'debit',
-                'amount' => $bill->tax,
-                'description' => "Tax - Bill #{$bill->bill_number}",
-            ];
+        if ($salesTaxPayable) {
+            $taxAmount = $this->calculateTaxAmount($bill);
+            if ($taxAmount > 0) {
+                $lines[] = [
+                    'ledger_account_id' => $salesTaxPayable->id,
+                    'type' => 'debit',
+                    'amount' => $taxAmount,
+                    'description' => "Tax - Bill #{$bill->bill_number}",
+                ];
+            }
         }
 
         // Credit Accounts Payable
@@ -310,17 +373,83 @@ class BillService extends BaseService
             'ledger_account_id' => $accountsPayable->id,
             'type' => 'credit',
             'amount' => $bill->total,
-            'description' => "Bill #{$bill->bill_number} - {$bill->vendor->name}",
+            'description' => "Bill #{$bill->bill_number}",
         ];
 
         return $this->journalEntryService->createAndPost($team, [
             'entry_date' => $bill->bill_date,
-            'description' => "Bill #{$bill->bill_number} from {$bill->vendor->name}",
+            'description' => "Bill #{$bill->bill_number}",
             'reference_type' => get_class($bill),
             'reference_id' => $bill->id,
             'user_id' => $userId,
             'lines' => $lines,
         ], $userId);
+    }
+
+    /**
+     * Calculate tax amount for a bill.
+     *
+     * @param Bill $bill
+     * @return float
+     */
+    protected function calculateTaxAmount(Bill $bill): float
+    {
+        $taxTotal = 0;
+        foreach ($bill->items ?? [] as $item) {
+            if (isset($item['tax']) && floatval($item['tax']) > 0) {
+                $lineTotal = floatval($item['quantity'] ?? 0) * floatval($item['rate'] ?? 0);
+                $taxTotal += (floatval($item['tax']) / 100) * $lineTotal;
+            }
+        }
+        return round($taxTotal, 2);
+    }
+
+    /**
+     * Increment inventory for bill items.
+     *
+     * @param Bill $bill
+     * @return void
+     */
+    protected function incrementInventoryForBill(Bill $bill): void
+    {
+        foreach ($bill->items ?? [] as $item) {
+            if (isset($item['item']) && $item['item']) {
+                $inventoryItem = Item::find($item['item']);
+                if ($inventoryItem && $inventoryItem->track_inventory_for_this_item) {
+                    $this->inventoryService->incrementStock(
+                        $inventoryItem,
+                        floatval($item['quantity'] ?? 0),
+                        'bill',
+                        $bill->id,
+                        "Bill #{$bill->bill_number}"
+                    );
+                }
+            }
+        }
+    }
+
+    /**
+     * Decrement inventory for cancelled bill items.
+     *
+     * @param Bill $bill
+     * @return void
+     */
+    protected function decrementInventoryForBill(Bill $bill): void
+    {
+        foreach ($bill->items ?? [] as $item) {
+            if (isset($item['item']) && $item['item']) {
+                $inventoryItem = Item::find($item['item']);
+                if ($inventoryItem && $inventoryItem->track_inventory_for_this_item) {
+                    $this->inventoryService->decrementStock(
+                        $inventoryItem,
+                        floatval($item['quantity'] ?? 0),
+                        'bill_cancellation',
+                        $bill->id,
+                        "Cancelled Bill #{$bill->bill_number}"
+                    );
+                }
+            }
+        }
     }
 
     /**
