@@ -271,13 +271,14 @@ class PurchaseOrderResource extends Resource
                     ->default(0)
                     ->afterStateUpdated(function ($get, $set) {
                         $vat = 0;
-                        foreach ($get('items') as $item) {
-                            $vat += $item['tax'];
+                        foreach ($get('items') ?? [] as $item) {
+                            $vat += floatval($item['tax'] ?? 0);
                         }
-                        $total = floatval($get('sub_total')) + (floatval($vat) / 100 * floatval($get('sub_total')));
-
-                        $total = floatval($total) - (floatval($get('discount')) / 100 * floatval($total));
-                        $total += floatval($get('adjustment'));
+                        $subtotal = floatval($get('sub_total') ?? 0);
+                        $total = $subtotal + ($vat / 100 * $subtotal);
+                        $discount = floatval($get('discount') ?? 0);
+                        $total = $total - ($discount / 100 * $total);
+                        $total += floatval($get('adjustment') ?? 0);
                         $set('total', $total);
                     })
                     ->live(onBlur: true)
@@ -290,13 +291,14 @@ class PurchaseOrderResource extends Resource
                     ->live(onBlur: true)
                     ->afterStateUpdated(function ($get, $set) {
                         $vat = 0;
-                        foreach ($get('items') as $item) {
-                            $vat += $item['tax'];
+                        foreach ($get('items') ?? [] as $item) {
+                            $vat += floatval($item['tax'] ?? 0);
                         }
-                        $total = floatval($get('sub_total')) + (floatval($vat) / 100 * floatval($get('sub_total')));
-
-                        $total = floatval($total) - (floatval($get('discount')) / 100 * floatval($total));
-                        $total += floatval($get('adjustment'));
+                        $subtotal = floatval($get('sub_total') ?? 0);
+                        $total = $subtotal + ($vat / 100 * $subtotal);
+                        $discount = floatval($get('discount') ?? 0);
+                        $total = $total - ($discount / 100 * $total);
+                        $total += floatval($get('adjustment') ?? 0);
                         $set('total', $total);
                     })
                     ->numeric(),
