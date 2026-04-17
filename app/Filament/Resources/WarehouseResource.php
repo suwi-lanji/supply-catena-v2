@@ -17,6 +17,10 @@ class WarehouseResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-building-office-2';
 
+    protected static ?string $navigationGroup = 'Inventory';
+
+    protected static ?int $navigationSort = 5;
+
     public static function shouldRegisterNavigation(): bool
     {
         if (Filament::getTenant()->has_warehouses != null && Filament::getTenant()->has_warehouses != false) {

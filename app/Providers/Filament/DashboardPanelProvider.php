@@ -33,7 +33,7 @@ class DashboardPanelProvider extends PanelProvider
             ->tenantProfile(EditTeamProfile::class)
             ->login()
             ->registration()
-            ->sidebarCollapsibleOnDesktop()
+            ->topNavigation()
             ->navigationGroups([
                 NavigationGroup::make()
                     ->icon('heroicon-o-clipboard-document-list')
@@ -44,9 +44,6 @@ class DashboardPanelProvider extends PanelProvider
                 NavigationGroup::make()
                     ->icon('heroicon-o-shopping-bag')
                     ->label('Purchases'),
-                NavigationGroup::make()
-                    ->icon('heroicon-o-chart-bar')
-                    ->label('More'),
                 NavigationGroup::make()
                     ->label('Settings')
                     ->icon('heroicon-o-cog-8-tooth'),

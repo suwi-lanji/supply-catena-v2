@@ -80,11 +80,11 @@ class PaymentsMadeResource extends Resource
                             ->native(false)->default(now())
                             ->required(),
                         Forms\Components\TextInput::make('full_amount')->hidden(true),
-                        Forms\Components\TextInput::make('payment_made')
+                        Forms\Components\TextInput::make('amount')
                             ->hintAction(
                                 Action::make('Pay Full Amount')
                                     ->action(function ($get, $set) {
-                                        $set('payment_made', $get('full_amount'));
+                                        $set('amount', $get('full_amount'));
                                     })
                             )
                             ->required()

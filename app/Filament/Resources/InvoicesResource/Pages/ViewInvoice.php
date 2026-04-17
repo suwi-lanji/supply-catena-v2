@@ -82,14 +82,22 @@ class ViewInvoice extends ViewRecord
                         ->required(),
                 ])
                 ->action(function (array $data) {
+                    $invoiceService = app(\App\Services\Sales\InvoiceService::class);
+                    
                     $credit = CreditNotes::where('customer_id', $this->getRecord()->customer_id)->get()->first();
                     if ($credit) {
                         $new_amount_due = floatval($credit['amount_due']) - floatval($data['amount']);
                         $credit->update(['amount_due' => $new_amount_due]);
-                        $new_balance_due = $this->getRecord()->balance_due - floatval($data['amount']);
-                        $this->getRecord()->update(['balance_due' => $new_balance_due]);
+                        
+                        // Use service to apply payment
+                        $invoiceService->applyPayment($this->getRecord(), floatval($data['amount']), $credit->id);
+                        
+                        Notification::make()
+                            ->title('Credits Applied')
+                            ->body('Credit notes have been applied to the invoice.')
+                            ->success()
+                            ->send();
                     }
-
                 }),
             Actions\Action::make('pdf')
                 ->label('PDF/Print')

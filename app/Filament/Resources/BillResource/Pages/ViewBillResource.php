@@ -51,14 +51,22 @@ class ViewBillResource extends ViewRecord
                         ->required(),
                 ])
                 ->action(function (array $data) {
-                    $credit = VendorCredit::where('vendor_id', $data['vendor_credit'])->get()->first();
+                    $billService = app(\App\Services\Purchases\BillService::class);
+                    
+                    $credit = VendorCredit::where('id', $data['vendor_credit'])->first();
                     if ($credit) {
                         $new_amount_due = floatval($credit['amount_due']) - floatval($data['amount']);
                         $credit->update(['amount_due' => $new_amount_due]);
-                        $new_balance_due = $this->getRecord()->balance_due - floatval($data['amount']);
-                        $this->getRecord()->update(['balance_due' => $new_balance_due]);
+                        
+                        // Use service to apply payment
+                        $billService->applyPayment($this->getRecord(), floatval($data['amount']), $credit->id);
+                        
+                        \Filament\Notifications\Notification::make()
+                            ->title('Credits Applied')
+                            ->body('Vendor credits have been applied to the bill.')
+                            ->success()
+                            ->send();
                     }
-
                 }),
             Actions\Action::make('pdf')
                 ->label('PDF/Print')
