@@ -121,11 +121,14 @@ class DemoCompanySeeder extends Seeder
                 $company->admins()->attach($user);
             }
 
-            // Assign role
+            // Assign role with team context
             $role = Role::where('name', $userData['role'])
                 ->where('team_id', $company->id)
                 ->first();
             if ($role) {
+                // Set the team context for permissions
+                app()['cache']->forget('spatie.permission.cache');
+                setPermissionsTeamId($company->id);
                 $user->assignRole($role);
             }
         }
