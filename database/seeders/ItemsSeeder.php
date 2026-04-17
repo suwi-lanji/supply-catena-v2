@@ -36,7 +36,7 @@ class ItemsSeeder extends Seeder
         );
 
         // Create item groups
-        $itemGroups = $this->createItemGroups($company->id);
+        $itemGroups = $this->createItemGroups($company->id, $salesAccount->id, $purchaseAccount->id);
 
         // Create items
         $items = $this->getMiningSupplyItems($company->id, $salesAccount->id, $purchaseAccount->id);
@@ -48,27 +48,34 @@ class ItemsSeeder extends Seeder
         $this->command->info('Items created: ' . count($items) . ' mining supply products');
     }
 
-    protected function createItemGroups(int $teamId): array
+    protected function createItemGroups(int $teamId, int $salesAccountId, int $purchaseAccountId): array
     {
         $groups = [
-            ['name' => 'Mining Equipment', 'description' => 'Heavy mining machinery and equipment'],
-            ['name' => 'Drilling Equipment', 'description' => 'Drill rigs, drill bits, and drilling consumables'],
-            ['name' => 'Safety Equipment', 'description' => 'PPE and safety gear'],
-            ['name' => 'Spare Parts', 'description' => 'Machine spare parts and components'],
-            ['name' => 'Consumables', 'description' => 'Mining consumables and supplies'],
-            ['name' => 'Electrical Components', 'description' => 'Electrical parts and components'],
-            ['name' => 'Pumps & Valves', 'description' => 'Industrial pumps and valves'],
-            ['name' => 'Conveyor Components', 'description' => 'Conveyor belts, rollers, and accessories'],
-            ['name' => 'Welding Supplies', 'description' => 'Welding equipment and consumables'],
-            ['name' => 'Lubricants & Fluids', 'description' => 'Industrial lubricants and fluids'],
+            ['name' => 'Mining Equipment', 'type' => 'Inventory', 'description' => 'Heavy mining machinery and equipment'],
+            ['name' => 'Drilling Equipment', 'type' => 'Inventory', 'description' => 'Drill rigs, drill bits, and drilling consumables'],
+            ['name' => 'Safety Equipment', 'type' => 'Inventory', 'description' => 'PPE and safety gear'],
+            ['name' => 'Spare Parts', 'type' => 'Inventory', 'description' => 'Machine spare parts and components'],
+            ['name' => 'Consumables', 'type' => 'Inventory', 'description' => 'Mining consumables and supplies'],
+            ['name' => 'Electrical Components', 'type' => 'Inventory', 'description' => 'Electrical parts and components'],
+            ['name' => 'Pumps & Valves', 'type' => 'Inventory', 'description' => 'Industrial pumps and valves'],
+            ['name' => 'Conveyor Components', 'type' => 'Inventory', 'description' => 'Conveyor belts, rollers, and accessories'],
+            ['name' => 'Welding Supplies', 'type' => 'Inventory', 'description' => 'Welding equipment and consumables'],
+            ['name' => 'Lubricants & Fluids', 'type' => 'Inventory', 'description' => 'Industrial lubricants and fluids'],
         ];
 
         $created = [];
         foreach ($groups as $group) {
             $created[$group['name']] = ItemGroup::create([
                 'team_id' => $teamId,
-                'name' => $group['name'],
+                'type' => $group['type'],
+                'item_group_name' => $group['name'],
                 'description' => $group['description'],
+                'returnable_item' => true,
+                'images' => [],
+                'unit' => 'Unit',
+                'sales_account_id' => $salesAccountId,
+                'purchases_account_id' => $purchaseAccountId,
+                'inventory_account' => 'Inventory',
             ]);
         }
 

@@ -215,11 +215,14 @@ class TransactionsSeeder extends Seeder
                 'team_id' => $this->team->id,
                 'sales_order_number' => $orderData['reference'],
                 'customer_id' => $customer->id,
-                'order_date' => $orderData['date'],
+                'sales_order_date' => $orderData['date'],
                 'status' => $orderData['status'],
                 'items' => $items,
                 'sub_total' => $subtotal,
                 'total' => $subtotal,
+                'adjustment' => 0,
+                'shipment_charges' => 0,
+                'discount' => 0,
                 'terms_and_conditions' => [['terms_and_conditions' => 'Delivery within 14 days.']],
             ]);
             $count++;
@@ -236,6 +239,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(25),
                 'due_date' => Carbon::now()->addDays(5),
                 'reference' => 'INV-2024-0001',
+                'order_number' => 'SO-2024-0001',
                 'type' => 'tax',
                 'status' => 'partial',
                 'items' => [
@@ -248,6 +252,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(18),
                 'due_date' => Carbon::now()->addDays(12),
                 'reference' => 'INV-2024-0002',
+                'order_number' => 'SO-2024-0002',
                 'type' => 'tax',
                 'status' => 'sent',
                 'items' => [
@@ -260,6 +265,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(12),
                 'due_date' => Carbon::now()->addDays(18),
                 'reference' => 'INV-2024-0003',
+                'order_number' => 'SO-2024-0003',
                 'type' => 'tax',
                 'status' => 'sent',
                 'items' => [
@@ -272,6 +278,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(8),
                 'due_date' => Carbon::now()->addDays(22),
                 'reference' => 'INV-2024-0004',
+                'order_number' => 'SO-2024-0004',
                 'type' => 'tax',
                 'status' => 'sent',
                 'items' => [
@@ -285,6 +292,11 @@ class TransactionsSeeder extends Seeder
         foreach ($invoices as $invoiceData) {
             $customer = $this->customers[$invoiceData['customer']] ?? null;
             if (!$customer) continue;
+
+            // Find the sales order
+            $salesOrder = SalesOrder::where('sales_order_number', $invoiceData['order_number'])
+                ->where('team_id', $this->team->id)
+                ->first();
 
             $items = [];
             $subtotal = 0;
@@ -317,6 +329,7 @@ class TransactionsSeeder extends Seeder
                 'customer_id' => $customer->id,
                 'invoice_date' => $invoiceData['date'],
                 'due_date' => $invoiceData['due_date'],
+                'order_number' => $salesOrder?->id,
                 'type' => $invoiceData['type'],
                 'status' => $invoiceData['status'],
                 'items' => $items,
@@ -430,6 +443,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(30),
                 'due_date' => Carbon::now()->subDays(15),
                 'reference' => 'BILL-2024-0001',
+                'po_reference' => 'PO-2024-0001',
                 'vendor_invoice' => 'SV-INV-45678',
                 'status' => 'paid',
                 'items' => [
@@ -442,6 +456,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(25),
                 'due_date' => Carbon::now()->subDays(10),
                 'reference' => 'BILL-2024-0002',
+                'po_reference' => 'PO-2024-0002',
                 'vendor_invoice' => 'SA-INV-12345',
                 'status' => 'paid',
                 'items' => [
@@ -454,6 +469,7 @@ class TransactionsSeeder extends Seeder
                 'date' => Carbon::now()->subDays(10),
                 'due_date' => Carbon::now()->addDays(20),
                 'reference' => 'BILL-2024-0003',
+                'po_reference' => null,
                 'vendor_invoice' => 'CAT-INV-78901',
                 'status' => 'open',
                 'items' => [
@@ -467,6 +483,14 @@ class TransactionsSeeder extends Seeder
         foreach ($bills as $billData) {
             $vendor = $this->vendors[$billData['vendor']] ?? null;
             if (!$vendor) continue;
+
+            // Find purchase order if referenced
+            $purchaseOrder = null;
+            if ($billData['po_reference']) {
+                $purchaseOrder = PurchaseOrder::where('purchase_order_number', $billData['po_reference'])
+                    ->where('team_id', $this->team->id)
+                    ->first();
+            }
 
             $items = [];
             $subtotal = 0;
@@ -490,14 +514,14 @@ class TransactionsSeeder extends Seeder
             Bill::create([
                 'team_id' => $this->team->id,
                 'bill_number' => $billData['reference'],
+                'order_number' => $purchaseOrder?->id ?? 1,
                 'vendor_id' => $vendor->id,
                 'bill_date' => $billData['date'],
                 'due_date' => $billData['due_date'],
-                'vendor_invoice_number' => $billData['vendor_invoice'],
+                'payment_terms' => 'Net 30',
                 'status' => $billData['status'],
                 'items' => $items,
-                'subtotal' => $subtotal,
-                'tax' => 0,
+                'sub_total' => $subtotal,
                 'total' => $subtotal,
                 'balance_due' => $billData['status'] === 'paid' ? 0 : $subtotal,
             ]);
@@ -536,9 +560,13 @@ class TransactionsSeeder extends Seeder
                 'payment_number' => $paymentData['reference'],
                 'customer_id' => $customer->id,
                 'payment_date' => $paymentData['date'],
-                'amount' => $paymentData['amount'],
-                'payment_method' => $paymentData['method'],
-                'status' => 'completed',
+                'amount_received' => $paymentData['amount'],
+                'bank_charges' => 0,
+                'payment_mode' => $paymentData['method'],
+                'paid_through' => 'ZANACO',
+                'reference_number' => $paymentData['reference'],
+                'notes' => 'Payment received for invoices',
+                'items' => [],
             ]);
             $count++;
         }
@@ -575,9 +603,13 @@ class TransactionsSeeder extends Seeder
                 'payment_number' => $paymentData['reference'],
                 'vendor_id' => $vendor->id,
                 'payment_date' => $paymentData['date'],
-                'amount' => $paymentData['amount'],
-                'payment_method' => $paymentData['method'],
-                'status' => 'completed',
+                'payment_made' => $paymentData['amount'],
+                'payment_mode' => $paymentData['method'],
+                'paid_through' => 'ZANACO',
+                'clear_applied_amount' => false,
+                'reference_number' => $paymentData['reference'],
+                'notes' => 'Payment made for bills',
+                'items' => [],
             ]);
             $count++;
         }

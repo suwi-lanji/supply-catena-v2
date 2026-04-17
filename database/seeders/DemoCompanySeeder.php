@@ -29,9 +29,14 @@ class DemoCompanySeeder extends Seeder
             'phone' => '+260 212 456 789',
             'fax' => '+260 212 456 790',
             'website' => 'www.copperbeltminingsupplies.com',
+            'email' => 'info@copperbeltminingsupplies.com',
             'inventory_start' => now()->startOfYear(),
             'fiscal_year' => 'January - December',
             'language' => 'en',
+            'logo' => 'logos/cms-logo.png',
+            'currency_code' => 'ZMW',
+            'currency_symbol' => 'K',
+            'has_warehouses' => true,
         ]);
 
         // Create roles

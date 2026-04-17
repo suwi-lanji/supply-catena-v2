@@ -76,6 +76,7 @@ class VendorsSeeder extends Seeder
         foreach ($manufacturers as $name) {
             Manufucturer::create([
                 'name' => $name,
+                'team_id' => $teamId,
             ]);
         }
 
@@ -120,6 +121,7 @@ class VendorsSeeder extends Seeder
         foreach ($brands as $name) {
             Brand::create([
                 'name' => $name,
+                'team_id' => $teamId,
             ]);
         }
 

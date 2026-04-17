@@ -24,26 +24,18 @@ class SalesPersonsSeeder extends Seeder
             [
                 'name' => 'Ruth Phiri',
                 'email' => 'salesrep1@copperbeltmining.com',
-                'phone' => '+260 977 123 456',
-                'commission_rate' => 2.5,
             ],
             [
                 'name' => 'Steven Mulenga',
                 'email' => 'salesrep2@copperbeltmining.com',
-                'phone' => '+260 966 234 567',
-                'commission_rate' => 2.5,
             ],
             [
                 'name' => 'Peter Chisanga',
                 'email' => 'sales@copperbeltmining.com',
-                'phone' => '+260 955 345 678',
-                'commission_rate' => 1.5,
             ],
             [
                 'name' => 'Grace Ng\'andu',
                 'email' => 'grace.ngandu@copperbeltmining.com',
-                'phone' => '+260 977 456 789',
-                'commission_rate' => 2.0,
             ],
         ];
 
