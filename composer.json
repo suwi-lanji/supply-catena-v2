@@ -20,6 +20,7 @@
         "spatie/browsershot": "^4.3",
         "spatie/laravel-interacts-with-payload": "^1.2",
         "spatie/laravel-multitenancy": "^4.0",
+        "spatie/laravel-permission": "^6.0",
         "spatie/laravel-pdf": "^1.5",
         "tomatophp/filament-alerts": "^2.0"
     },
