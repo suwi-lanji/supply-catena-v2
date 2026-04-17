@@ -412,7 +412,6 @@ class TransactionsSeeder extends Seeder
                 'expected_delivery_date' => Carbon::now()->addDays(14),
                 'order_status' => $orderData['status'],
                 'items' => $items,
-                'subtotal' => $subtotal,
                 'sub_total' => $subtotal,
                 'total' => $subtotal,
                 'discount' => 0,
