@@ -45,6 +45,9 @@ class DashboardPanelProvider extends PanelProvider
                     ->icon('heroicon-o-shopping-bag')
                     ->label('Purchases'),
                 NavigationGroup::make()
+                    ->icon('heroicon-o-calculator')
+                    ->label('Accounting'),
+                NavigationGroup::make()
                     ->label('Settings')
                     ->icon('heroicon-o-cog-8-tooth'),
             ])
