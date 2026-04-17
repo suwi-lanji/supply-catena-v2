@@ -22,8 +22,6 @@ class DeliveryNoteResource extends Resource
 
     protected static ?string $navigationGroup = 'Sales';
 
-    protected static ?string $navigationIcon = 'heroicon-o-truck';
-
     public static function form(Form $form): Form
     {
         return $form

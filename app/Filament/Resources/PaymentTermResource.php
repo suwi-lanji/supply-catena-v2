@@ -16,8 +16,6 @@ class PaymentTermResource extends Resource
 
     protected static ?string $modelLabel = 'Bank Detail';
 
-    protected static ?string $navigationIcon = 'heroicon-o-credit-card';
-
     protected static ?string $navigationGroup = 'Settings';
 
     protected static ?int $navigationSort = 20;
